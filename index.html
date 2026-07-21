@@ -270,9 +270,9 @@
         <!-- DEBRIEF PAGE -->
         <div id="debrief" class="page container">
             <div class="card" style="padding: 16px; margin-bottom: 20px;">
-                <h3 style="margin-bottom: 10px; font-size: 16px;">⚡ Energi 7 Hari Terakhir</h3>
-                <div class="chart-container" style="height: 120px; margin-top: 0;">
-                    <canvas id="barChartEnergy"></canvas>
+                <h3 style="margin-bottom: 12px; font-size: 16px;">⚡ Riwayat Mood & Energi</h3>
+                <div id="debriefEnergyTimeline" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none;">
+                    <p style="font-size: 13px; color: var(--text-muted); text-align: center; width: 100%;">Memuat data...</p>
                 </div>
             </div>
             
@@ -921,19 +921,26 @@
                         btnDebrief.innerText = hasActiveOpt ? 'SELESAIKAN HARI' : '\u2705 SUDAH DIISI SEMUA';
                     }
 
-                    // Update Chart Energy Debrief
-                    if (chartEnergyInst && res.allDebriefs) {
-                        // Ambil 7 debrief terakhir (array udah diurutkan dari terbaru ke terlama, jadi ambil slice lalu reverse)
-                        const energyDebriefs = [...res.allDebriefs].slice(0, 7).reverse();
-                        const energyLabels = energyDebriefs.map(d => new Date(d.date).toLocaleDateString('id-ID', {weekday:'short', day:'numeric'}));
-                        const energyData = energyDebriefs.map(d => d.energy);
-                        // Warnain bar: merah kalau <= 4, hijau kalau >= 7, sisanya kuning
-                        const energyColors = energyData.map(e => e <= 4 ? '#EF4444' : (e >= 7 ? '#10B981' : '#FBBF24'));
-                        
-                        chartEnergyInst.data.labels = energyLabels;
-                        chartEnergyInst.data.datasets[0].data = energyData;
-                        chartEnergyInst.data.datasets[0].backgroundColor = energyColors;
-                        chartEnergyInst.update();
+                    // Update Timeline Mood & Energi
+                    const timelineContainer = document.getElementById('debriefEnergyTimeline');
+                    if (timelineContainer && res.allDebriefs) {
+                        const energyDebriefs = [...res.allDebriefs].slice(0, 7).reverse(); // urut dari kiri ke kanan (terlama ke terbaru)
+                        if (energyDebriefs.length === 0) {
+                            timelineContainer.innerHTML = '<p style="font-size: 13px; color: var(--text-muted); text-align: center; width: 100%;">Belum ada riwayat.</p>';
+                        } else {
+                            timelineContainer.innerHTML = energyDebriefs.map(d => {
+                                const dayName = new Date(d.date).toLocaleDateString('id-ID', {weekday:'short'});
+                                const color = d.energy <= 4 ? '#EF4444' : (d.energy >= 7 ? '#10B981' : '#FBBF24');
+                                const bg = d.energy <= 4 ? 'rgba(239,68,68,0.15)' : (d.energy >= 7 ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.15)');
+                                return `
+                                    <div style="flex-shrink: 0; background: ${bg}; border: 1px solid ${color}40; border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 75px;">
+                                        <div style="font-size: 11px; font-weight: 700; color: var(--text-title); margin-bottom: 8px;">${dayName}</div>
+                                        <div style="font-size: 28px; margin-bottom: 6px;">${d.mood}</div>
+                                        <div style="font-size: 14px; font-weight: 800; font-family: 'Outfit'; color: ${color};">${d.energy}<span style="font-size:10px;color:var(--text-muted);">/10</span></div>
+                                    </div>
+                                `;
+                            }).join('');
+                        }
                     }
 
                     const debriefContainer = document.getElementById('debriefHistoryList');
@@ -952,13 +959,10 @@
                                 let card = document.createElement('div');
                                 card.className = 'card'; card.style.padding = '16px';
                                 card.innerHTML = `
-                                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                                        <div style="background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 10px; font-size: 20px;">${d.mood}</div>
-                                        <div style="background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 10px; font-size: 13px; color: var(--text-muted);">Energi: <strong style="color: white;">${d.energy}/10</strong></div>
-                                    </div>
-                                    ${d.lesson ? `<p style="font-size: 13px; color: var(--text-muted); line-height:1.4; margin-bottom: 6px;">\ud83d\udca1 ${d.lesson}</p>` : ''}
-                                    ${d.fix ? `<p style="font-size: 13px; color: var(--text-muted); line-height:1.4;">\ud83c\udfaf ${d.fix}</p>` : ''}
+                                    ${d.lesson ? `<p style="font-size: 13.5px; color: var(--text-main); line-height:1.5; margin-bottom: 12px;">\ud83d\udca1 <strong style="color:var(--text-muted); font-size:12px;">Pelajaran Hari Ini:</strong><br>${d.lesson}</p>` : ''}
+                                    ${d.fix ? `<p style="font-size: 13.5px; color: var(--text-main); line-height:1.5;">\ud83c\udfaf <strong style="color:var(--text-muted); font-size:12px;">Target Besok:</strong><br>${d.fix}</p>` : ''}
                                 `;
+                                if(!d.lesson && !d.fix) card.innerHTML = `<p style="font-size: 13px; color: var(--text-muted); font-style: italic; text-align: center;">Hanya mencatat mood & energi.</p>`;
                                 debriefContainer.appendChild(card);
                             };
                             if (todayDebrief) renderDebriefCard(todayDebrief, 'Hari Ini');
@@ -1641,12 +1645,6 @@
                 type: 'bar',
                 data: { labels: [], datasets: [{ label: 'Frekuensi', data: [], backgroundColor: 'rgba(124, 58, 237, 0.8)', borderRadius: 6 }] },
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, border: { display: false } }, x: { grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false } } }
-            });
-
-            chartEnergyInst = new Chart(document.getElementById('barChartEnergy'), {
-                type: 'bar',
-                data: { labels: [], datasets: [{ label: 'Level Energi', data: [], borderRadius: 4 }] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, border: { display: false }, ticks: { stepSize: 2 } }, x: { grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `Energi: ${ctx.raw}/10` } } } }
             });
 
             // LANGSUNG TARIK DATA KETIKA WEB DIBUKA
