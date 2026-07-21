@@ -281,7 +281,7 @@
                     <p style="font-size: 13px; color: var(--text-muted); text-align: center;">Memuat data...</p>
                 </div>
                 
-                <div id="debriefEnergyTimeline" style="display: none; gap: 10px; overflow-x: auto; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--glass-border); scrollbar-width: none; -ms-overflow-style: none;">
+                <div id="debriefEnergyTimeline" style="display: none; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--glass-border);">
                 </div>
             </div>
             
@@ -565,7 +565,7 @@
 
         function toggleEnergyHistory() {
             const el = document.getElementById('debriefEnergyTimeline');
-            if (el) el.style.display = el.style.display === 'none' ? 'flex' : 'none';
+            if (el) el.style.display = el.style.display === 'none' ? 'grid' : 'none';
         }
 
         document.addEventListener('click', function(e) {
@@ -975,7 +975,7 @@
                                 const c = d.energy <= 4 ? '#EF4444' : (d.energy >= 7 ? '#10B981' : '#FBBF24');
                                 const cbg = d.energy <= 4 ? 'rgba(239,68,68,0.15)' : (d.energy >= 7 ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.15)');
                                 return `
-                                    <div style="flex-shrink: 0; background: ${cbg}; border: 1px solid ${c}40; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 80px;">
+                                    <div style="background: ${cbg}; border: 1px solid ${c}40; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                                         <div style="font-size: 11px; font-weight: 700; color: var(--text-title); margin-bottom: 2px;">${dayName}</div>
                                         <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 8px;">${shortDate}</div>
                                         <div style="font-size: 22px; margin-bottom: 6px;">${d.mood}</div>
