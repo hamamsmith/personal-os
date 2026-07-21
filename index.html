@@ -673,7 +673,19 @@
             container.querySelectorAll('.radio-btn, .emoji-btn').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
             if(navigator.vibrate) navigator.vibrate(20);
-            document.getElementById(groupName + 'Val').value = element.innerText.trim();
+            let val = element.innerText.trim();
+            document.getElementById(groupName + 'Val').value = val;
+            
+            if (groupName === 'mood') {
+                const energySelect = document.getElementById('energyVal');
+                if (energySelect) {
+                    if (val === '😁') energySelect.value = '5';
+                    else if (val === '🙂') energySelect.value = '4';
+                    else if (val === '😐') energySelect.value = '3';
+                    else if (val === '😕') energySelect.value = '2';
+                    else if (val === '😞') energySelect.value = '1';
+                }
+            }
         }
 
         function showToast(msg) {
