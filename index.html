@@ -277,9 +277,11 @@
         <!-- DEBRIEF PAGE -->
         <div id="debrief" class="page container">
             <div class="card" style="padding: 16px; margin-bottom: 20px;">
-                <h3 style="margin-bottom: 12px; font-size: 16px;">⚡ Riwayat Mood & Energi</h3>
-                <div id="debriefEnergyTimeline" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none;">
-                    <p style="font-size: 13px; color: var(--text-muted); text-align: center; width: 100%;">Memuat data...</p>
+                <div id="latestEnergyCard" onclick="toggleEnergyHistory()" style="cursor:pointer; transition: 0.2s;" onmouseover="this.style.transform='scale(0.98)'" onmouseout="this.style.transform='scale(1)'">
+                    <p style="font-size: 13px; color: var(--text-muted); text-align: center;">Memuat data...</p>
+                </div>
+                
+                <div id="debriefEnergyTimeline" style="display: none; gap: 10px; overflow-x: auto; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--glass-border); scrollbar-width: none; -ms-overflow-style: none;">
                 </div>
             </div>
             
@@ -560,6 +562,11 @@
             } else { sidebar.classList.toggle('collapsed'); main.classList.toggle('expanded'); }
         }
         function closeMobileSidebar() { if (window.innerWidth <= 768) { document.getElementById('sidebar').classList.remove('mobile-show'); sidebarOpen = false; } }
+
+        function toggleEnergyHistory() {
+            const el = document.getElementById('debriefEnergyTimeline');
+            if (el) el.style.display = el.style.display === 'none' ? 'flex' : 'none';
+        }
 
         document.addEventListener('click', function(e) {
             const sidebar = document.getElementById('sidebar');
@@ -929,21 +936,50 @@
                     }
 
                     // Update Timeline Mood & Energi
+                    const latestCard = document.getElementById('latestEnergyCard');
                     const timelineContainer = document.getElementById('debriefEnergyTimeline');
-                    if (timelineContainer && res.allDebriefs) {
-                        const energyDebriefs = [...res.allDebriefs].slice(0, 7).reverse(); // urut dari kiri ke kanan (terlama ke terbaru)
+                    if (latestCard && timelineContainer && res.allDebriefs) {
+                        const energyDebriefs = [...res.allDebriefs].slice(0, 7); // dari terbaru ke terlama
                         if (energyDebriefs.length === 0) {
-                            timelineContainer.innerHTML = '<p style="font-size: 13px; color: var(--text-muted); text-align: center; width: 100%;">Belum ada riwayat.</p>';
+                            latestCard.innerHTML = '<p style="font-size: 13px; color: var(--text-muted); text-align: center; width: 100%;">Belum ada riwayat mood & energi.</p>';
                         } else {
-                            timelineContainer.innerHTML = energyDebriefs.map(d => {
-                                const dayName = new Date(d.date).toLocaleDateString('id-ID', {weekday:'short'});
-                                const color = d.energy <= 4 ? '#EF4444' : (d.energy >= 7 ? '#10B981' : '#FBBF24');
-                                const bg = d.energy <= 4 ? 'rgba(239,68,68,0.15)' : (d.energy >= 7 ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.15)');
+                            // Tampilan Card 1 (Terbaru)
+                            const latest = energyDebriefs[0];
+                            const latestDate = new Date(latest.date);
+                            const dayStr = latestDate.toLocaleDateString('id-ID', {weekday:'long'});
+                            const dateStr = latestDate.toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'2-digit'}); // ex: 20 Jul 26
+                            
+                            const color = latest.energy <= 4 ? '#EF4444' : (latest.energy >= 7 ? '#10B981' : '#FBBF24');
+                            const bg = latest.energy <= 4 ? 'rgba(239,68,68,0.15)' : (latest.energy >= 7 ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.15)');
+                            
+                            latestCard.innerHTML = `
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: ${bg}; border: 1px solid ${color}40; border-radius: 12px; padding: 16px;">
+                                    <div>
+                                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Terakhir Diisi</div>
+                                        <div style="font-size: 15px; font-weight: 700; color: var(--text-title);">${dayStr}, ${dateStr}</div>
+                                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">Klik untuk riwayat seminggu ▾</div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <span style="font-size: 32px;">${latest.mood}</span>
+                                        <div style="font-size: 20px; font-weight: 800; font-family: 'Outfit'; color: ${color};">${latest.energy}<span style="font-size:12px;color:var(--text-muted);">/10</span></div>
+                                    </div>
+                                </div>
+                            `;
+
+                            // Tampilan Timeline (disembunyikan secara default)
+                            const reversedTimeline = [...energyDebriefs].reverse(); // diurutkan kiri ke kanan (terlama ke terbaru)
+                            timelineContainer.innerHTML = reversedTimeline.map(d => {
+                                const dd = new Date(d.date);
+                                const dayName = dd.toLocaleDateString('id-ID', {weekday:'short'});
+                                const shortDate = dd.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+                                const c = d.energy <= 4 ? '#EF4444' : (d.energy >= 7 ? '#10B981' : '#FBBF24');
+                                const cbg = d.energy <= 4 ? 'rgba(239,68,68,0.15)' : (d.energy >= 7 ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.15)');
                                 return `
-                                    <div style="flex-shrink: 0; background: ${bg}; border: 1px solid ${color}40; border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 75px;">
-                                        <div style="font-size: 11px; font-weight: 700; color: var(--text-title); margin-bottom: 8px;">${dayName}</div>
-                                        <div style="font-size: 28px; margin-bottom: 6px;">${d.mood}</div>
-                                        <div style="font-size: 14px; font-weight: 800; font-family: 'Outfit'; color: ${color};">${d.energy}<span style="font-size:10px;color:var(--text-muted);">/10</span></div>
+                                    <div style="flex-shrink: 0; background: ${cbg}; border: 1px solid ${c}40; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 80px;">
+                                        <div style="font-size: 11px; font-weight: 700; color: var(--text-title); margin-bottom: 2px;">${dayName}</div>
+                                        <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 8px;">${shortDate}</div>
+                                        <div style="font-size: 22px; margin-bottom: 6px;">${d.mood}</div>
+                                        <div style="font-size: 14px; font-weight: 800; font-family: 'Outfit'; color: ${c};">${d.energy}<span style="font-size:10px;color:var(--text-muted);">/10</span></div>
                                     </div>
                                 `;
                             }).join('');
