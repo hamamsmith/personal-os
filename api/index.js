@@ -39,7 +39,7 @@ app.post('/api/data', async (req, res) => {
     const { action, data } = req.body;
     
     if (action === 'saveBattle') {
-      const ts = data.date && data.date.length === 10 ? `${data.date} 23:59:00` : new Date().toISOString();
+      const ts = data.date && data.date.length === 10 ? `${data.date} 12:00:00` : new Date().toISOString();
       await pool.query('INSERT INTO battles (timestamp, type, outcome, note, kategori) VALUES ($1, $2, $3, $4, $5)', [ts, data.type, data.outcomeVal, data.note, data.kategori]);
       return res.json({ status: 'success' });
     }
@@ -59,14 +59,14 @@ app.post('/api/data', async (req, res) => {
     }
     
     else if (action === 'saveScreenTime') {
-      const ts = data.date && data.date.length === 10 ? `${data.date} 23:59:00` : new Date().toISOString();
+      const ts = data.date && data.date.length === 10 ? `${data.date} 12:00:00` : new Date().toISOString();
       await pool.query('INSERT INTO screentimes (timestamp, total_duration, app1, dur1, app2, dur2, app3, dur3) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
         [ts, data.total || 0, data.app1Name, data.app1Dur || 0, data.app2Name, data.app2Dur || 0, data.app3Name, data.app3Dur || 0]);
       return res.json({ status: 'success' });
     }
     
     else if (action === 'saveDebrief') {
-      const ts = data.date && data.date.length === 10 ? `${data.date} 23:59:00` : new Date().toISOString();
+      const ts = data.date && data.date.length === 10 ? `${data.date} 12:00:00` : new Date().toISOString();
       await pool.query('INSERT INTO debriefs (timestamp, mood, energy, lesson, fix) VALUES ($1, $2, $3, $4, $5)', [ts, data.mood, data.energy, data.lesson, data.fix]);
       return res.json({ status: 'success' });
     }
