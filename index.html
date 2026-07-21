@@ -269,6 +269,13 @@
 
         <!-- DEBRIEF PAGE -->
         <div id="debrief" class="page container">
+            <div class="card" style="padding: 16px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 10px; font-size: 16px;">⚡ Energi 7 Hari Terakhir</h3>
+                <div class="chart-container" style="height: 120px; margin-top: 0;">
+                    <canvas id="barChartEnergy"></canvas>
+                </div>
+            </div>
+            
             <div class="card" id="debriefForm">
                 <label>Tanggal (hari ini atau kemarin)</label>
                 <div class="picker-container" style="margin-bottom: 20px;">
@@ -515,6 +522,7 @@
     <script>
         let chartWinLoseInst = null;
         let chartBattleInst = null;
+        let chartEnergyInst = null;
 
         function initTimePickers() {
             let jamOpts = '<option value="0">0</option>';
@@ -911,6 +919,21 @@
                     if (btnDebrief) {
                         btnDebrief.disabled = !hasActiveOpt;
                         btnDebrief.innerText = hasActiveOpt ? 'SELESAIKAN HARI' : '\u2705 SUDAH DIISI SEMUA';
+                    }
+
+                    // Update Chart Energy Debrief
+                    if (chartEnergyInst && res.allDebriefs) {
+                        // Ambil 7 debrief terakhir (array udah diurutkan dari terbaru ke terlama, jadi ambil slice lalu reverse)
+                        const energyDebriefs = [...res.allDebriefs].slice(0, 7).reverse();
+                        const energyLabels = energyDebriefs.map(d => new Date(d.date).toLocaleDateString('id-ID', {weekday:'short', day:'numeric'}));
+                        const energyData = energyDebriefs.map(d => d.energy);
+                        // Warnain bar: merah kalau <= 4, hijau kalau >= 7, sisanya kuning
+                        const energyColors = energyData.map(e => e <= 4 ? '#EF4444' : (e >= 7 ? '#10B981' : '#FBBF24'));
+                        
+                        chartEnergyInst.data.labels = energyLabels;
+                        chartEnergyInst.data.datasets[0].data = energyData;
+                        chartEnergyInst.data.datasets[0].backgroundColor = energyColors;
+                        chartEnergyInst.update();
                     }
 
                     const debriefContainer = document.getElementById('debriefHistoryList');
@@ -1618,6 +1641,12 @@
                 type: 'bar',
                 data: { labels: [], datasets: [{ label: 'Frekuensi', data: [], backgroundColor: 'rgba(124, 58, 237, 0.8)', borderRadius: 6 }] },
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, border: { display: false } }, x: { grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false } } }
+            });
+
+            chartEnergyInst = new Chart(document.getElementById('barChartEnergy'), {
+                type: 'bar',
+                data: { labels: [], datasets: [{ label: 'Level Energi', data: [], borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10, border: { display: false }, ticks: { stepSize: 2 } }, x: { grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `Energi: ${ctx.raw}/10` } } } }
             });
 
             // LANGSUNG TARIK DATA KETIKA WEB DIBUKA
