@@ -137,10 +137,17 @@
         .chart-container { position: relative; height: 200px; width: 100%; margin-top: 15px;}
 
         @media (max-width: 768px) {
-            .sidebar-wrapper { transform: translateX(-150%); opacity: 0; pointer-events: none; }
+            .sidebar-wrapper { transform: translateX(-150%); opacity: 0; pointer-events: none; will-change: transform, opacity; }
             .sidebar-wrapper.mobile-show { transform: translateX(0); opacity: 1; pointer-events: auto; }
             .main-content { margin-left: 0; }
-            .topbar-title { margin-left: auto; margin-right: auto; transform: translateX(-24px); }
+            
+            /* OPTIMASI PERFORMA HP (ANTI-LAG) */
+            /* Mematikan animasi bola cahaya dan blur tingkat tinggi yang bikin GPU HP berat */
+            .orb { animation: none !important; filter: blur(30px) !important; opacity: 0.2 !important; }
+            /* Mematikan efek kaca belakang pada kartu saat di-scroll */
+            .card { backdrop-filter: none !important; background: rgba(255, 255, 255, 0.05) !important; box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important; }
+            .topbar { backdrop-filter: blur(8px) !important; padding: 0 16px; }
+            .modal-overlay { backdrop-filter: blur(4px) !important; }
         }
     </style>
 </head>
