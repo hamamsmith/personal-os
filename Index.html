@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Personal OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-base: #0B0C10;
+            --bg-orb-1: #3b0066;
+            --bg-orb-2: #002244;
+            --bg-orb-3: #1a0033;
+            
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            
+            --primary: #7C3AED;
+            --primary-hover: #8B5CF6;
+            --primary-glow: rgba(124, 58, 237, 0.4);
+            
+            --danger: #EF4444;
+            --danger-glow: rgba(239, 68, 68, 0.3);
+            
+            --success: #10B981;
+            
+            --text-title: #F8FAFC;
+            --text-main: #E2E8F0;
+            --text-muted: #94A3B8;
+            
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+
+            --topbar-height: 70px;
+            --sidebar-width: 90px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overscroll-behavior: none;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+        }
+
+        .ambient-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; background: var(--bg-base); }
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; animation: float 15s infinite alternate ease-in-out; }
+        .orb-1 { width: 300px; height: 300px; background: var(--bg-orb-1); top: -50px; left: -50px; }
+        .orb-2 { width: 400px; height: 400px; background: var(--bg-orb-2); bottom: -100px; right: -50px; animation-delay: -5s; }
+        .orb-3 { width: 250px; height: 250px; background: var(--bg-orb-3); top: 40%; left: 30%; animation-delay: -10s; }
+        @keyframes float { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.1); } 100% { transform: translateY(20px) scale(0.9); } }
+
+        .topbar { position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-height); background: rgba(11, 12, 16, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; padding: 0 24px; z-index: 1000; }
+        .hamburger { font-size: 28px; cursor: pointer; color: var(--text-main); margin-right: 20px; transition: 0.3s; user-select: none; }
+        .hamburger:active { transform: scale(0.9); color: var(--primary); }
+        .topbar-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-title); }
+
+        .sidebar-wrapper { position: fixed; top: calc(var(--topbar-height) + 20px); left: 20px; height: calc(100vh - var(--topbar-height) - 40px); width: var(--sidebar-width); z-index: 999; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s; }
+        .sidebar-wrapper.collapsed { transform: translateX(-150%); opacity: 0; pointer-events: none; }
+        .sidebar { height: 100%; background: rgba(20, 20, 25, 0.7); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; border-radius: 30px; border: 1px solid var(--glass-border); box-shadow: 0 10px 40px rgba(0,0,0,0.5); gap: 15px; }
+        .nav-item { color: var(--text-muted); text-decoration: none; display: flex; flex-direction: column; align-items: center; font-size: 10px; font-weight: 600; cursor: pointer; padding: 10px 8px; border-radius: 20px; transition: all 0.3s ease; width: 85%; }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; transition: 0.3s; opacity: 0.7; }
+        .nav-item:hover { color: white; background: rgba(255, 255, 255, 0.05); }
+        .nav-item.active { color: white; background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05); }
+        .nav-item.active .nav-icon { opacity: 1; transform: translateY(-2px) scale(1.1); text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+
+        .main-content { flex-grow: 1; margin-left: calc(var(--sidebar-width) + 40px); margin-top: var(--topbar-height); padding: 30px 20px 50px 20px; display: flex; justify-content: center; transition: margin-left 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .main-content.expanded { margin-left: 0; }
+        .container { width: 100%; max-width: 600px; }
+        .page { display: none; opacity: 0; transform: translateX(15px); transition: all 0.4s; }
+        .page.active { display: block; opacity: 1; transform: translateX(0); }
+
+        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; color: var(--text-title); letter-spacing: -0.5px; }
+        h1 { font-size: 30px; font-weight: 700; margin-bottom: 24px; }
+        h3 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+        .card { background: var(--glass-bg); backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
+        label { display: block; margin-bottom: 10px; font-weight: 500; color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        input[type="text"], input[type="number"], textarea { width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-title); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px; font-size: 16px; outline: none; transition: 0.3s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); font-family: 'Inter', sans-serif; }
+        input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.2); }
+        input:focus, textarea:focus { border-color: var(--primary); background: rgba(0, 0, 0, 0.5); box-shadow: 0 0 0 4px var(--primary-glow), inset 0 2px 4px rgba(0,0,0,0.2); }
+        textarea { resize: vertical; min-height: 100px; }
+
+        .time-picker-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        .picker-container { flex: 1; position: relative; }
+        .picker-container select { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 15px 40px 15px 15px; border-radius: var(--radius-md); appearance: none; font-size: 18px; font-weight: 600; font-family: 'Outfit', sans-serif; outline: none; transition: 0.3s; }
+        .picker-container select:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); box-shadow: 0 0 0 4px var(--primary-glow); }
+        .picker-container .lbl { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-muted); pointer-events: none;}
+        
+        .app-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center;}
+        .app-row input[type="text"] { flex: 2.5; margin-bottom: 0; }
+        .app-row .picker-container { flex: 1; }
+        .app-row .picker-container select { padding: 14px 25px 14px 10px; font-size: 15px; }
+        .app-row .picker-container .lbl { right: 10px; font-size: 11px; }
+
+        .radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .radio-grid.full { grid-template-columns: 1fr; }
+        .radio-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 16px 12px; text-align: center; cursor: pointer; transition: 0.25s; font-size: 15px; font-weight: 500; user-select: none; }
+        .radio-btn:active { transform: scale(0.96); }
+        .radio-btn.active { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); border-color: transparent; color: white; font-weight: 600; box-shadow: 0 4px 15px var(--primary-glow); }
+        .radio-btn.danger.active { background: linear-gradient(135deg, var(--danger), #F87171); box-shadow: 0 4px 15px var(--danger-glow); }
+
+        .emoji-grid { display: flex; justify-content: space-between; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.05); }
+        .emoji-btn { font-size: 28px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: transparent; cursor: pointer; transition: 0.3s; user-select: none; filter: grayscale(100%) opacity(0.5); }
+        .emoji-btn:active { transform: scale(0.8); }
+        .emoji-btn.active { filter: grayscale(0%) opacity(1); transform: scale(1.15); background: rgba(255,255,255,0.1); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        .btn-submit { width: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none; padding: 18px; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; font-family: 'Outfit', sans-serif; letter-spacing: 1px; cursor: pointer; margin-top: 10px; transition: 0.3s; box-shadow: 0 8px 20px var(--primary-glow); overflow: hidden; position: relative; }
+        .btn-submit::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent); transform: skewX(-25deg); transition: 0.6s; }
+        .btn-submit:hover::after { left: 200%; }
+        .btn-submit:active { transform: translateY(2px); box-shadow: 0 4px 10px var(--primary-glow); }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); z-index: 2000; display: none; justify-content: center; align-items: flex-start; padding: 40px 20px; overflow-y: auto; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-content { background: var(--bg-base); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 24px; width: 100%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); transform: translateY(-20px); transition: transform 0.3s; }
+        .modal-overlay.show .modal-content { transform: translateY(0); }
+
+        #toast { visibility: hidden; background: linear-gradient(135deg, var(--success), #059669); color: #fff; text-align: center; border-radius: 100px; padding: 14px 24px; position: fixed; z-index: 2002; top: 90px; left: 50%; transform: translateX(-50%) translateY(-20px); font-size: 15px; font-weight: 600; opacity: 0; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); transition: 0.4s; }
+        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .summary-box { background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%); padding: 20px 16px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .summary-box .label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+        .summary-box .value { font-size: 28px; font-weight: 800; font-family: 'Outfit'; color: white; margin-top: 8px; }
+        .value.accent { color: var(--primary); }
+        .value.danger { color: #F87171; }
+        .chart-container { position: relative; height: 200px; width: 100%; margin-top: 15px;}
+
+        @media (max-width: 768px) {
+            .sidebar-wrapper { transform: translateX(-150%); opacity: 0; pointer-events: none; }
+            .sidebar-wrapper.mobile-show { transform: translateX(0); opacity: 1; pointer-events: auto; }
+            .main-content { margin-left: 0; }
+            .topbar-title { margin-left: auto; margin-right: auto; transform: translateX(-24px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+
+    <header class="topbar">
+        <div class="hamburger" onclick="toggleSidebar()">☰</div>
+        <div class="topbar-title" id="topbar-title">Dashboard.</div>
+    </header>
+    <div id="toast">✅ Data berhasil disimpan!</div>
+
+    <div class="sidebar-wrapper" id="sidebar">
+        <nav class="sidebar">
+            <a class="nav-item active" onclick="navTo('dashboard', 'Dashboard.', this)"><span class="nav-icon">✨</span><span>Home</span></a>
+            <a class="nav-item" onclick="navTo('battle', 'Log Battle.', this)"><span class="nav-icon">⚔️</span><span>Battle</span></a>
+            <a class="nav-item" onclick="navTo('braindump', 'Brain Dump.', this)"><span class="nav-icon">🧠</span><span>Dump</span></a>
+            <a class="nav-item" onclick="navTo('debrief', 'Debrief Malam.', this)"><span class="nav-icon">🌙</span><span>Debrief</span></a>
+            <a class="nav-item" onclick="navTo('screentime', 'Screen Time.', this)"><span class="nav-icon">📱</span><span>Screen</span></a>
+            <a class="nav-item" onclick="navTo('weekly', 'Weekly Review.', this)"><span class="nav-icon">🗓️</span><span>Weekly</span></a>
+        </nav>
+    </div>
+
+    <main class="main-content" id="main-content">
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="page active container">
+            <div class="summary-grid">
+                <div class="summary-box"><div class="label">🟢 Battle Positif</div><div class="value" id="valTotalPositif">0</div></div>
+                <div class="summary-box"><div class="label">🔴 Battle Negatif</div><div class="value danger" id="valTotalNegatif">0</div></div>
+                <div class="summary-box">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="label" id="rateLabel">📊 Overall Rate</div>
+                        <select id="rateFilter" onchange="changeRateFilter()" style="background:transparent; color:var(--text-muted); border:none; outline:none; font-size:10px; cursor:pointer; -webkit-appearance:none;">
+                            <option value="overall" style="color:#000;">Overall</option>
+                            <option value="sukses" style="color:#000;">Sukses (Positif)</option>
+                            <option value="kontrol" style="color:#000;">Kontrol (Negatif)</option>
+                        </select>
+                    </div>
+                    <div class="value accent" id="valRateDisplay">0%</div>
+                </div>
+                <div class="summary-box">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <div class="label">📱 Avg Screen</div>
+                        <select id="screenFilter" onchange="changeScreenFilter()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 2px 6px; border-radius: 6px; font-size: 10px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif; cursor:pointer;">
+                            <option value="7">1 Minggu</option>
+                            <option value="30">1 Bulan</option>
+                            <option value="all">Semua</option>
+                        </select>
+                    </div>
+                    <div class="value" id="valAvgScreen">-</div>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 14px 16px; margin-bottom: 0;">
+                <div style="display:flex; gap:16px; flex-wrap: wrap; align-items:center;">
+                    <div style="flex:1; min-width:120px;">
+                        <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">⚡ KEBIASAAN TERBAIK</div>
+                        <div style="font-size:13px; color:var(--text-title); font-weight:600;" id="valMostPositif">-</div>
+                    </div>
+                    <div style="flex:1; min-width:120px;">
+                        <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">💀 GODAAN TERBERAT</div>
+                        <div style="font-size:13px; color:var(--text-title); font-weight:600;" id="valMostNegatif">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0;">🏆 Menang vs 💀 Kalah</h3>
+                    <div style="display: flex; align-items: center; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px 8px; border: 1px solid var(--glass-border);">
+                        <button onclick="shiftWeek(-1)" style="cursor:pointer; padding:4px 10px; color:var(--primary); font-size:16px; background:none; border:none; line-height:1;">◄</button>
+                        <span id="chartWeekLabel" style="font-size:11px; font-weight:600; margin:0 8px; color:var(--text-muted); text-transform:uppercase; min-width:80px; text-align:center;">Loading...</span>
+                        <button id="btnNextWeek" onclick="shiftWeek(1)" style="cursor:pointer; padding:4px 10px; color:var(--primary); font-size:16px; background:none; border:none; line-height:1;">►</button>
+                    </div>
+                </div>
+                <div class="chart-container"><canvas id="barChartWinLose"></canvas></div>
+            </div>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0;">Battle Paling Sering</h3>
+                    <select id="filterBattleFreq" onchange="filterBattleFreqChanged()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 4px 8px; border-radius: 8px; font-size: 11px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif;">
+                        <option value="7">1 MINGGU</option><option value="30">1 BULAN</option><option value="all">SEMUA WAKTU</option>
+                    </select>
+                </div>
+                <div class="chart-container"><canvas id="barChartBattle"></canvas></div>
+            </div>
+        </div>
+
+        <!-- BATTLE PAGE (LIST VIEW) -->
+        <div id="battle" class="page container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3>Hari Ini</h3>
+                <button class="btn-submit" style="width: auto; padding: 10px 20px; margin-top: 0; font-size: 14px;" onclick="openBattleModal()">+ Tambah</button>
+            </div>
+            <div id="battleTodayList">
+                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;">Loading...</p>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 16px;">
+                <h3>Riwayat Hari Sebelumnya</h3>
+            </div>
+            <div id="battleHistoryList">
+                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;">Belum ada catatan battle sebelumnya.</p>
+            </div>
+        </div>
+
+        <!-- BRAIN DUMP PAGE -->
+        <div id="braindump" class="page container">
+            <div class="card">
+                <label>Kosongkan Pikiran</label>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Tulis apapun yang membebani pikiran lu sekarang biar otak plong.</p>
+                <textarea id="dumpContent" style="min-height: 250px; font-size: 18px;" placeholder="Gua ngerasa... / Gua kepikiran soal..."></textarea>
+                <button class="btn-submit" onclick="submitBrainDump()">LEPASKAN PIKIRAN</button>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; margin-top: 40px;">
+                <h3>Riwayat Hari Sebelumnya</h3>
+            </div>
+            <div id="brainDumpHistoryList">
+                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 30px;">Belum ada catatan di hari-hari sebelumnya.</p>
+            </div>
+        </div>
+
+        <!-- DEBRIEF PAGE -->
+        <div id="debrief" class="page container">
+            <div class="card" id="debriefForm">
+                <label>Tanggal (hari ini atau kemarin)</label>
+                <div class="picker-container" style="margin-bottom: 20px;">
+                    <select id="debriefDatePicker" style="font-size: 15px;"></select>
+                    <span class="lbl">▼</span>
+                </div>
+                <label>Mood secara umum?</label>
+                <div class="emoji-grid" id="mood-grid">
+                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">😞</div>
+                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">😕</div>
+                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">😐</div>
+                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">🙂</div>
+                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">😁</div>
+                </div>
+                <input type="hidden" id="moodVal">
+                <label>Level Energi (1-10)</label>
+                <div class="picker-container" style="margin-bottom: 20px;">
+                    <select id="energyVal" style="font-size: 15px;">
+                        <option value="" disabled selected>Seberapa bertenaga lu hari ini?</option>
+                        <option value="1">1 - Habis Total 🪫</option>
+                        <option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        <option value="5">5 - Cukup 🔋</option>
+                        <option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                        <option value="10">10 - On Fire ⚡</option>
+                    </select>
+                    <span class="lbl">▼</span>
+                </div>
+                <label>Satu pelajaran penting hari ini</label>
+                <textarea id="pelajaranVal" placeholder="Apa yang lu sadari hari ini?" style="min-height: 80px;"></textarea>
+                <label>Apa yang perlu diperbaiki besok?</label>
+                <textarea id="perbaikanVal" placeholder="Target perbaikan besok..." style="min-height: 80px;"></textarea>
+                <button class="btn-submit" id="btnSelesaiHari" onclick="submitDebrief()">SELESAIKAN HARI</button>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; margin-top: 40px;">
+                <h3>Riwayat Hari Sebelumnya</h3>
+            </div>
+            <div id="debriefHistoryList">
+                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;">Belum ada debrief sebelumnya.</p>
+            </div>
+        </div>
+        
+        <!-- SCREEN TIME PAGE -->
+        <div id="screentime" class="page container">
+            <div class="card">
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Catat durasi layar lu hari ini agar tetap sadar (mindful) sama waktu yang dihabiskan di depan layar.</p>
+                <label>Tanggal (isi hari ini atau kemarin)</label>
+                <div class="picker-container" style="margin-bottom: 20px;">
+                    <select id="screenDatePicker" style="font-size: 15px;"></select>
+                    <span class="lbl">▼</span>
+                </div>
+                <label>Total Durasi Layar</label>
+                <div class="time-picker-row">
+                    <div class="picker-container"><select id="totJam"></select><span class="lbl">Jam</span></div>
+                    <div class="picker-container"><select id="totMenit"></select><span class="lbl">Mnt</span></div>
+                </div>
+                <label style="margin-top:20px;">Top 3 Aplikasi Terlama</label>
+                <div class="app-row">
+                    <input type="text" id="app1Name" placeholder="1. Nama App">
+                    <div class="picker-container"><select id="app1Jam"></select><span class="lbl">Jam</span></div>
+                    <div class="picker-container"><select id="app1Menit"></select><span class="lbl">Mnt</span></div>
+                </div>
+                <div class="app-row">
+                    <input type="text" id="app2Name" placeholder="2. Nama App">
+                    <div class="picker-container"><select id="app2Jam"></select><span class="lbl">Jam</span></div>
+                    <div class="picker-container"><select id="app2Menit"></select><span class="lbl">Mnt</span></div>
+                </div>
+                <div class="app-row">
+                    <input type="text" id="app3Name" placeholder="3. Nama App">
+                    <div class="picker-container"><select id="app3Jam"></select><span class="lbl">Jam</span></div>
+                    <div class="picker-container"><select id="app3Menit"></select><span class="lbl">Mnt</span></div>
+                </div>
+                <button class="btn-submit" id="btnSimpanScreen" style="margin-top: 20px;" onclick="submitScreenTime()">SIMPAN SCREEN TIME</button>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; margin-top: 40px;">
+                <h3>Riwayat Hari Sebelumnya</h3>
+            </div>
+            <div id="screenHistoryList">
+                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;">Belum ada catatan screen time sebelumnya.</p>
+            </div>
+        </div>
+
+        <!-- WEEKLY REVIEW PAGE -->
+        <div id="weekly" class="page container">
+            <!-- Stat Boxes -->
+            <div class="summary-grid" style="margin-bottom: 16px;">
+                <div class="summary-box"><div class="label">🏆 Kemenangan</div><div class="value accent" id="wkTotalWins">-</div></div>
+                <div class="summary-box">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                        <div class="label" id="wkRateLabel" style="margin-bottom:0;">📊 Overall Rate</div>
+                        <select id="wkRateFilter" onchange="changeWkRateFilter()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 2px 6px; border-radius: 6px; font-size: 10px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif; cursor:pointer;">
+                            <option value="overall">OVERALL</option>
+                            <option value="sukses">SUKSES</option>
+                            <option value="kontrol">KONTROL</option>
+                        </select>
+                    </div>
+                    <div class="value accent" id="wkRateDisplay" style="margin-top:8px;">-</div>
+                </div>
+                <div class="summary-box"><div class="label">⚡ Avg Energi</div><div class="value" id="wkAvgEnergy">-</div></div>
+                <div class="summary-box"><div class="label">📱 Avg Screen</div><div class="value" id="wkAvgScreen">-</div></div>
+            </div>
+
+            <!-- Mood Tracker Minggu Ini -->
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3 style="margin:0;">😊 Mood Minggu Ini</h3>
+                    <div style="font-size:11px; color:var(--text-muted);" id="wkMoodSummary">-</div>
+                </div>
+                <div id="wkMoodGrid" style="display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap:4px; text-align:center; margin-bottom:16px;"></div>
+                <div style="background: rgba(255,255,255,0.04); border-left: 3px solid #10B981; padding: 15px; border-radius: 4px 8px 8px 4px; font-size: 14px; line-height: 1.6; color: var(--text-main);" id="wkMoodAnalysis">
+                    Sistem sedang menunggu data...
+                </div>
+            </div>
+
+            <!-- Pola Minggu Ini -->
+            <div class="card">
+                <h3 style="margin-bottom: 16px;">Pola Minggu Ini</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+                    <div style="flex: 1; min-width: 120px; background: rgba(239,68,68,0.1); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--danger-glow);">
+                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">💀 Godaan Terberat</div>
+                        <div style="font-weight: 700; font-size: 14px; margin-top: 6px; color: #F87171; line-height: 1.3;" id="wkWeakness">-</div>
+                    </div>
+                    <div style="flex: 1; min-width: 120px; background: rgba(16,185,129,0.1); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(16,185,129,0.3);">
+                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">⚡ Kebiasaan Terbaik</div>
+                        <div style="font-weight: 700; font-size: 14px; margin-top: 6px; color: var(--success); line-height: 1.3;" id="wkStrength">-</div>
+                    </div>
+                </div>
+                <div style="background: rgba(124,58,237,0.1); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(124,58,237,0.3); margin-bottom: 16px;">
+                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">💪 Terkendali Terbaik</div>
+                    <div style="font-weight: 700; font-size: 14px; color: var(--primary); line-height: 1.3;" id="wkBestControl">-</div>
+                </div>
+
+                <label>Analisa Minggu Ini</label>
+                <div style="background: rgba(255,255,255,0.04); border-left: 3px solid #F87171; padding: 15px; border-radius: 4px 8px 8px 4px; font-size: 14px; line-height: 1.6; color: var(--text-main); margin-bottom: 16px;" id="wkRootCause">
+                    Sistem sedang menunggu data...
+                </div>
+
+                <label>Rekomendasi Aksi Minggu Depan</label>
+                <div style="background: rgba(255,255,255,0.04); border-left: 3px solid var(--primary); padding: 15px; border-radius: 4px 8px 8px 4px; font-size: 14px; line-height: 1.6; color: var(--text-main);" id="wkActionPlan">
+                    Sistem sedang menunggu data...
+                </div>
+            </div>
+
+            <!-- Habit Tracker Harian -->
+            <div class="card">
+                <h3 style="margin-bottom: 4px;">📅 Habit Tracker Minggu Ini</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Konsistensi kebiasaan positif lu 7 hari terakhir</p>
+                <div id="wkHabitTracker">
+                    <p style="font-size: 14px; color: var(--text-muted); text-align: center;">Belum ada habit positif yang direkam minggu ini.</p>
+                </div>
+            </div>
+
+            <!-- Breakdown Battle Negatif -->
+            <div class="card">
+                <h3 style="margin-bottom: 4px;">🔴 Battle Negatif Minggu Ini</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Godaan yang datang & seberapa bisa lu kendalikan</p>
+                <div id="wkNegatifBreakdown">
+                    <p style="font-size: 14px; color: var(--text-muted); text-align: center;">Tidak ada battle negatif minggu ini. Luar biasa! 🎉</p>
+                </div>
+            </div>
+
+            <!-- Refleksi & Target Perbaikan -->
+            <div class="card">
+                <h3 style="margin-bottom: 4px;">🧠 Refleksi & Target Perbaikan</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;" id="wkRefleksiSubtitle">Pola pikiran & resolusi lu minggu ini</p>
+                <div id="wkRepeatedFix" style="margin-bottom: 16px;"></div>
+                <div id="wkLessonsList">
+                    <p style="font-size: 14px; color: var(--text-muted); text-align: center; margin-top: 10px;">Belum ada refleksi dari debrief minggu ini.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- BATTLE FORM MODAL -->
+    <div class="modal-overlay" id="battleModal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 0;">Catat Battle</h3>
+                <span onclick="closeBattleModal()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">&times;</span>
+            </div>
+
+            <!-- Step 1: Tanggal -->
+            <label>1. Tanggal (Hari ini/Kemarin)</label>
+            <div class="picker-container" style="margin-bottom: 20px;">
+                <select id="battleDatePicker" onchange="const k = document.getElementById('battleKategoriVal').value; if(k) selectKategori(k);" style="font-size: 15px;"></select>
+                <span class="lbl">▼</span>
+            </div>
+
+            <!-- Step 2: Kategori -->
+            <label>2. Pilih Kategori</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <div class="radio-btn" id="btnKatPositif" onclick="selectKategori('Positif')">🟢 Positif</div>
+                <div class="radio-btn" id="btnKatNegatif" onclick="selectKategori('Negatif')">🔴 Negatif</div>
+            </div>
+            <input type="hidden" id="battleKategoriVal">
+
+            <!-- Step 3: Pilih Battle -->
+            <label>3. Pilih Battle</label>
+            <div class="picker-container" style="margin-bottom: 20px;">
+                <select id="battleTypeVal" style="font-size: 15px;">
+                    <option value="" disabled selected>Pilih kategori dulu...</option>
+                </select>
+                <span class="lbl">▼</span>
+            </div>
+
+            <!-- Step 4: Outcome -->
+            <label id="labelOutcome">4. Hasil</label>
+            <div class="picker-container" style="margin-bottom: 20px;">
+                <select id="battleOutcomeVal" style="font-size: 15px;">
+                    <option value="" disabled selected>Pilih hasil battle...</option>
+                </select>
+                <span class="lbl">▼</span>
+            </div>
+
+            <!-- Step 4: Catatan -->
+            <label>4. Catatan (Opsional)</label>
+            <textarea id="battleNote" placeholder="Tulis konteks singkat..."></textarea>
+            <button class="btn-submit" onclick="submitBattle()">REKAM BATTLE</button>
+        </div>
+    </div>
+
+    <!-- BATTLE DETAIL POPUP -->
+    <div class="modal-overlay" id="battleDetailModal" onclick="if(event.target===this)closeBattleDetail()">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h3 style="margin-bottom: 4px;" id="battleDetailTitle">-</h3>
+                    <p style="font-size: 12px; color: var(--text-muted);" id="battleDetailSub">-</p>
+                </div>
+                <span onclick="closeBattleDetail()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">&times;</span>
+            </div>
+            <div id="battleDetailList" style="max-height: 60vh; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- NOTIF MODAL -->
+    <div class="modal-overlay" id="notifModal" onclick="if(event.target===this)closeNotifModal()">
+        <!-- Isi modal digenerate lewat JS biar dinamis -->
+    </div>
+
+    <!-- FLOATING BELL ICON -->
+    <div id="floatingBell" onclick="openNotifModal()" style="position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(124, 58, 237, 0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(124, 58, 237, 0.4); z-index: 99; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.6), 0 0 25px rgba(124, 58, 237, 0.6)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(124, 58, 237, 0.4)';">
+        <span style="font-size: 26px; filter: drop-shadow(0 2px 4px rgba(124,58,237,0.8));">🔔</span>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        let chartWinLoseInst = null;
+        let chartBattleInst = null;
+
+        function initTimePickers() {
+            let jamOpts = '<option value="0">0</option>';
+            for(let i=1; i<=24; i++) jamOpts += `<option value="${i}">${i}</option>`;
+            let menitOpts = '<option value="0">0</option>';
+            for(let i=1; i<=59; i++) menitOpts += `<option value="${i}">${i}</option>`;
+            document.getElementById('totJam').innerHTML = jamOpts; document.getElementById('totMenit').innerHTML = menitOpts;
+            [1,2,3].forEach(n => { document.getElementById('app' + n + 'Jam').innerHTML = jamOpts; document.getElementById('app' + n + 'Menit').innerHTML = menitOpts; });
+            
+            // Init screenDatePicker: hari ini & kemarin
+            const today = new Date();
+            const yesterday = new Date(); yesterday.setDate(today.getDate() - 1);
+            const toStr = d => d.toLocaleDateString('sv-SE');
+            const toLabel = d => d.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long' });
+            const dpScreen = document.getElementById('screenDatePicker');
+            if(dpScreen) dpScreen.innerHTML = `<option value="${toStr(today)}">Hari Ini — ${toLabel(today)}</option><option value="${toStr(yesterday)}">Kemarin — ${toLabel(yesterday)}</option>`;
+            const dpBattle = document.getElementById('battleDatePicker');
+            if(dpBattle) dpBattle.innerHTML = `<option value="${toStr(today)}">Hari Ini — ${toLabel(today)}</option><option value="${toStr(yesterday)}">Kemarin — ${toLabel(yesterday)}</option>`;
+        }
+
+        let sidebarOpen = window.innerWidth > 768;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('main-content');
+            if (window.innerWidth <= 768) {
+                sidebarOpen = !sidebarOpen;
+                sidebarOpen ? sidebar.classList.add('mobile-show') : sidebar.classList.remove('mobile-show');
+            } else { sidebar.classList.toggle('collapsed'); main.classList.toggle('expanded'); }
+        }
+        function closeMobileSidebar() { if (window.innerWidth <= 768) { document.getElementById('sidebar').classList.remove('mobile-show'); sidebarOpen = false; } }
+
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            if (window.innerWidth <= 768 && sidebarOpen) {
+                if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                    closeMobileSidebar();
+                }
+            }
+        });
+
+        function navTo(pageId, pageTitle, el) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.getElementById('topbar-title').innerText = pageTitle;
+            setTimeout(() => { document.getElementById(pageId).classList.add('active'); window.scrollTo({top: 0, behavior: 'smooth'}); }, 50);
+            if(el) el.classList.add('active'); 
+            closeMobileSidebar();
+            if (['battle', 'braindump', 'debrief', 'screentime', 'weekly'].includes(pageId)) {
+                loadDashboardData();
+            }
+        }
+
+        function formatTanggal(dateStr) {
+            if (!dateStr || dateStr.length < 10) return dateStr;
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+        }
+
+        function formatDur(val) {
+            const h = parseFloat(val);
+            if (isNaN(h) || h > 24 || h < 0) return '?';
+            const hours = Math.floor(h);
+            const mins = Math.round((h - hours) * 60);
+            if (hours === 0) return `${mins}m`;
+            return mins > 0 ? `${hours}j ${mins}m` : `${hours}j`;
+        }
+
+        function openBattleModal() { document.getElementById('battleModal').classList.add('show'); }
+        function closeBattleModal() {
+            document.getElementById('battleModal').classList.remove('show');
+            document.getElementById('battleTypeVal').value = '';
+            document.getElementById('battleKategoriVal').value = '';
+            document.getElementById('battleOutcomeVal').value = '';
+            document.getElementById('battleNote').value = '';
+            ['btnKatPositif','btnKatNegatif','btnOutcomeBerhasil','btnOutcomeGagal'].forEach(id => {
+                const el = document.getElementById(id); if(el) el.classList.remove('active');
+            });
+            // Reset dropdown
+            document.getElementById('battleTypeVal').innerHTML = '<option value="" disabled selected>Pilih kategori dulu...</option>';
+            document.getElementById('labelOutcome').innerText = '4. Hasil';
+        }
+
+        const BATTLE_LIST = {
+            Positif: ['🏃‍♂️ Jogging','📚 Belajar','🚿 Mandi Pagi','🛀 Mandi Sore/Malam','📖 Ngaji','🕌 Solat 5 Waktu','💻 Fokus Kerja','🎯 Menyelesaikan Target','🙏 Bersyukur','😴 Tidur Tepat Waktu'],
+            Negatif: ['📱 Scroll Media Sosial','🥱 Malas','😈 Horny','🤯 Overthinking','🌧️ Kesepian','⏳ Menunda Pekerjaan','💫 Mudah Terdistraksi']
+        };
+
+        function selectKategori(kat) {
+            document.getElementById('battleKategoriVal').value = kat;
+            document.getElementById('btnKatPositif').classList.toggle('active', kat === 'Positif');
+            document.getElementById('btnKatNegatif').classList.toggle('active', kat === 'Negatif');
+            // Update dropdown — sembunyikan yang sudah diisi pada tanggal yang dipilih
+            const sel = document.getElementById('battleTypeVal');
+            const dp = document.getElementById('battleDatePicker');
+            const selectedDate = dp ? dp.value : new Date().toLocaleDateString('sv-SE');
+            const doneSelected = new Set((window._cachedAllBattles || []).filter(b => b.ts.startsWith(selectedDate)).map(b => b.type));
+            
+            sel.innerHTML = `<option value="" disabled selected>Pilih battle ${kat.toLowerCase()}...</option>` +
+                BATTLE_LIST[kat].filter(b => !doneSelected.has(b)).map(b => `<option value="${b}">${b}</option>`).join('');
+            if (BATTLE_LIST[kat].filter(b => !doneSelected.has(b)).length === 0) {
+                sel.innerHTML = `<option value="" disabled selected>Semua ${kat.toLowerCase()} sudah direkam ✅</option>`;
+            }
+            // Update label outcome
+            document.getElementById('labelOutcome').innerText = kat === 'Positif'
+                ? '4. Apakah berhasil dilakukan?'
+                : '4. Apakah berhasil dikendalikan?';
+                
+            // Update Dropdown Outcome (1-5)
+            const outcomeSel = document.getElementById('battleOutcomeVal');
+            if (kat === 'Positif') {
+                outcomeSel.innerHTML = `
+                    <option value="" disabled selected>Gimana hasilnya?</option>
+                    <option value="1">1 - Sama Sekali Tidak Jalan 💥</option>
+                    <option value="2">2 - Jalan Tapi Males-malesan</option>
+                    <option value="3">3 - Netral / Cukup ⚖️</option>
+                    <option value="4">4 - Lumayan Bagus</option>
+                    <option value="5">5 - Tuntas & Puas 🛡️</option>
+                `;
+            } else {
+                outcomeSel.innerHTML = `
+                    <option value="" disabled selected>Gimana hasilnya?</option>
+                    <option value="1">1 - Kebablasan Parah 💥</option>
+                    <option value="2">2 - Kalah Tipis</option>
+                    <option value="3">3 - Netral / Seri ⚖️</option>
+                    <option value="4">4 - Menang Tipis</option>
+                    <option value="5">5 - Menang Telak 🛡️</option>
+                `;
+            }
+        }
+
+        function selectRadio(element, groupName) {
+            let container = element.parentElement;
+            container.querySelectorAll('.radio-btn, .emoji-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            if(navigator.vibrate) navigator.vibrate(20);
+            document.getElementById(groupName + 'Val').value = element.innerText.trim();
+        }
+
+        function showToast(msg) {
+            let toast = document.getElementById("toast");
+            if(msg) toast.innerText = "✅ " + msg;
+            toast.className = "show";
+            if(navigator.vibrate) navigator.vibrate([20, 50, 20]);
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function resetForm(pageId) {
+            let page = document.getElementById(pageId);
+            page.querySelectorAll('input:not([type="hidden"]), textarea').forEach(el => el.value = '');
+            page.querySelectorAll('select').forEach(el => el.value = '0');
+            page.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+            page.querySelectorAll('input[type="hidden"]').forEach(el => el.value = '');
+        }
+
+        // ==========================================
+        // REST API CONFIGURATION
+        // ==========================================
+        function getApiURL() { 
+    // Otomatis nyesuain: kalau di lokal pake localhost, kalau di Vercel pake URL Vercel
+    return '/api/data'; 
+}
+
+        function sendToServer(action, dataPayload, callback, btnElement, origTxt) {
+            let api = getApiURL();
+            fetch(api, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: action, data: dataPayload })
+            })
+            .then(r => r.json())
+            .then(res => callback(res))
+            .catch(err => {
+                alert("Error Koneksi API: " + err.message);
+                if(btnElement) { btnElement.innerText = origTxt; btnElement.disabled = false; }
+            });
+        }
+        
+        // Filter Rate UI Logic
+        window._rateData = { overall: 0, sukses: 0, kontrol: 0 };
+        function changeRateFilter() {
+            const f = document.getElementById('rateFilter').value;
+            const labels = { overall: '📊 Overall Rate', sukses: '✅ Sukses Rate', kontrol: '🎯 Kontrol Rate' };
+            document.getElementById('rateLabel').innerText = labels[f];
+            document.getElementById('valRateDisplay').innerText = window._rateData[f] + '%';
+        }
+
+        // Filter Avg Screen Logic
+        window._allScreenTimes = [];
+        function changeScreenFilter() {
+            const f = document.getElementById('screenFilter').value;
+            const now = new Date();
+            const cutoff = new Date();
+            if (f === '7') cutoff.setDate(now.getDate() - 6);
+            else if (f === '30') cutoff.setDate(now.getDate() - 29);
+            else cutoff.setFullYear(2000);
+            const cutStr = cutoff.toLocaleDateString('sv-SE');
+            const filtered = window._allScreenTimes.filter(s => s.date >= cutStr);
+            const avg = filtered.length > 0
+                ? (filtered.reduce((sum, s) => sum + parseFloat(s.total || 0), 0) / filtered.length).toFixed(1)
+                : '-';
+            const el = document.getElementById('valAvgScreen');
+            if (el) el.innerText = avg !== '-' ? avg + 'j' : '-';
+        }
+
+        // Chart Navigator — Senin s/d Minggu per pekan
+        let _chartWeekOffset = 0; // 0 = minggu ini, -1 = minggu lalu, dst
+        function shiftWeek(dir) {
+            // Blokir maju ke minggu depan (future)
+            if (dir > 0 && _chartWeekOffset >= 0) return;
+            _chartWeekOffset += dir;
+            renderWeekChart();
+        }
+        function renderWeekChart() {
+            if (!chartWinLoseInst || !window._cachedAllBattles) return;
+            const now = new Date();
+            // Cari Senin minggu ini
+            const dayOfWeek = now.getDay(); // 0=minggu
+            const diffToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+            const monday = new Date(now);
+            monday.setDate(now.getDate() + diffToMonday + (_chartWeekOffset * 7));
+            monday.setHours(0,0,0,0);
+
+            const days = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                days.push(d);
+            }
+            const dayStrs = days.map(d => d.toLocaleDateString('sv-SE'));
+            const dayLabels = days.map(d => d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' }));
+
+            const wins = dayStrs.map(ds => window._cachedAllBattles.filter(b => b.ts.startsWith(ds) && b.outcome >= 4).length);
+            const losses = dayStrs.map(ds => window._cachedAllBattles.filter(b => b.ts.startsWith(ds) && b.outcome <= 2).length);
+
+            chartWinLoseInst.data.labels = dayLabels;
+            chartWinLoseInst.data.datasets[0].data = wins;
+            chartWinLoseInst.data.datasets[1].data = losses;
+            chartWinLoseInst.update();
+
+            // Label navigasi + disable next button jika sudah minggu ini
+            const startLabel = days[0].toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            const endLabel   = days[6].toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            const weekLabel = _chartWeekOffset === 0 ? 'Minggu Ini'
+                : _chartWeekOffset === -1 ? 'Minggu Lalu'
+                : `${startLabel} – ${endLabel}`;
+            const el = document.getElementById('chartWeekLabel');
+            if (el) el.innerText = weekLabel;
+            const btnNext = document.getElementById('btnNextWeek');
+            if (btnNext) {
+                btnNext.disabled = _chartWeekOffset >= 0;
+                btnNext.style.opacity = _chartWeekOffset >= 0 ? '0.3' : '1';
+                btnNext.style.cursor = _chartWeekOffset >= 0 ? 'not-allowed' : 'pointer';
+            }
+        }
+        window._wkRateData = { overall: '-', sukses: '-', kontrol: '-' };
+        function changeWkRateFilter() {
+            const f = document.getElementById('wkRateFilter').value;
+            const labels = { overall: '📊 Overall Rate 1W', sukses: '✅ Sukses Rate', kontrol: '🎯 Kontrol Rate' };
+            document.getElementById('wkRateLabel').innerText = labels[f];
+            const val = window._wkRateData[f];
+            document.getElementById('wkRateDisplay').innerText = val === '-' ? '-' : val + '%';
+        }
+
+        // ==========================================
+        // FETCH DATA (Dashboard & List)
+        // ==========================================
+        function loadDashboardData() {
+            sendToServer('getDashboardData', {}, function(res) {
+                if(res.status === 'success') {
+                    // Update Summary Dashboard
+                    const s = res.summary;
+                    const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
+                    
+                    const totalBattles = s.totalPositif + s.totalNegatif;
+                    const posWin = Math.round((s.successRate / 100) * s.totalPositif);
+                    const negWin = Math.round((s.kontrolRate / 100) * s.totalNegatif);
+                    const overallRate = totalBattles > 0 ? Math.round(((posWin + negWin) / totalBattles) * 100) : 0;
+                    
+                    setEl('valTotalPositif', s.totalPositif);
+                    setEl('valTotalNegatif', s.totalNegatif);
+                    
+                    window._rateData = {
+                        overall: overallRate,
+                        sukses: s.successRate,
+                        kontrol: s.kontrolRate
+                    };
+                    changeRateFilter();
+                    
+                    // Hitung mostPositif & mostNegatif: urutan paling lama ke paling baru (tie-breaker = yang pertama direkam)
+                    const cleanT = t => (t || '').replace(/^[\p{Emoji}\s]+/u, '').trim();
+                    const allB = [...(res.allBattles || [])].reverse(); // oldest-first
+                    const posFreqDash = {}, negFreqDash = {};
+                    allB.forEach(b => {
+                        if (b.kategori === 'Positif') posFreqDash[b.type] = (posFreqDash[b.type]||0) + 1;
+                        else negFreqDash[b.type] = (negFreqDash[b.type]||0) + 1;
+                    });
+                    const topPos = Object.entries(posFreqDash).sort((a,b) => b[1]-a[1])[0];
+                    const topNeg = Object.entries(negFreqDash).sort((a,b) => b[1]-a[1])[0];
+                    setEl('valMostPositif', topPos ? cleanT(topPos[0]) : 'Belum ada data');
+                    setEl('valMostNegatif', topNeg ? cleanT(topNeg[0]) : 'Belum ada data');
+                    
+                    // Update allScreenTimes cache & avg screen
+                    window._allScreenTimes = res.allScreenTimes || [];
+                    changeScreenFilter();
+
+                    // Cache allBattles lalu render chart Senin-Minggu
+                    window._cachedAllBattles = res.allBattles || [];
+                    window._cachedAllScreenTimes = res.allScreenTimes || [];
+                    renderWeekChart();
+
+                    if (chartBattleInst && res.chartData) {
+                        // Tampilkan label dengan emoji aslinya (tidak di-strip)
+                        chartBattleInst.data.labels = res.chartData.freqLabels;
+                        chartBattleInst.data.datasets[0].data = res.chartData.freqData;
+                        // Warna per bar sesuai kategori: hijau=Positif, merah=Negatif
+                        const freqColors = (res.chartData.freqKategori || []).map(k =>
+                            k === 'Positif' ? 'rgba(16,185,129,0.85)' : 'rgba(239,68,68,0.85)'
+                        );
+                        chartBattleInst.data.datasets[0].backgroundColor = freqColors;
+                        chartBattleInst.update();
+                    }
+
+                    // Render Battle Hari Ini
+                    const todayStr = new Date().toLocaleDateString('sv-SE');
+                    const todayBattles = res.allBattles ? res.allBattles.filter(b => b.ts.startsWith(todayStr)) : [];
+                    const pastBattles = res.allBattles ? res.allBattles.filter(b => !b.ts.startsWith(todayStr)) : [];
+
+                    // Sembunyikan opsi BATTLE_LIST yang sudah diisi hari ini di selectKategori
+                    window._todayBattleTypes = new Set(todayBattles.map(b => b.type));
+
+                    const todayListContainer = document.getElementById('battleTodayList');
+                    todayListContainer.innerHTML = '';
+                    if(todayBattles.length === 0) {
+                        todayListContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;">Belum ada battle hari ini. Sikat!</p>`;
+                    } else {
+                        todayBattles.forEach(b => renderBattleCard(b, todayListContainer));
+                    }
+
+                    // Render Riwayat Battle Sebelumnya — Accordion per hari
+                    const historyContainer = document.getElementById('battleHistoryList');
+                    historyContainer.innerHTML = '';
+                    if(pastBattles.length === 0) {
+                        historyContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;">Belum ada catatan battle sebelumnya.</p>`;
+                    } else {
+                        // Group by date
+                        const grouped = {};
+                        pastBattles.forEach(b => {
+                            const d = b.ts.substring(0,10);
+                            if (!grouped[d]) grouped[d] = [];
+                            grouped[d].push(b);
+                        });
+                        Object.keys(grouped).sort((a,b) => b.localeCompare(a)).forEach(date => {
+                            const battles = grouped[date];
+                            const wins = battles.filter(b => b.outcome >= 4).length;
+                            const losses = battles.filter(b => b.outcome <= 2).length;
+                            const uid = 'acc-' + date;
+
+                            // Header accordion → buka popup saat diklik
+                            const header = document.createElement('div');
+                            header.style = 'display: flex; justify-content: space-between; align-items: center; padding: 13px 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; user-select: none;';
+                            header.innerHTML = `
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 600; color: var(--text-title);">${formatTanggal(date)}</div>
+                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${battles.length} battle &nbsp;·&nbsp; <span style="color:var(--success);">${wins}W</span> <span style="color:var(--danger);">${losses}L</span></div>
+                                </div>
+                                <span style="font-size: 14px; color: var(--text-muted);">›</span>
+                            `;
+                            header.onclick = () => openBattleDetail(battles, date, wins, losses);
+
+                            historyContainer.appendChild(header);
+                        });
+                    }
+                    
+                    // Render Debrief + Validasi + Date Picker
+                    const yesterdayDbStr = (() => { const d = new Date(); d.setDate(d.getDate()-1); return d.toLocaleDateString('sv-SE'); })();
+                    const todayDebrief = res.allDebriefs ? res.allDebriefs.find(d => d.date === todayStr) : null;
+                    const yesterDebrief = res.allDebriefs ? res.allDebriefs.find(d => d.date === yesterdayDbStr) : null;
+
+                    // Setup debriefDatePicker
+                    const ddp = document.getElementById('debriefDatePicker');
+                    if (ddp) {
+                        const toLabel = d => d.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long' });
+                        const todayD = new Date(); const yesterD = new Date(); yesterD.setDate(todayD.getDate()-1);
+                        let opts = '';
+                        if (!todayDebrief) opts += `<option value="${todayStr}">Hari Ini \u2014 ${toLabel(todayD)}</option>`;
+                        if (!yesterDebrief) opts += `<option value="${yesterdayDbStr}">Kemarin \u2014 ${toLabel(yesterD)}</option>`;
+                        if (!opts) opts = `<option disabled selected>Hari ini & kemarin sudah diisi ✅</option>`;
+                        ddp.innerHTML = opts;
+                    }
+
+                    const btnDebrief = document.getElementById('btnSelesaiHari');
+                    const hasActiveOpt = ddp && ddp.options.length > 0 && !ddp.options[0].disabled;
+                    if (btnDebrief) {
+                        btnDebrief.disabled = !hasActiveOpt;
+                        btnDebrief.innerText = hasActiveOpt ? 'SELESAIKAN HARI' : '\u2705 SUDAH DIISI SEMUA';
+                    }
+
+                    const debriefContainer = document.getElementById('debriefHistoryList');
+                    if (debriefContainer) {
+                        debriefContainer.innerHTML = '';
+                        const pastDebriefs = res.allDebriefs ? res.allDebriefs.filter(d => d.date !== todayStr) : [];
+                        
+                        if (!todayDebrief && pastDebriefs.length === 0) {
+                            debriefContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;">Belum ada catatan debrief.</p>`;
+                        } else {
+                            const renderDebriefCard = (d, label) => {
+                                let dateEl = document.createElement('p');
+                                dateEl.style = 'font-size: 12px; color: var(--primary); font-weight: 700; text-transform: uppercase; margin: 20px 0 8px 4px; letter-spacing: 1px;';
+                                dateEl.innerText = label;
+                                debriefContainer.appendChild(dateEl);
+                                let card = document.createElement('div');
+                                card.className = 'card'; card.style.padding = '16px';
+                                card.innerHTML = `
+                                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                        <div style="background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 10px; font-size: 20px;">${d.mood}</div>
+                                        <div style="background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 10px; font-size: 13px; color: var(--text-muted);">Energi: <strong style="color: white;">${d.energy}/10</strong></div>
+                                    </div>
+                                    ${d.lesson ? `<p style="font-size: 13px; color: var(--text-muted); line-height:1.4; margin-bottom: 6px;">\ud83d\udca1 ${d.lesson}</p>` : ''}
+                                    ${d.fix ? `<p style="font-size: 13px; color: var(--text-muted); line-height:1.4;">\ud83c\udfaf ${d.fix}</p>` : ''}
+                                `;
+                                debriefContainer.appendChild(card);
+                            };
+                            if (todayDebrief) renderDebriefCard(todayDebrief, 'Hari Ini');
+                            pastDebriefs.forEach(d => renderDebriefCard(d, formatTanggal(d.date)));
+                        }
+                    }
+
+                    // Validasi + Render Riwayat Screen Time
+                    const yesterdayStr = (() => { const d = new Date(); d.setDate(d.getDate()-1); return d.toLocaleDateString('sv-SE'); })();
+                    const todayScreen = res.allScreenTimes ? res.allScreenTimes.find(s => s.date === todayStr) : null;
+                    const yesterScreen = res.allScreenTimes ? res.allScreenTimes.find(s => s.date === yesterdayStr) : null;
+                    const btnScreen = document.getElementById('btnSimpanScreen');
+                    const dp = document.getElementById('screenDatePicker');
+
+                    if (todayScreen && yesterScreen) {
+                        // Keduanya sudah diisi → kunci form
+                        if (btnScreen) { btnScreen.disabled = true; btnScreen.innerText = '\u2705 HARI INI & KEMARIN SUDAH DIISI'; }
+                        if (dp) dp.disabled = true;
+                    } else {
+                        // Rebuild opsi: hapus yang sudah diisi
+                        if (dp) {
+                            dp.disabled = false;
+                            const toLabel = d => d.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long' });
+                            const todayD = new Date(); const yesterD = new Date(); yesterD.setDate(todayD.getDate()-1);
+                            let opts = '';
+                            if (!todayScreen) opts += `<option value="${todayStr}">Hari Ini \u2014 ${toLabel(todayD)}</option>`;
+                            if (!yesterScreen) opts += `<option value="${yesterdayStr}">Kemarin \u2014 ${toLabel(yesterD)}</option>`;
+                            dp.innerHTML = opts;
+                        }
+                        if (btnScreen) { btnScreen.disabled = false; btnScreen.innerText = 'SIMPAN SCREEN TIME'; }
+                    }
+
+                    const screenContainer = document.getElementById('screenHistoryList');
+                    if (screenContainer) {
+                        screenContainer.innerHTML = '';
+                        const pastScreens = res.allScreenTimes ? res.allScreenTimes.filter(s => s.date !== todayStr) : [];
+
+                        if (!todayScreen && pastScreens.length === 0) {
+                            screenContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;">Belum ada catatan screen time.</p>`;
+                        } else {
+                            const renderScreenCard = (s, label) => {
+                                let totalH = parseFloat(s.total || 0);
+                                let totalDisplay = formatDur(totalH > 0 ? totalH : 0);
+                                let apps = [{ name: s.a1, dur: s.d1 }, { name: s.a2, dur: s.d2 }, { name: s.a3, dur: s.d3 }].filter(a => a.name);
+                                let dateEl = document.createElement('p');
+                                dateEl.style = 'font-size: 12px; color: var(--primary); font-weight: 700; text-transform: uppercase; margin: 20px 0 8px 4px; letter-spacing: 1px;';
+                                dateEl.innerText = label;
+                                screenContainer.appendChild(dateEl);
+                                let card = document.createElement('div');
+                                card.className = 'card'; card.style.padding = '16px';
+                                card.innerHTML = `
+                                    <div style="display: flex; align-items: baseline; gap: 6px; margin-bottom: ${apps.length > 0 ? '12px' : '0'};">
+                                        <span style="font-size: 28px; font-weight: 800; font-family: 'Outfit'; color: white;">${totalDisplay}</span>
+                                        <span style="font-size: 13px; color: var(--text-muted);">total layar</span>
+                                    </div>
+                                    ${apps.map(a => `<div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 4px;"><span>${a.name}</span><span style="color: white; font-weight: 600;">${formatDur(a.dur)}</span></div>`).join('')}
+                                `;
+                                screenContainer.appendChild(card);
+                            };
+                            if (todayScreen) renderScreenCard(todayScreen, 'Hari Ini');
+                            pastScreens.forEach(s => renderScreenCard(s, formatTanggal(s.date)));
+                        }
+                    }
+                    
+                    // Cache untuk validasi duplikat
+                    window._cachedAllBattles = res.allBattles || [];
+                    window._cachedAllScreenTimes = res.allScreenTimes || [];
+                    
+                    if (res.todayBrainDumpText) {
+                        document.getElementById('dumpContent').value = res.todayBrainDumpText;
+                    } else {
+                        document.getElementById('dumpContent').value = '';
+                    }
+                    
+                    const bdhContainer = document.getElementById('brainDumpHistoryList');
+                    if (bdhContainer) {
+                        bdhContainer.innerHTML = '';
+                        if(!res.pastBrainDumps || res.pastBrainDumps.length === 0) {
+                            bdhContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 30px;">Belum ada catatan di hari-hari sebelumnya.</p>`;
+                        } else {
+                            res.pastBrainDumps.forEach(d => {
+                                let newCard = document.createElement('div');
+                                newCard.className = 'card'; newCard.style.padding = '16px';
+                                // Fix: gunakan formatTanggal bukan raw date
+                                newCard.innerHTML = `<div style="font-size: 12px; color: var(--primary); font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px;">${formatTanggal(d.date)}</div><p style="font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.5; white-space: pre-wrap;">${d.text}</p>`;
+                                bdhContainer.appendChild(newCard);
+                            });
+                        }
+                    }
+                    // Build Weekly Review
+                    buildWeeklyReview(res.allBattles, res.allDebriefs, res.allScreenTimes, res);
+                } else {
+                    console.error("Gagal load data: ", res.message);
+                }
+            }, null, null);
+        }
+
+        function buildWeeklyReview(allBattles, allDebriefs, allScreenTimes, res) {
+            const now = new Date();
+            // Buat array 7 hari (D-6 s/d hari ini)
+            const days7 = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(now);
+                d.setDate(now.getDate() - i);
+                days7.push(d.toLocaleDateString('sv-SE'));
+            }
+            const weekAgoStr = days7[0];
+            const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
+
+            // Filter 7 hari
+            const wBattles  = (allBattles || []).filter(b => b.ts.substring(0,10) >= weekAgoStr);
+            const wDebriefs = (allDebriefs || []).filter(d => d.date >= weekAgoStr);
+            const wScreens  = (allScreenTimes || []).filter(s => s.date >= weekAgoStr);
+
+            // ---- STAT BOXES ----
+            const totalBattles = wBattles.length;
+            const wins = wBattles.filter(b => b.outcome >= 4).length;
+            const overallRate = totalBattles > 0 ? Math.round((wins / totalBattles) * 100) : 0;
+
+            const wPositif = wBattles.filter(b => b.kategori === 'Positif');
+            const posWins = wPositif.filter(b => b.outcome >= 4).length;
+            const suksesRate = wPositif.length > 0 ? Math.round((posWins / wPositif.length) * 100) : 0;
+            
+            const wNegatif = wBattles.filter(b => (b.kategori || 'Negatif') !== 'Positif');
+            const negatifTerkendali = wNegatif.filter(b => b.outcome >= 4).length;
+            const kontrolRate = wNegatif.length > 0 ? Math.round((negatifTerkendali / wNegatif.length) * 100) : 0;
+
+            setEl('wkTotalWins', wins);
+            
+            window._wkRateData = {
+                overall: totalBattles > 0 ? overallRate : '-',
+                sukses: wPositif.length > 0 ? suksesRate : '-',
+                kontrol: wNegatif.length > 0 ? kontrolRate : '-'
+            };
+            changeWkRateFilter();
+
+            const avgEnergy = wDebriefs.length > 0
+                ? (wDebriefs.reduce((s,d) => s + parseInt(d.energy||0), 0) / wDebriefs.length).toFixed(1)
+                : '-';
+            setEl('wkAvgEnergy', avgEnergy !== '-' ? avgEnergy + '/10' : '-');
+
+            const avgScreen = wScreens.length > 0
+                ? (wScreens.reduce((s,sc) => s + parseFloat(sc.total||0), 0) / wScreens.length).toFixed(1)
+                : '-';
+            setEl('wkAvgScreen', avgScreen !== '-' ? avgScreen + 'j (7 hari)' : '-');
+
+            // ---- MOOD TRACKER ----
+            const moodScore = { '😞':1, '😕':2, '😐':3, '🙂':4, '😁':5 };
+            const moodGrid = document.getElementById('wkMoodGrid');
+            const moodSummary = document.getElementById('wkMoodSummary');
+            if (moodGrid) {
+                moodGrid.innerHTML = '';
+                const hariPendek = ['Sen','Sel','Rab','Kam','Jum','Sab','Min'];
+                days7.forEach((dateStr, i) => {
+                    const debrief = wDebriefs.find(d => d.date === dateStr);
+                    const mood = debrief ? debrief.mood : null;
+                    const dayName = hariPendek[new Date(dateStr + 'T00:00:00').getDay() === 0 ? 6 : new Date(dateStr + 'T00:00:00').getDay() - 1];
+                    const dayNum = dateStr.slice(-2);
+                    const isToday = dateStr === days7[6];
+                    const cell = document.createElement('div');
+                    cell.style = `background: ${mood ? 'rgba(124,58,237,0.12)' : 'rgba(255,255,255,0.03)'}; border: 1px solid ${mood ? 'rgba(124,58,237,0.3)' : 'var(--glass-border)'}; border-radius: 6px; padding: 6px 2px; ${isToday ? 'border-color: var(--primary);' : ''}`;
+                    cell.innerHTML = `
+                        <div style="font-size:8px; color:var(--text-muted); font-weight:600; margin-bottom:2px;">${dayName}</div>
+                        <div style="font-size:16px; line-height:1;">${mood || '·'}</div>
+                        <div style="font-size:8px; color:var(--text-muted); margin-top:2px;">${dayNum}</div>
+                    `;
+                    moodGrid.appendChild(cell);
+                });
+
+                // Rata-rata mood & Analisa
+                const moodsThisWeek = wDebriefs.filter(d => moodScore[d.mood]).map(d => moodScore[d.mood]);
+                let analisaMood = '';
+                if (moodsThisWeek.length > 0) {
+                    const avgScore = moodsThisWeek.reduce((a,b) => a+b, 0) / moodsThisWeek.length;
+                    const avgEmoji = avgScore >= 4.5 ? '😁' : avgScore >= 3.5 ? '🙂' : avgScore >= 2.5 ? '😐' : avgScore >= 1.5 ? '😕' : '😞';
+                    if (moodSummary) moodSummary.innerText = `Rata-rata: ${avgEmoji} (${avgScore.toFixed(1)}/5)`;
+                    
+                    if (avgScore === 5) {
+                        analisaMood = "Yang paling membanggakan, rata-rata mood lu minggu ini SEMPURNA di angka 5! Luar biasa banget bro! Ini bukti nyata kalau lu bisa banget bahagia, fokus, dan penuh syukur ngejalanin hari-hari. Pertahankan semangat dan senyuman lu, lu pantes banget dapetin minggu sehebat ini! 🔥😁";
+                    } else if (avgScore >= 4) {
+                        analisaMood = "Mood lu minggu ini sangat positif! Kelihatan kalau lu lagi punya semangat dan fokus yang bagus. Bersyukur banget bisa lewatin minggu ini dengan perasaan menyenangkan. Lanjutkan energi positifnya bro! ✨";
+                    } else if (avgScore > 0 && avgScore <= 2.5) {
+                        analisaMood = "Gua lihat rata-rata mood lu minggu ini agak turun. Nggak masalah bro, pasti ada hal yang bikin capek atau kepikiran. Ingat buat tarik napas dalam-dalam, istirahat yang cukup, dan sadari hal-hal kecil yang bisa lu syukuri. Besok pasti lebih baik! 🫂";
+                    } else {
+                        analisaMood = "Mood lu minggu ini tergolong stabil. Tetap jaga fokus lu, sempatkan apresiasi diri sendiri sekecil apapun itu, dan selalu bersyukur atas apa yang lu lewatin. Langkah kecil lu tiap hari itu berharga banget. 💪";
+                    }
+                } else {
+                    if (moodSummary) moodSummary.innerText = 'Belum ada debrief minggu ini';
+                    analisaMood = "Belum ada catatan mood minggu ini. Jangan lupa isi debrief harian ya biar kita bisa lihat pola mood lu!";
+                }
+                const maEl = document.getElementById('wkMoodAnalysis'); if(maEl) maEl.innerText = analisaMood;
+            }
+
+            // ---- POLA: Godaan, Kebiasaan, Terkendali Terbaik ----
+            const clean = t => (t || '').replace(/^[\p{Emoji}\s]+/u, '').trim();
+
+            // Godaan Terberat: negatif dengan total muncul terbanyak (tie-breaker = paling lama direkam)
+            const negFreqMap = {};
+            [...wNegatif].reverse().forEach(b => { negFreqMap[b.type] = (negFreqMap[b.type]||0) + 1; });
+            const sortedNegFreq = Object.entries(negFreqMap).sort((a,b) => b[1]-a[1]);
+            setEl('wkWeakness', sortedNegFreq.length > 0
+                ? clean(sortedNegFreq[0][0])
+                : 'Bersih! Tidak ada godaan 🎉');
+
+            // Kebiasaan Terbaik: positif dengan frekuensi terbanyak (tie-breaker = paling lama direkam)
+            const posFreqMap = {};
+            [...wPositif].reverse().forEach(b => { posFreqMap[b.type] = (posFreqMap[b.type]||0) + 1; });
+            const sortedPosFreq = Object.entries(posFreqMap).sort((a,b) => b[1]-a[1]);
+            setEl('wkStrength', sortedPosFreq.length > 0
+                ? clean(sortedPosFreq[0][0])
+                : 'Belum ada habit positif 💪');
+
+            // Terkendali Terbaik: negatif dengan win rate tertinggi (min 1 kemenangan)
+            const negWinMap = {}, negTotalMap = {};
+            wNegatif.forEach(b => {
+                negTotalMap[b.type] = (negTotalMap[b.type]||0) + 1;
+                if (b.outcome >= 4) negWinMap[b.type] = (negWinMap[b.type]||0) + 1;
+            });
+            let bestControl = null, bestRate = 0;
+            Object.keys(negTotalMap).forEach(t => {
+                const rate = Math.round(((negWinMap[t]||0) / negTotalMap[t]) * 100);
+                if ((negWinMap[t]||0) > 0 && rate > bestRate) { bestRate = rate; bestControl = t; }
+            });
+            setEl('wkBestControl', bestControl
+                ? clean(bestControl)
+                : wNegatif.length > 0 ? 'Belum ada kemenangan negatif minggu ini' : 'Tidak ada battle negatif 🎉');
+
+            // ---- ANALISA MINGGU INI ----
+            let analisa = '';
+            const topGodaan = sortedNegFreq.length > 0 ? clean(sortedNegFreq[0][0]) : null;
+            const topHabit  = sortedPosFreq.length > 0 ? clean(sortedPosFreq[0][0]) : null;
+
+            if (totalBattles === 0) {
+                analisa = 'Hai bro, minggu ini catatannya masih kosong nih. Nggak masalah kok! Besok kita coba rekam satu aja ya, hal sekecil apapun sangat berharga buat langkah awal lu.';
+            } else if (kontrolRate >= 70 && wPositif.length >= 3) {
+                analisa = `Wah, minggu yang luar biasa bro! Kontrol diri lu keren banget dan kebiasaan positif lu mulai terbangun. ${topGodaan ? `Walau ada godaan "${topGodaan}", lu tetap kuat.` : ''} Pelan-pelan hasil disiplin lu mulai kelihatan. Pertahankan ya!`;
+            } else if (kontrolRate >= 70) {
+                analisa = `Hebat bro, pertahanan lu minggu ini solid banget! ${topGodaan ? `Godaan "${topGodaan}" bisa lu atasi dengan tenang.` : ''} Karena fondasinya udah kuat, minggu depan yuk kita coba mulai bangun satu kebiasaan positif pelan-pelan.`;
+            } else if (wPositif.length >= 3 && kontrolRate < 40) {
+                analisa = `Keren bro, lu udah mulai melangkah maju dengan habit positif lu! ${topGodaan ? `Kalaupun godaan "${topGodaan}" kadang masih lolos, ` : ''}nggak apa-apa banget, namanya juga proses. Yang penting lu udah sadar dan mau terus mencoba.`;
+            } else if (kontrolRate < 40 && wNegatif.length > 0) {
+                analisa = `Sepertinya minggu ini cukup berat ya bro, ${topGodaan ? `godaan "${topGodaan}" pasti nguras energi lu.` : 'godaan yang datang pasti melelahkan.'} Tapi gua salut lu tetap jujur nyatet di sini. Tenang aja, ini wajar kok. Besok kita tarik napas dan coba lagi ya.`;
+            } else {
+                analisa = `Minggu ini berjalan cukup seimbang bro. ${topHabit ? `Asyik melihat "${topHabit}" mulai jadi bagian dari hari-hari lu.` : ''} Santai aja, nikmati prosesnya. Yuk lanjut rekam dan jaga momentum baik ini!`;
+            }
+
+
+            const rcEl = document.getElementById('wkRootCause'); if(rcEl) rcEl.innerText = analisa;
+
+            // ---- REKOMENDASI AKSI ----
+            let action = '';
+            // Habit positif dengan frekuensi rendah
+            const lowHabit = sortedPosFreq.find(([,c]) => c < 3);
+            // Negatif dengan 0% kontrol
+            const zeroControl = Object.keys(negTotalMap).find(t => !(negWinMap[t]));
+
+            if (totalBattles === 0) {
+                action = 'Untuk minggu depan, kita coba target santai aja ya bro: rekam minimal 1 hal per hari. Nggak perlu sempurna, yang penting lu mulai terbiasa lagi nyatet.';
+            } else if (zeroControl) {
+                action = `Godaan "${clean(zeroControl)}" sepertinya lagi susah dilawan ya minggu ini. Nggak apa-apa bro. Minggu depan, coba jangan dilawan pakai keras: pas godaannya datang, pelan-pelan alihkan aja perhatian lu ke hal lain.`;
+            } else if (lowHabit) {
+                action = `Kebiasaan "${clean(lowHabit[0])}" memang butuh waktu biar konsisten. Biar lu nggak lupa, minggu depan coba pasang pengingat kecil di HP lu ya. Pelan-pelan aja sampai lu terbiasa.`;
+            } else if (kontrolRate >= 70 && wPositif.length >= 3) {
+                action = `Fondasi lu udah mantap banget nih bro! Minggu depan, rasanya lu udah siap buat nambah 1 kebiasaan positif baru. Nggak usah buru-buru, pilih satu aja yang paling bikin lu semangat.`;
+            } else {
+                action = `Buat minggu depan, yuk pilih 1 hal kecil aja yang pengen lu perbaiki. Nggak usah banyak-banyak, yang penting nyaman buat lu lakuin tiap hari. Semangat bro!`;
+            }
+            const apEl = document.getElementById('wkActionPlan'); if(apEl) apEl.innerText = action;
+
+            // ---- HABIT TRACKER HARIAN ----
+            const trackerEl = document.getElementById('wkHabitTracker');
+            if (trackerEl) {
+                trackerEl.innerHTML = '';
+                const hariLabels = ['M', 'S', 'S', 'R', 'K', 'J', 'S'];
+                // Header hari
+                const allPosTypes = [...new Set(wPositif.map(b => b.type))];
+                if (allPosTypes.length === 0) {
+                    trackerEl.innerHTML = `<p style="font-size:14px;color:var(--text-muted);text-align:center;">Belum ada habit positif minggu ini. Yuk mulai rekam! 💪</p>`;
+                } else {
+                    // Header row
+                    let headerHtml = `<div style="display:grid; grid-template-columns: minmax(0, 1fr) repeat(7,24px); gap:4px; margin-bottom:6px; align-items:center;">
+                        <div style="font-size:10px;color:var(--text-muted);font-weight:600;">HABIT</div>
+                        ${days7.map((d,i) => {
+                            const dd = new Date(d+'T00:00:00');
+                            return `<div style="text-align:center;font-size:9px;color:var(--text-muted);font-weight:600;">${['M','S','S','R','K','J','S'][dd.getDay()]}<br><span style="font-size:8px;">${dd.getDate()}</span></div>`;
+                        }).join('')}
+                    </div>`;
+                    trackerEl.innerHTML = headerHtml;
+
+                    allPosTypes.forEach(type => {
+                        const cleanName = clean(type);
+                        const dayCount = days7.filter(d => wPositif.some(b => b.ts.startsWith(d) && b.type === type)).length;
+                        const row = document.createElement('div');
+                        row.style = 'display:grid; grid-template-columns: minmax(0, 1fr) repeat(7,24px); gap:4px; margin-bottom:8px; align-items:center;';
+                        const cells = days7.map(d => {
+                            const done = wPositif.some(b => b.ts.startsWith(d) && b.type === type);
+                            return `<div style="width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;background:${done ? 'rgba(16,185,129,0.25)' : 'rgba(255,255,255,0.05)'};border:1px solid ${done ? 'rgba(16,185,129,0.5)' : 'var(--glass-border)'};">${done ? '✅' : ''}</div>`;
+                        }).join('');
+                        row.innerHTML = `
+                            <div>
+                                <div style="font-size:12px;font-weight:600;color:var(--text-title);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${cleanName}</div>
+                                <div style="font-size:10px;color:var(--text-muted);">${dayCount}/7 hari</div>
+                            </div>
+                            ${cells}
+                        `;
+                        trackerEl.appendChild(row);
+                    });
+                }
+            }
+
+            // ---- BREAKDOWN BATTLE NEGATIF ----
+            const negEl = document.getElementById('wkNegatifBreakdown');
+            if (negEl) {
+                negEl.innerHTML = '';
+                if (wNegatif.length === 0) {
+                    negEl.innerHTML = `<p style="font-size:14px;color:var(--text-muted);text-align:center;">Tidak ada battle negatif minggu ini. Luar biasa! 🎉</p>`;
+                } else {
+                    sortedNegFreq.forEach(([type, total]) => {
+                        const terkendali = negWinMap[type] || 0;
+                        const gagal = total - terkendali;
+                        const rate = Math.round(terkendali / total * 100);
+                        const barColor = rate >= 60 ? 'var(--success)' : rate >= 30 ? '#FBBF24' : 'var(--danger)';
+                        const item = document.createElement('div');
+                        item.style = 'margin-bottom:14px;';
+                        item.innerHTML = `
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+                                <div style="font-size:13px;font-weight:600;color:var(--text-title);">${clean(type)}</div>
+                                <div style="font-size:11px;color:var(--text-muted);">${terkendali} terkendali · ${gagal} kebablasan</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.07);border-radius:4px;height:6px;overflow:hidden;">
+                                <div style="height:100%;width:${rate}%;background:${barColor};border-radius:4px;transition:width 0.5s;"></div>
+                            </div>
+                            <div style="font-size:10px;color:${barColor};margin-top:3px;font-weight:600;">${rate}% berhasil dikendalikan</div>
+                        `;
+                        negEl.appendChild(item);
+                    });
+                }
+            }
+
+            // ---- REFLEKSI & TARGET PERBAIKAN ----
+            const lessonsEl = document.getElementById('wkLessonsList');
+            const repeatEl = document.getElementById('wkRepeatedFix');
+            const subEl = document.getElementById('wkRefleksiSubtitle');
+
+            // Hitung Brain Dump
+            const pastDumps = res.pastBrainDumps || [];
+            const todayDump = res.todayBrainDumpText ? 1 : 0;
+            // Filter pastDumps yang masih dalam minggu ini
+            const weekDumps = pastDumps.filter(d => d.date >= weekAgoStr).length + todayDump;
+            if(subEl) subEl.innerText = `Lu nulis isi pikiran (Brain Dump) ${weekDumps}x dari 7 hari minggu ini.`;
+
+            if (lessonsEl && repeatEl) {
+                lessonsEl.innerHTML = '';
+                repeatEl.innerHTML = '';
+                
+                // Deteksi Target Berulang
+                const fixCount = {};
+                wDebriefs.forEach(d => {
+                    const f = clean(d.fix);
+                    if (f && f.length > 3 && f.toLowerCase() !== '-' && f.toLowerCase() !== 'tidak ada') {
+                        fixCount[f] = (fixCount[f]||0) + 1;
+                    }
+                });
+                
+                const repeatedFixes = Object.entries(fixCount).filter(([,count]) => count >= 2);
+                if (repeatedFixes.length > 0) {
+                    let warnHtml = repeatedFixes.map(([f, c]) => `
+                        <div style="background: rgba(245, 158, 11, 0.1); border-left: 3px solid #F59E0B; padding: 12px 16px; border-radius: 4px 8px 8px 4px; margin-bottom: 8px;">
+                            <div style="font-size: 12px; font-weight: 700; color: #F59E0B; text-transform: uppercase; margin-bottom: 4px;">⚠️ Target Berulang (${c} hari)</div>
+                            <div style="font-size: 14px; color: var(--text-main); line-height: 1.5;">"${f}"</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Ini bukan sekadar target lagi — ini masalah yang butuh perubahan sistem yang nyata.</div>
+                        </div>
+                    `).join('');
+                    repeatEl.innerHTML = warnHtml;
+                }
+
+                // Timeline Pelajaran
+                const withRefleksi = wDebriefs.filter(d => d.lesson || d.fix);
+                if (withRefleksi.length === 0) {
+                    lessonsEl.innerHTML = `<p style="font-size: 14px; color: var(--text-muted); text-align: center; margin-top: 10px;">Belum ada refleksi dari debrief minggu ini.</p>`;
+                } else {
+                    withRefleksi.forEach(d => {
+                        const dObj = new Date(d.date + 'T00:00:00');
+                        const hariNama = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][dObj.getDay()];
+                        const tanggalFmt = `${hariNama}, ${dObj.getDate()} ${dObj.toLocaleDateString('id-ID', {month:'short'})}`;
+                        
+                        let item = document.createElement('div');
+                        item.style = 'border-bottom: 1px solid var(--glass-border); padding: 16px 0;';
+                        
+                        let html = `<div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">${tanggalFmt}</div>`;
+                        
+                        if (d.lesson && d.lesson.toLowerCase() !== '-' && d.lesson.trim() !== '') {
+                            html += `
+                                <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px;">
+                                    <span style="font-size: 16px; flex-shrink: 0; line-height: 1.2;">💡</span>
+                                    <p style="font-size: 13.5px; color: var(--text-main); line-height: 1.5; margin: 0;">${d.lesson}</p>
+                                </div>
+                            `;
+                        }
+                        if (d.fix && d.fix.toLowerCase() !== '-' && d.fix.trim() !== '') {
+                            html += `
+                                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                    <span style="font-size: 16px; flex-shrink: 0; line-height: 1.2;">🎯</span>
+                                    <p style="font-size: 13.5px; color: var(--text-main); line-height: 1.5; margin: 0;"><span style="color: var(--text-muted); font-size: 12px; font-weight: 600;">Target Besok:</span> ${d.fix}</p>
+                                </div>
+                            `;
+                        }
+                        item.innerHTML = html;
+                        lessonsEl.appendChild(item);
+                    });
+                }
+            }
+        }
+
+        // ==========================================
+        // DATA SUBMISSION
+        // ==========================================
+
+        function renderBattleCard(b, container) {
+            const kat = b.kategori || 'Negatif';
+            const isPos = kat === 'Positif';
+            const isSuccess = b.outcome >= 4;
+            const ocColor = isSuccess ? 'var(--success)' : (b.outcome === 3 ? '#FBBF24' : 'var(--danger)');
+            
+            // Emoji outcome seperti lama
+            let ocEmoji = '\u2696\ufe0f'; // ⚖️
+            if (isSuccess) ocEmoji = '\ud83d\udee1\ufe0f'; // 🛡️
+            else if (b.outcome <= 2) ocEmoji = '\ud83d\udca5'; // 💥
+            
+            const ocLabel = isSuccess
+                ? (isPos ? 'Berhasil' : 'Terkendali')
+                : (b.outcome === 3 ? 'Netral' : (isPos ? 'Tidak Berhasil' : 'Kebablasan'));
+            
+            const badgeBg  = isPos ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)';
+            const badgeClr = isPos ? 'var(--success)' : 'var(--danger)';
+            const cleanType = b.type.replace(/^[\p{Emoji}\s]+/u, '').trim();
+            
+            let newCard = document.createElement('div');
+            newCard.style = 'display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--glass-bg); border-radius: var(--radius-sm); border: 1px solid var(--glass-border); margin-bottom: 8px;';
+            newCard.innerHTML = `
+                <div style="display:flex; align-items:flex-start; gap:10px;">
+                    <span style="flex-shrink:0; margin-top:1px; font-size:11px; font-weight:700; padding:2px 7px; border-radius:20px; background:${badgeBg}; color:${badgeClr};">${isPos ? '\ud83d\udfe2' : '\ud83d\udd34'}</span>
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600; color: var(--text-title);">${cleanType}</div>
+                        ${b.note ? `<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${b.note}</div>` : ''}
+                    </div>
+                </div>
+                <div style="text-align: right; flex-shrink: 0; margin-left: 10px;">
+                    <div style="font-size: 14px; display:flex; align-items:center; justify-content:flex-end; gap:4px;">
+                        <span>${ocEmoji}</span> 
+                        <span style="font-weight: 700; color: ${ocColor}; font-size: 15px;">${b.outcome}/5</span>
+                    </div>
+                    <div style="font-size: 10px; color: ${ocColor}; font-weight: 600; margin-top: 2px;">${ocLabel}</div>
+                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">${b.ts.substring(11,16)}</div>
+                </div>
+            `;
+            container.appendChild(newCard);
+        }
+
+        function openBattleDetail(battles, date, wins, losses) {
+            document.getElementById('battleDetailTitle').innerText = formatTanggal(date);
+            document.getElementById('battleDetailSub').innerText = `${battles.length} battle  ·  ${wins} Menang  ·  ${losses} Kalah`;
+            const list = document.getElementById('battleDetailList');
+            list.innerHTML = '';
+            battles.forEach(b => renderBattleCard(b, list));
+            document.getElementById('battleDetailModal').classList.add('show');
+        }
+        function closeBattleDetail() {
+            document.getElementById('battleDetailModal').classList.remove('show');
+        }
+
+        function submitBattle() {
+            const type     = document.getElementById('battleTypeVal').value;
+            const outcomeVal = parseInt(document.getElementById('battleOutcomeVal').value);
+            const kategori = document.getElementById('battleKategoriVal').value;
+            const note     = document.getElementById('battleNote').value;
+            
+            if (!kategori) { alert('Pilih kategori dulu bro! (Positif/Negatif)'); return; }
+            if (!type)     { alert('Pilih battle-nya dulu bro!'); return; }
+            if (!outcomeVal) { alert('Pilih hasil battle-nya dulu bro!'); return; }
+            
+            // Validasi: 1 tipe per hari
+            const dp = document.getElementById('battleDatePicker');
+            const selectedDate = dp ? dp.value : new Date().toLocaleDateString('sv-SE');
+            const allBattlesCache = window._cachedAllBattles || [];
+            const alreadyFilled = allBattlesCache.some(b => b.ts.startsWith(selectedDate) && b.type === type);
+            if (alreadyFilled) { alert(`"${type}" udah direkam untuk tanggal tersebut bro!`); return; }
+            
+            let btn = document.querySelector('#battleModal .btn-submit');
+            let origTxt = btn.innerText;
+            btn.innerText = 'MEREKAM...'; btn.disabled = true;
+
+            sendToServer('saveBattle', { type, outcomeVal, note, kategori, date: selectedDate }, function(res){
+                if(res.status === 'success') {
+                    showToast('Battle berhasil direkam!');
+                    closeBattleModal();
+                    loadDashboardData();
+                } else { alert('Gagal rekam: ' + res.message); }
+                btn.innerText = origTxt; btn.disabled = false;
+            }, btn, origTxt);
+        }
+
+        function submitBrainDump() { 
+            let content = document.getElementById('dumpContent').value;
+            if(!content) return;
+            
+            let btn = document.querySelector('#braindump .btn-submit');
+            let origTxt = btn.innerText;
+            btn.innerText = "MENYIMPAN..."; btn.disabled = true;
+            
+            sendToServer('saveBrainDump', content, function(res){
+                if(res.status === 'success') {
+                    showToast("Notes berhasil diupdate!"); 
+                    loadDashboardData();
+                    navTo('dashboard', 'Overview.', document.querySelectorAll('.nav-item')[0]);
+                } else { alert("Gagal simpan: " + res.message); }
+                btn.innerText = origTxt; btn.disabled = false;
+            }, btn, origTxt);
+        }
+
+        function submitScreenTime() { 
+            let selectedDate = document.getElementById('screenDatePicker').value;
+            let jam = parseInt(document.getElementById('totJam').value || 0);
+            let mnt = parseInt(document.getElementById('totMenit').value || 0);
+            if(jam == 0 && mnt == 0) { alert('Total durasi ngga boleh kosong!'); return; }
+
+            // Validasi: tanggal yang dipilih belum diisi
+            const allScreensCache = window._cachedAllScreenTimes || [];
+            const alreadyFilled = allScreensCache.some(s => s.date === selectedDate);
+            if (alreadyFilled) { alert(`Screen time ${selectedDate === new Date().toLocaleDateString('sv-SE') ? 'hari ini' : 'kemarin'} udah diisi bro!`); return; }
+
+            let totalFloat = jam + (mnt / 60);
+            let a1j = parseInt(document.getElementById('app1Jam').value || 0); let a1m = parseInt(document.getElementById('app1Menit').value || 0);
+            let a2j = parseInt(document.getElementById('app2Jam').value || 0); let a2m = parseInt(document.getElementById('app2Menit').value || 0);
+            let a3j = parseInt(document.getElementById('app3Jam').value || 0); let a3m = parseInt(document.getElementById('app3Menit').value || 0);
+
+            let payload = {
+                date: selectedDate,
+                total: totalFloat.toFixed(2),
+                app1Name: document.getElementById('app1Name').value, app1Dur: (a1j + (a1m/60)).toFixed(2),
+                app2Name: document.getElementById('app2Name').value, app2Dur: (a2j + (a2m/60)).toFixed(2),
+                app3Name: document.getElementById('app3Name').value, app3Dur: (a3j + (a3m/60)).toFixed(2)
+            };
+
+            let btn = document.querySelector('#screentime .btn-submit');
+            let origTxt = btn.innerText;
+            btn.innerText = "MENYIMPAN..."; btn.disabled = true;
+
+            sendToServer('saveScreenTime', payload, function(res){
+                if(res.status === 'success') {
+                    showToast("Screen Time dicatat di Database!"); resetForm('screentime'); 
+                    navTo('dashboard', 'Overview.', document.querySelectorAll('.nav-item')[0]); 
+                    loadDashboardData();
+                } else { alert("Gagal simpan: " + res.message); }
+                btn.innerText = origTxt; btn.disabled = false;
+            }, btn, origTxt);
+        }
+
+        function submitDebrief() { 
+            let mood = document.getElementById('moodVal').value;
+            let energy = document.getElementById('energyVal').value;
+            let lesson = document.getElementById('pelajaranVal').value;
+            let fix = document.getElementById('perbaikanVal').value;
+            const ddp = document.getElementById('debriefDatePicker');
+            const selectedDate = ddp ? ddp.value : new Date().toLocaleDateString('sv-SE');
+
+            if(!mood || !energy) { alert("Mood & Level Energi wajib diisi!"); return; }
+            if(!selectedDate) { alert("Pilih tanggal dulu!"); return; }
+
+            let payload = { mood, energy, lesson, fix, date: selectedDate };
+            let btn = document.querySelector('#debrief .btn-submit');
+            let origTxt = btn.innerText;
+            btn.innerText = "MENYIMPAN..."; btn.disabled = true;
+
+            sendToServer('saveDebrief', payload, function(res){
+                if(res.status === 'success') {
+                    showToast("Debrief malam dicatat!"); resetForm('debrief');
+                    loadDashboardData();
+                } else { alert("Gagal simpan: " + res.message); }
+                btn.innerText = origTxt; btn.disabled = false;
+            }, btn, origTxt);
+        }
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) { outputArray[i] = rawData.charCodeAt(i); }
+            return outputArray;
+        }
+
+        async function openNotifModal() {
+            let sub = null;
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                const reg = await navigator.serviceWorker.ready;
+                sub = await reg.pushManager.getSubscription();
+            }
+            if (sub) {
+                document.getElementById('notifModal').innerHTML = '<div class="modal-content" style="text-align: center; max-width: 400px; padding: 32px 24px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 0 40px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255,255,255,0.1); border-radius: 24px;"><div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);"><div style="font-size: 32px; filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.5));">✅</div></div><h3 style="margin-bottom: 12px; font-size: 22px; font-weight: 700; background: linear-gradient(to right, #fff, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Notifikasi Aktif!</h3><p style="font-size: 14.5px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.6; font-weight: 300;">Sistem telah terhubung. Anda akan menerima notifikasi pengingat evaluasi harian secara otomatis.</p><div style="display: flex; gap: 14px; justify-content: center;"><button class="btn" onclick="closeNotifModal()" style="flex:1; background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-weight: 500; padding: 14px 20px; font-size: 15px; transition: all 0.2s;">Tutup</button><button class="btn btn-primary" onclick="testPush()" style="flex:1; border-radius: 12px; background: linear-gradient(135deg, #10B981, #059669); font-weight: 600; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); border:none; color:#fff; padding: 14px 20px; font-size: 15px; transition: all 0.2s;">Test Notifikasi</button></div></div>';
+            } else {
+                document.getElementById('notifModal').innerHTML = '<div class="modal-content" style="text-align: center; max-width: 400px; padding: 32px 24px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(124, 58, 237, 0.3); box-shadow: 0 0 40px rgba(124, 58, 237, 0.15), inset 0 1px 0 rgba(255,255,255,0.1); border-radius: 24px;"><div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(124, 58, 237, 0.05)); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(124, 58, 237, 0.4); box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);"><div style="font-size: 32px; filter: drop-shadow(0 2px 8px rgba(124, 58, 237, 0.5));">🔔</div></div><h3 style="margin-bottom: 12px; font-size: 22px; font-weight: 700; background: linear-gradient(to right, #fff, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Aktifkan Notifikasi</h3><p style="font-size: 14.5px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.6; font-weight: 300;">Aktifkan pengingat harian otomatis untuk memastikan Anda tidak pernah melewatkan sesi evaluasi progres setiap malam.</p><div style="display: flex; gap: 14px; justify-content: center;"><button class="btn" onclick="closeNotifModal()" style="flex:1; background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-weight: 500; padding: 14px 20px; font-size: 15px; transition: all 0.2s;">Nanti Saja</button><button class="btn btn-primary" id="btnAktifNotif" onclick="subscribePush()" style="flex:1; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); font-weight: 600; box-shadow: 0 4px 15px var(--primary-glow); border:none; color:#fff; padding: 14px 20px; font-size: 15px; transition: all 0.2s;">Aktifkan</button></div></div>';
+            }
+            document.getElementById('notifModal').classList.add('show');
+        }
+
+        async function initPushNotifBanner() {
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+            const reg = await navigator.serviceWorker.register('/sw.js');
+            const sub = await reg.pushManager.getSubscription();
+            
+            // Kalau belum subscribe dan belum pernah klik Nanti Aja, tampilin otomatis
+            if (!sub && !localStorage.getItem('hideNotifModal')) {
+                openNotifModal();
+            }
+        }
+        
+        function closeNotifModal() {
+            localStorage.setItem('hideNotifModal', 'true');
+            document.getElementById('notifModal').classList.remove('show');
+        }
+
+        async function subscribePush() {
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                const publicVapidKey = 'BEEPhFhKFgBcKkHKfFY7WGm00FRaGmY4yact3MxVZpqS41XzZqlT1vwji_GQd2ef333szq_oHUTFG8GYwUOJ_qA';
+                const sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+                });
+                
+                // Kirim ke database pake fetch (karena ini bukan /api/data)
+                let api = getApiURL().replace('/api/data', '/api/subscribe');
+                await fetch(api, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(sub)
+                });
+                alert('MANTAP! Notifikasi berhasil diaktifkan buat HP ini.');
+                openNotifModal(); // Buka ulang pop-up versi sukses
+            } catch(err) {
+                alert('Gagal langganan notif: ' + err.message);
+                console.error(err);
+            }
+        }
+
+        async function testPush() {
+            let btn = event.target;
+            let origTxt = btn.innerText;
+            btn.innerText = 'Ngetest...';
+            try {
+                let api = getApiURL().replace('/api/data', '/api/cron-notify');
+                let res = await fetch(api);
+                let json = await res.json();
+                if(json.status === 'success') {
+                    console.log('Test Sent:', json);
+                } else {
+                    alert('Gagal tembus ke server!');
+                }
+            } catch(e) {
+                alert('Error ngetest API!');
+            }
+            btn.innerText = origTxt;
+        }
+
+        window.onload = function() {
+            initTimePickers();
+            
+            Chart.defaults.color = '#94A3B8';
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.scale.grid.color = 'rgba(255,255,255,0.05)';
+            
+            chartWinLoseInst = new Chart(document.getElementById('barChartWinLose'), {
+                type: 'bar',
+                data: { labels: [], datasets: [{ label: 'Berhasil', data: [], backgroundColor: '#10B981', borderRadius: 4 }, { label: 'Kebablasan', data: [], backgroundColor: '#EF4444', borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true, grid: { display: false }, border: { display: false } }, y: { stacked: true, beginAtZero: true, border: { display: false } } }, plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 20 } } } }
+            });
+
+            chartBattleInst = new Chart(document.getElementById('barChartBattle'), {
+                type: 'bar',
+                data: { labels: [], datasets: [{ label: 'Frekuensi', data: [], backgroundColor: 'rgba(124, 58, 237, 0.8)', borderRadius: 6 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, border: { display: false } }, x: { grid: { display: false }, border: { display: false } } }, plugins: { legend: { display: false } } }
+            });
+
+            // LANGSUNG TARIK DATA KETIKA WEB DIBUKA
+            loadDashboardData();
+            setTimeout(initPushNotifBanner, 1000);
+        }
+    </script>
+</body>
+</html>
