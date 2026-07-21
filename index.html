@@ -59,7 +59,7 @@
         .orb-3 { width: 250px; height: 250px; background: var(--bg-orb-3); top: 40%; left: 30%; animation-delay: -10s; }
         @keyframes float { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.1); } 100% { transform: translateY(20px) scale(0.9); } }
 
-        .topbar { position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-height); background: rgba(11, 12, 16, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; padding: 0 24px; z-index: 1000; }
+        .topbar { position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-height); background: rgba(11, 12, 16, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 1000; }
         .hamburger { font-size: 28px; cursor: pointer; color: var(--text-main); margin-right: 20px; transition: 0.3s; user-select: none; }
         .hamburger:active { transform: scale(0.9); color: var(--primary); }
         .topbar-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-title); }
@@ -148,8 +148,13 @@
     <div class="ambient-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
 
     <header class="topbar">
-        <div class="hamburger" onclick="toggleSidebar()">☰</div>
-        <div class="topbar-title" id="topbar-title">Dashboard.</div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="hamburger" style="margin-right:0;" onclick="toggleSidebar()">☰</div>
+            <div class="topbar-title" id="topbar-title">Dashboard.</div>
+        </div>
+        <div id="headerBell" onclick="openNotifModal()" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.2);" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='scale(1)';">
+            <span style="font-size: 18px; filter: drop-shadow(0 2px 4px rgba(124,58,237,0.5));">🔔</span>
+        </div>
     </header>
     <div id="toast">✅ Data berhasil disimpan!</div>
 
@@ -506,11 +511,6 @@
     <!-- NOTIF MODAL -->
     <div class="modal-overlay" id="notifModal" onclick="if(event.target===this)closeNotifModal()">
         <!-- Isi modal digenerate lewat JS biar dinamis -->
-    </div>
-
-    <!-- FLOATING BELL ICON -->
-    <div id="floatingBell" onclick="openNotifModal()" style="position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(124, 58, 237, 0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(124, 58, 237, 0.4); z-index: 99; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.6), 0 0 25px rgba(124, 58, 237, 0.6)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(124, 58, 237, 0.4)';">
-        <span style="font-size: 26px; filter: drop-shadow(0 2px 4px rgba(124,58,237,0.8));">🔔</span>
     </div>
 
     <!-- JAVASCRIPT -->
