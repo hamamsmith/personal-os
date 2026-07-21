@@ -300,15 +300,15 @@
                     <div class="emoji-btn" onclick="selectRadio(this, 'mood')">😁</div>
                 </div>
                 <input type="hidden" id="moodVal">
-                <label>Level Energi (1-10)</label>
+                <label>Level Energi (1-5)</label>
                 <div class="picker-container" style="margin-bottom: 20px;">
                     <select id="energyVal" style="font-size: 15px;">
                         <option value="" disabled selected>Seberapa bertenaga lu hari ini?</option>
                         <option value="1">1 - Habis Total 🪫</option>
-                        <option value="2">2</option><option value="3">3</option><option value="4">4</option>
-                        <option value="5">5 - Cukup 🔋</option>
-                        <option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option>
-                        <option value="10">10 - On Fire ⚡</option>
+                        <option value="2">2</option>
+                        <option value="3">3 - Cukup 🔋</option>
+                        <option value="4">4</option>
+                        <option value="5">5 - On Fire ⚡</option>
                     </select>
                     <span class="lbl">▼</span>
                 </div>
@@ -949,8 +949,8 @@
                             const dayStr = latestDate.toLocaleDateString('id-ID', {weekday:'long'});
                             const dateStr = latestDate.toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'2-digit'}); // ex: 20 Jul 26
                             
-                            const color = latest.energy <= 4 ? '#EF4444' : (latest.energy >= 7 ? '#10B981' : '#FBBF24');
-                            const bg = latest.energy <= 4 ? 'rgba(239,68,68,0.15)' : (latest.energy >= 7 ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.15)');
+                            const color = latest.energy <= 2 ? '#EF4444' : (latest.energy >= 4 ? '#10B981' : '#FBBF24');
+                            const bg = latest.energy <= 2 ? 'rgba(239,68,68,0.15)' : (latest.energy >= 4 ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.15)');
                             
                             latestCard.innerHTML = `
                                 <div style="display: flex; justify-content: space-between; align-items: center; background: ${bg}; border: 1px solid ${color}40; border-radius: 12px; padding: 16px;">
@@ -961,7 +961,7 @@
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <span style="font-size: 32px;">${latest.mood}</span>
-                                        <div style="font-size: 20px; font-weight: 800; font-family: 'Outfit'; color: ${color};">${latest.energy}<span style="font-size:12px;color:var(--text-muted);">/10</span></div>
+                                        <div style="font-size: 20px; font-weight: 800; font-family: 'Outfit'; color: ${color};">${latest.energy}<span style="font-size:12px;color:var(--text-muted);">/5</span></div>
                                     </div>
                                 </div>
                             `;
@@ -972,14 +972,14 @@
                                 const dd = new Date(d.date);
                                 const dayName = dd.toLocaleDateString('id-ID', {weekday:'short'});
                                 const shortDate = dd.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
-                                const c = d.energy <= 4 ? '#EF4444' : (d.energy >= 7 ? '#10B981' : '#FBBF24');
-                                const cbg = d.energy <= 4 ? 'rgba(239,68,68,0.15)' : (d.energy >= 7 ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.15)');
+                                const c = d.energy <= 2 ? '#EF4444' : (d.energy >= 4 ? '#10B981' : '#FBBF24');
+                                const cbg = d.energy <= 2 ? 'rgba(239,68,68,0.15)' : (d.energy >= 4 ? 'rgba(16,185,129,0.15)' : 'rgba(251,191,36,0.15)');
                                 return `
                                     <div style="background: ${cbg}; border: 1px solid ${c}40; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                                         <div style="font-size: 11px; font-weight: 700; color: var(--text-title); margin-bottom: 2px;">${dayName}</div>
                                         <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 8px;">${shortDate}</div>
                                         <div style="font-size: 22px; margin-bottom: 6px;">${d.mood}</div>
-                                        <div style="font-size: 14px; font-weight: 800; font-family: 'Outfit'; color: ${c};">${d.energy}<span style="font-size:10px;color:var(--text-muted);">/10</span></div>
+                                        <div style="font-size: 14px; font-weight: 800; font-family: 'Outfit'; color: ${c};">${d.energy}<span style="font-size:10px;color:var(--text-muted);">/5</span></div>
                                     </div>
                                 `;
                             }).join('');
