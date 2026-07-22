@@ -843,10 +843,12 @@
                             if (!grouped[d]) grouped[d] = [];
                             grouped[d].push(b);
                         });
-                        Object.keys(grouped).sort((a,b) => b.localeCompare(a)).forEach(date => {
+                        const sortedDates = Object.keys(grouped).sort((a,b) => b.localeCompare(a));
+                        // Tampilkan maksimal 14 hari terakhir
+                        sortedDates.slice(0, 14).forEach(date => {
                             const battles = grouped[date];
-                            const wins = battles.filter(b => b.outcome >= 4).length;
-                            const losses = battles.filter(b => b.outcome <= 2).length;
+                            const wins = battles.filter(b => b.outcome >= 3).length;
+                            const losses = battles.filter(b => b.outcome < 3).length;
                             const uid = 'acc-' + date;
 
                             // Header accordion → buka popup saat diklik
@@ -855,7 +857,7 @@
                             header.innerHTML = `
                                 <div>
                                     <div style="font-size: 13px; font-weight: 600; color: var(--text-title);">${formatTanggal(date)}</div>
-                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${battles.length} battle &nbsp;·&nbsp; <span style="color:var(--success);">${wins}W</span> <span style="color:var(--danger);">${losses}L</span></div>
+                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${battles.length} log &nbsp;·&nbsp; <span style="color:var(--success);">${wins} ✅</span> <span style="color:var(--danger);">${losses} ❌</span></div>
                                 </div>
                                 <span style="font-size: 14px; color: var(--text-muted);">›</span>
                             `;
@@ -1415,7 +1417,7 @@
 
         function openBattleDetail(battles, date, wins, losses) {
             document.getElementById('battleDetailTitle').innerText = formatTanggal(date);
-            document.getElementById('battleDetailSub').innerText = `${battles.length} battle  ·  ${wins} Menang  ·  ${losses} Kalah`;
+            document.getElementById('battleDetailSub').innerText = `${battles.length} log  ·  ${wins} Berhasil  ·  ${losses} Gagal`;
             const list = document.getElementById('battleDetailList');
             list.innerHTML = '';
             battles.forEach(b => renderBattleCard(b, list));
