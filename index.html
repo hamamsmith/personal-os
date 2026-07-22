@@ -166,7 +166,7 @@
     <div class="sidebar-wrapper" id="sidebar">
         <nav class="sidebar">
             <a class="nav-item active" onclick="navTo('dashboard', 'Dashboard.', this)"><span class="nav-icon">✨</span><span>Home</span></a>
-            <a class="nav-item" onclick="navTo('battle', 'Log Battle.', this)"><span class="nav-icon">⚔️</span><span>Battle</span></a>
+            <a class="nav-item" onclick="navTo('battle', 'Take Control.', this)"><span class="nav-icon">⚔️</span><span>Control</span></a>
             <a class="nav-item" onclick="navTo('braindump', 'Brain Dump.', this)"><span class="nav-icon">🧠</span><span>Dump</span></a>
             <a class="nav-item" onclick="navTo('debrief', 'Debrief Malam.', this)"><span class="nav-icon">🌙</span><span>Debrief</span></a>
             <a class="nav-item" onclick="navTo('screentime', 'Screen Time.', this)"><span class="nav-icon">📱</span><span>Screen</span></a>
@@ -175,21 +175,15 @@
     </div>
 
     <main class="main-content" id="main-content">
-        <!-- DASHBOARD -->
         <div id="dashboard" class="page active container">
             <div class="summary-grid">
-                <div class="summary-box"><div class="label">🟢 Battle Positif</div><div class="value" id="valTotalPositif">0</div></div>
-                <div class="summary-box"><div class="label">🔴 Battle Negatif</div><div class="value danger" id="valTotalNegatif">0</div></div>
+                <div class="summary-box"><div class="label">🟢 Self Control</div><div class="value" id="valControlPoint">0</div><div style="font-size:10px; color:var(--text-muted); margin-top:2px;" id="valControlDetail">0 Berhasil | 0 Gagal</div></div>
+                <div class="summary-box"><div class="label">🔵 Konsistensi</div><div class="value accent" id="valConsistencyPoint">0</div><div style="font-size:10px; color:var(--text-muted); margin-top:2px;">Total Log</div></div>
                 <div class="summary-box">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div class="label" id="rateLabel">📊 Overall Rate</div>
-                        <select id="rateFilter" onchange="changeRateFilter()" style="background:transparent; color:var(--text-muted); border:none; outline:none; font-size:10px; cursor:pointer; -webkit-appearance:none;">
-                            <option value="overall" style="color:#000;">Overall</option>
-                            <option value="sukses" style="color:#000;">Sukses (Positif)</option>
-                            <option value="kontrol" style="color:#000;">Kontrol (Negatif)</option>
-                        </select>
+                        <div class="label">📊 Success Rate</div>
                     </div>
-                    <div class="value accent" id="valRateDisplay">0%</div>
+                    <div class="value success" id="valRateDisplay">0%</div>
                 </div>
                 <div class="summary-box">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -207,19 +201,19 @@
             <div class="card" style="padding: 14px 16px; margin-bottom: 0;">
                 <div style="display:flex; gap:16px; flex-wrap: wrap; align-items:center;">
                     <div style="flex:1; min-width:120px;">
-                        <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">⚡ KEBIASAAN TERBAIK</div>
-                        <div style="font-size:13px; color:var(--text-title); font-weight:600;" id="valMostPositif">-</div>
+                        <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">⚡ TRIGGER PALING SERING</div>
+                        <div style="font-size:13px; color:var(--text-title); font-weight:600;" id="valMostFrequent">-</div>
                     </div>
                     <div style="flex:1; min-width:120px;">
-                        <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">💀 GODAAN TERBERAT</div>
-                        <div style="font-size:13px; color:var(--text-title); font-weight:600;" id="valMostNegatif">-</div>
+                        <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;">🎯 SUCCESS RATE</div>
+                        <div style="font-size:13px; color:var(--text-title); font-weight:600;" id="valRateDisplaySmall">-</div>
                     </div>
                 </div>
             </div>
 
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="margin: 0;">🏆 Menang vs 💀 Kalah</h3>
+                    <h3 style="margin: 0;">✅ Berhasil vs ❌ Gagal</h3>
                     <div style="display: flex; align-items: center; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px 8px; border: 1px solid var(--glass-border);">
                         <button onclick="shiftWeek(-1)" style="cursor:pointer; padding:4px 10px; color:var(--primary); font-size:16px; background:none; border:none; line-height:1;">◄</button>
                         <span id="chartWeekLabel" style="font-size:11px; font-weight:600; margin:0 8px; color:var(--text-muted); text-transform:uppercase; min-width:80px; text-align:center;">Loading...</span>
@@ -231,7 +225,7 @@
             
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="margin: 0;">Battle Paling Sering</h3>
+                    <h3 style="margin: 0;">Trigger Paling Sering</h3>
                     <select id="filterBattleFreq" onchange="filterBattleFreqChanged()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 4px 8px; border-radius: 8px; font-size: 11px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif;">
                         <option value="7">1 MINGGU</option><option value="30">1 BULAN</option><option value="all">SEMUA WAKTU</option>
                     </select>
@@ -460,51 +454,44 @@
     </main>
 
 
-    <!-- BATTLE FORM MODAL -->
+    <!-- TAKE CONTROL FORM MODAL -->
     <div class="modal-overlay" id="battleModal">
         <div class="modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin-bottom: 0;">Catat Battle</h3>
+                <h3 style="margin-bottom: 0;">Take Control</h3>
                 <span onclick="closeBattleModal()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">&times;</span>
             </div>
 
             <!-- Step 1: Tanggal -->
             <label>1. Tanggal (Hari ini/Kemarin)</label>
             <div class="picker-container" style="margin-bottom: 20px;">
-                <select id="battleDatePicker" onchange="const k = document.getElementById('battleKategoriVal').value; if(k) selectKategori(k);" style="font-size: 15px;"></select>
+                <select id="battleDatePicker" style="font-size: 15px;"></select>
                 <span class="lbl">▼</span>
             </div>
 
-            <!-- Step 2: Kategori -->
-            <label>2. Pilih Kategori</label>
+            <!-- Step 2: Trigger -->
+            <label>2. Pilih Trigger</label>
+            <div class="picker-container" style="margin-bottom: 10px;">
+                <select id="battleTypeVal" onchange="checkCustomTrigger()" style="font-size: 15px;">
+                    <option value="" disabled selected>Pilih trigger...</option>
+                </select>
+                <span class="lbl">▼</span>
+            </div>
+            <input type="text" id="customTriggerInput" placeholder="Ketik trigger lu di sini..." style="display:none; margin-bottom: 20px; font-size: 15px; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: var(--text-main); width: 100%; box-sizing: border-box; outline: none;">
+            <input type="hidden" id="battleKategoriVal" value="Lainnya">
+
+            <!-- Step 3: Hasil -->
+            <label>3. Hasil</label>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                <div class="radio-btn" id="btnKatPositif" onclick="selectKategori('Positif')">🟢 Positif</div>
-                <div class="radio-btn" id="btnKatNegatif" onclick="selectKategori('Negatif')">🔴 Negatif</div>
+                <div class="radio-btn" onclick="selectRadio(this, 'battleOutcome')">✅ Berhasil</div>
+                <div class="radio-btn" onclick="selectRadio(this, 'battleOutcome')">❌ Gagal</div>
             </div>
-            <input type="hidden" id="battleKategoriVal">
-
-            <!-- Step 3: Pilih Battle -->
-            <label>3. Pilih Battle</label>
-            <div class="picker-container" style="margin-bottom: 20px;">
-                <select id="battleTypeVal" style="font-size: 15px;">
-                    <option value="" disabled selected>Pilih kategori dulu...</option>
-                </select>
-                <span class="lbl">▼</span>
-            </div>
-
-            <!-- Step 4: Outcome -->
-            <label id="labelOutcome">4. Hasil</label>
-            <div class="picker-container" style="margin-bottom: 20px;">
-                <select id="battleOutcomeVal" style="font-size: 15px;">
-                    <option value="" disabled selected>Pilih hasil battle...</option>
-                </select>
-                <span class="lbl">▼</span>
-            </div>
+            <input type="hidden" id="battleOutcomeVal">
 
             <!-- Step 4: Catatan -->
             <label>4. Catatan (Opsional)</label>
             <textarea id="battleNote" placeholder="Tulis konteks singkat..."></textarea>
-            <button class="btn-submit" onclick="submitBattle()">REKAM BATTLE</button>
+            <button class="btn-submit" onclick="submitBattle()">SIMPAN</button>
         </div>
     </div>
 
@@ -605,67 +592,41 @@
             return mins > 0 ? `${hours}j ${mins}m` : `${hours}j`;
         }
 
-        function openBattleModal() { document.getElementById('battleModal').classList.add('show'); }
-        function closeBattleModal() {
-            document.getElementById('battleModal').classList.remove('show');
-            document.getElementById('battleTypeVal').value = '';
-            document.getElementById('battleKategoriVal').value = '';
-            document.getElementById('battleOutcomeVal').value = '';
-            document.getElementById('battleNote').value = '';
-            ['btnKatPositif','btnKatNegatif','btnOutcomeBerhasil','btnOutcomeGagal'].forEach(id => {
-                const el = document.getElementById(id); if(el) el.classList.remove('active');
-            });
-            // Reset dropdown
-            document.getElementById('battleTypeVal').innerHTML = '<option value="" disabled selected>Pilih kategori dulu...</option>';
-            document.getElementById('labelOutcome').innerText = '4. Hasil';
+        const TRIGGER_LIST = ['🏃‍♂️ Jogging','📚 Belajar','🚿 Mandi Pagi','🛀 Mandi Sore/Malam','📖 Ngaji','🕌 Solat 5 Waktu','💻 Fokus Kerja','🎯 Menyelesaikan Target','🙏 Bersyukur','😴 Tidur Tepat Waktu','📱 Scroll Media Sosial','🥱 Malas','😈 Horny','🤯 Overthinking','🌧️ Kesepian','⏳ Menunda Pekerjaan','💫 Mudah Terdistraksi'];
+
+        function checkCustomTrigger() {
+            const val = document.getElementById('battleTypeVal').value;
+            const customInput = document.getElementById('customTriggerInput');
+            if (val === 'Lainnya') {
+                customInput.style.display = 'block';
+            } else {
+                customInput.style.display = 'none';
+            }
         }
 
-        const BATTLE_LIST = {
-            Positif: ['🏃‍♂️ Jogging','📚 Belajar','🚿 Mandi Pagi','🛀 Mandi Sore/Malam','📖 Ngaji','🕌 Solat 5 Waktu','💻 Fokus Kerja','🎯 Menyelesaikan Target','🙏 Bersyukur','😴 Tidur Tepat Waktu'],
-            Negatif: ['📱 Scroll Media Sosial','🥱 Malas','😈 Horny','🤯 Overthinking','🌧️ Kesepian','⏳ Menunda Pekerjaan','💫 Mudah Terdistraksi']
-        };
-
-        function selectKategori(kat) {
-            document.getElementById('battleKategoriVal').value = kat;
-            document.getElementById('btnKatPositif').classList.toggle('active', kat === 'Positif');
-            document.getElementById('btnKatNegatif').classList.toggle('active', kat === 'Negatif');
-            // Update dropdown — sembunyikan yang sudah diisi pada tanggal yang dipilih
-            const sel = document.getElementById('battleTypeVal');
+        function openBattleModal() {
+            document.getElementById('battleModal').classList.add('show');
+            const typeSel = document.getElementById('battleTypeVal');
+            
             const dp = document.getElementById('battleDatePicker');
             const selectedDate = dp ? dp.value : new Date().toLocaleDateString('sv-SE');
             const doneSelected = new Set((window._cachedAllBattles || []).filter(b => b.ts.startsWith(selectedDate)).map(b => b.type));
             
-            sel.innerHTML = `<option value="" disabled selected>Pilih battle ${kat.toLowerCase()}...</option>` +
-                BATTLE_LIST[kat].filter(b => !doneSelected.has(b)).map(b => `<option value="${b}">${b}</option>`).join('');
-            if (BATTLE_LIST[kat].filter(b => !doneSelected.has(b)).length === 0) {
-                sel.innerHTML = `<option value="" disabled selected>Semua ${kat.toLowerCase()} sudah direkam ✅</option>`;
-            }
-            // Update label outcome
-            document.getElementById('labelOutcome').innerText = kat === 'Positif'
-                ? '4. Apakah berhasil dilakukan?'
-                : '4. Apakah berhasil dikendalikan?';
-                
-            // Update Dropdown Outcome (1-5)
-            const outcomeSel = document.getElementById('battleOutcomeVal');
-            if (kat === 'Positif') {
-                outcomeSel.innerHTML = `
-                    <option value="" disabled selected>Gimana hasilnya?</option>
-                    <option value="1">1 - Sama Sekali Tidak Jalan 💥</option>
-                    <option value="2">2 - Jalan Tapi Males-malesan</option>
-                    <option value="3">3 - Netral / Cukup ⚖️</option>
-                    <option value="4">4 - Lumayan Bagus</option>
-                    <option value="5">5 - Tuntas & Puas 🛡️</option>
-                `;
-            } else {
-                outcomeSel.innerHTML = `
-                    <option value="" disabled selected>Gimana hasilnya?</option>
-                    <option value="1">1 - Kebablasan Parah 💥</option>
-                    <option value="2">2 - Kalah Tipis</option>
-                    <option value="3">3 - Netral / Seri ⚖️</option>
-                    <option value="4">4 - Menang Tipis</option>
-                    <option value="5">5 - Menang Telak 🛡️</option>
-                `;
-            }
+            let html = '<option value="" disabled selected>Pilih trigger...</option>';
+            TRIGGER_LIST.filter(b => !doneSelected.has(b)).forEach(t => html += `<option value="${t}">${t}</option>`);
+            html += `<option value="Lainnya">Lainnya (Ketik manual)...</option>`;
+            typeSel.innerHTML = html;
+        }
+
+        function closeBattleModal() {
+            document.getElementById('battleModal').classList.remove('show');
+            document.getElementById('battleTypeVal').value = '';
+            document.getElementById('battleKategoriVal').value = 'Lainnya';
+            document.getElementById('battleOutcomeVal').value = '';
+            document.getElementById('battleNote').value = '';
+            document.getElementById('customTriggerInput').value = '';
+            document.getElementById('customTriggerInput').style.display = 'none';
+            document.querySelectorAll('#battleModal .radio-btn').forEach(btn => btn.classList.remove('active'));
         }
 
         function selectRadio(element, groupName) {
@@ -823,33 +784,14 @@
                     const s = res.summary;
                     const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
                     
-                    const totalBattles = s.totalPositif + s.totalNegatif;
-                    const posWin = Math.round((s.successRate / 100) * s.totalPositif);
-                    const negWin = Math.round((s.kontrolRate / 100) * s.totalNegatif);
-                    const overallRate = totalBattles > 0 ? Math.round(((posWin + negWin) / totalBattles) * 100) : 0;
+                    setEl('valControlPoint', s.controlPoint);
+                    setEl('valControlDetail', `${s.totalBerhasil} Berhasil | ${s.totalGagal} Gagal`);
+                    setEl('valConsistencyPoint', s.consistencyPoint);
+                    setEl('valRateDisplay', s.successRate + '%');
+                    setEl('valRateDisplaySmall', s.successRate + '%');
                     
-                    setEl('valTotalPositif', s.totalPositif);
-                    setEl('valTotalNegatif', s.totalNegatif);
-                    
-                    window._rateData = {
-                        overall: overallRate,
-                        sukses: s.successRate,
-                        kontrol: s.kontrolRate
-                    };
-                    changeRateFilter();
-                    
-                    // Hitung mostPositif & mostNegatif: urutan paling lama ke paling baru (tie-breaker = yang pertama direkam)
                     const cleanT = t => (t || '').replace(/^[\p{Emoji}\s]+/u, '').trim();
-                    const allB = [...(res.allBattles || [])].reverse(); // oldest-first
-                    const posFreqDash = {}, negFreqDash = {};
-                    allB.forEach(b => {
-                        if (b.kategori === 'Positif') posFreqDash[b.type] = (posFreqDash[b.type]||0) + 1;
-                        else negFreqDash[b.type] = (negFreqDash[b.type]||0) + 1;
-                    });
-                    const topPos = Object.entries(posFreqDash).sort((a,b) => b[1]-a[1])[0];
-                    const topNeg = Object.entries(negFreqDash).sort((a,b) => b[1]-a[1])[0];
-                    setEl('valMostPositif', topPos ? cleanT(topPos[0]) : 'Belum ada data');
-                    setEl('valMostNegatif', topNeg ? cleanT(topNeg[0]) : 'Belum ada data');
+                    setEl('valMostFrequent', s.mostFrequent ? cleanT(s.mostFrequent) : 'Belum ada data');
                     
                     // Update allScreenTimes cache & avg screen
                     window._allScreenTimes = res.allScreenTimes || [];
@@ -1437,29 +1379,21 @@
         // ==========================================
 
         function renderBattleCard(b, container) {
-            const kat = b.kategori || 'Negatif';
-            const isPos = kat === 'Positif';
-            const isSuccess = b.outcome >= 4;
-            const ocColor = isSuccess ? 'var(--success)' : (b.outcome === 3 ? '#FBBF24' : 'var(--danger)');
+            const isSuccess = b.outcome >= 3;
+            const ocColor = isSuccess ? 'var(--success)' : 'var(--danger)';
             
-            // Emoji outcome seperti lama
-            let ocEmoji = '\u2696\ufe0f'; // ⚖️
-            if (isSuccess) ocEmoji = '\ud83d\udee1\ufe0f'; // 🛡️
-            else if (b.outcome <= 2) ocEmoji = '\ud83d\udca5'; // 💥
+            let ocEmoji = isSuccess ? '✅' : '❌';
+            const ocLabel = isSuccess ? 'Berhasil' : 'Gagal';
             
-            const ocLabel = isSuccess
-                ? (isPos ? 'Berhasil' : 'Terkendali')
-                : (b.outcome === 3 ? 'Netral' : (isPos ? 'Tidak Berhasil' : 'Kebablasan'));
-            
-            const badgeBg  = isPos ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)';
-            const badgeClr = isPos ? 'var(--success)' : 'var(--danger)';
+            const badgeBg  = 'rgba(124,58,237,0.15)';
+            const badgeClr = 'var(--primary)';
             const cleanType = b.type.replace(/^[\p{Emoji}\s]+/u, '').trim();
             
             let newCard = document.createElement('div');
             newCard.style = 'display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--glass-bg); border-radius: var(--radius-sm); border: 1px solid var(--glass-border); margin-bottom: 8px;';
             newCard.innerHTML = `
                 <div style="display:flex; align-items:flex-start; gap:10px;">
-                    <span style="flex-shrink:0; margin-top:1px; font-size:11px; font-weight:700; padding:2px 7px; border-radius:20px; background:${badgeBg}; color:${badgeClr};">${isPos ? '\ud83d\udfe2' : '\ud83d\udd34'}</span>
+                    <span style="flex-shrink:0; margin-top:1px; font-size:11px; font-weight:700; padding:2px 7px; border-radius:20px; background:${badgeBg}; color:${badgeClr};">🎯</span>
                     <div>
                         <div style="font-size: 14px; font-weight: 600; color: var(--text-title);">${cleanType}</div>
                         ${b.note ? `<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${b.note}</div>` : ''}
@@ -1467,8 +1401,8 @@
                 </div>
                 <div style="text-align: right; flex-shrink: 0; margin-left: 10px;">
                     <div style="font-size: 14px; display:flex; align-items:center; justify-content:flex-end; gap:4px;">
-                        <span>${ocEmoji}</span> 
-                        <span style="font-weight: 700; color: ${ocColor}; font-size: 15px;">${b.outcome}/5</span>
+                        <span></span> 
+                        <span style="font-weight: 700; color: ${ocColor}; font-size: 15px;">${ocEmoji}</span>
                     </div>
                     <div style="font-size: 10px; color: ${ocColor}; font-weight: 600; margin-top: 2px;">${ocLabel}</div>
                     <div style="font-size: 10px; color: var(--text-muted); margin-top: 1px;">${b.ts.substring(11,16)}</div>
@@ -1490,14 +1424,17 @@
         }
 
         function submitBattle() {
-            const type     = document.getElementById('battleTypeVal').value;
-            const outcomeVal = parseInt(document.getElementById('battleOutcomeVal').value);
-            const kategori = document.getElementById('battleKategoriVal').value;
+            let type = document.getElementById('battleTypeVal').value;
+            if (type === 'Lainnya') {
+                type = document.getElementById('customTriggerInput').value.trim();
+            }
+            const outStr = document.getElementById('battleOutcomeVal').value;
+            let outcomeVal = outStr === '✅ Berhasil' ? 5 : (outStr === '❌ Gagal' ? 1 : 0);
+            const kategori = document.getElementById('battleKategoriVal').value || 'Lainnya';
             const note     = document.getElementById('battleNote').value;
             
-            if (!kategori) { alert('Pilih kategori dulu bro! (Positif/Negatif)'); return; }
-            if (!type)     { alert('Pilih battle-nya dulu bro!'); return; }
-            if (!outcomeVal) { alert('Pilih hasil battle-nya dulu bro!'); return; }
+            if (!type)     { alert('Pilih atau ketik trigger-nya dulu bro!'); return; }
+            if (!outcomeVal) { alert('Pilih hasil ✅ Berhasil / ❌ Gagal dulu bro!'); return; }
             
             // Validasi: 1 tipe per hari
             const dp = document.getElementById('battleDatePicker');
@@ -1508,11 +1445,11 @@
             
             let btn = document.querySelector('#battleModal .btn-submit');
             let origTxt = btn.innerText;
-            btn.innerText = 'MEREKAM...'; btn.disabled = true;
+            btn.innerText = 'MENYIMPAN...'; btn.disabled = true;
 
             sendToServer('saveBattle', { type, outcomeVal, note, kategori, date: selectedDate }, function(res){
                 if(res.status === 'success') {
-                    showToast('Battle berhasil direkam!');
+                    showToast('Log berhasil disimpan!');
                     closeBattleModal();
                     loadDashboardData();
                 } else { alert('Gagal rekam: ' + res.message); }
