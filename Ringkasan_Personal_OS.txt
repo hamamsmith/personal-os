@@ -1,0 +1,50 @@
+RINGKASAN LENGKAP APLIKASI PERSONAL OS (HABIT TRACKER)
+======================================================
+
+1. DESKRIPSI UMUM
+Personal OS adalah aplikasi berbasis web yang berfungsi sebagai habit tracker, pengingat, dan jurnal evaluasi harian (productivity & mental health tracker). Tujuannya adalah membantu lu melacak kebiasaan baik, menahan kebiasaan buruk, memantau penggunaan gadget, dan mengevaluasi hari secara keseluruhan.
+
+2. ARSITEKTUR TEKNOLOGI
+- Frontend: Dibangun dengan HTML, CSS murni (mengusung gaya desain Glassmorphism dan Dark Mode kekinian), dan Vanilla JavaScript tanpa framework berat supaya cepat.
+- PWA (Progressive Web App): Aplikasi ini sudah mendukung PWA melalui file `sw.js` (Service Worker), sehingga bisa diinstal di HP layaknya aplikasi native/biasa dan jalan secara offline-first.
+- Backend: Menggunakan Node.js (dengan framework Express.js) yang terletak di folder `/api/` dan `/backend/`.
+- Database: Menggunakan PostgreSQL (terhubung lewat library `pg`). Tabel-tabel yang dipakai meliputi: battles (untuk kebiasaan), braindumps (jurnal), screentimes (waktu layar), dan debriefs (evaluasi).
+- Push Notifications: Backend mendukung Web Push Notification dengan VAPID keys supaya bisa ngirim notif ke HP/Browser lu.
+- Hosting & Otomatisasi: Dikonfigurasi untuk Vercel (ada file `vercel.json`), lengkap dengan fitur Cron Job yang otomatis memanggil URL notifikasi setiap jam 16:00 (UTC) alias tengah malam/pagi waktu lokal untuk ngingetin debrief.
+- Sistem Backup/Lama: Masih ada `Code.gs`, yang artinya dulu aplikasi ini nge-save data ke Google Sheets via Google Apps Script sebelum pindah ke database modern.
+
+3. FITUR DAN MENU UTAMA (ISI APLIKASI)
+
+A. Dashboard (Beranda)
+   Menampilkan ringkasan metrik dan analitik performa lu:
+   - Skor Battle Positif & Negatif: Akumulasi seberapa sering lu ngelakuin hal baik (positif) dan kepleset/berhasil nahan hal buruk (negatif).
+   - Success Rate & Kontrol Rate: Persentase tingkat keberhasilan lu dalam membangun habit dan menahan godaan.
+   - Rata-rata Screen Time (waktu layar hp).
+   - Kebiasaan Terbaik & Godaan Terberat: Sistem otomatis nyari mana habit yang paling konsisten lu lakuin, dan godaan mana yang paling sering bikin lu kalah.
+   - Visualisasi Grafik (Chart.js): 
+     * Bar Chart Win vs Lose: Ngebandingin hari di mana lu menang lawan godaan vs hari di mana lu kalah.
+     * Bar Chart Battle Paling Sering: Nampilin 3 kebiasaan/godaan teratas yang paling sering terjadi.
+
+B. Battle (Log Perjuangan)
+   Fitur utama untuk mencatat setiap kebiasaan (Habit) harian. 
+   - Kategori: Dibagi jadi Positif (Hal produktif yang mau dibangun) dan Negatif (Godaan yang mau dihindari).
+   - Input Data: Lu bisa masukin nama kegiatan, Skor Outcome (seberapa berhasil pelaksanaannya, menang atau kalah), dan Catatan tambahan.
+
+C. Brain Dump (Buang Pikiran)
+   Tempat untuk "membuang" pikiran yang bikin overthinking (jurnal bebas). 
+   Sistemnya simpel, cuma ada text-area besar buat numpahin semua beban pikiran hari itu supaya otak lu lebih plong dan siap istirahat.
+
+D. Debrief (Evaluasi Malam)
+   Form rutinitas yang diisi setiap malam sebelum tidur. Data yang di-track meliputi:
+   - Mood: Suasana hati secara umum (menggunakan pilihan Emoji).
+   - Level Energi: Skala energi fisik/mental lu hari itu.
+   - Pelajaran Penting: Insight atau "Lesson learned" apa yang lu dapet hari ini.
+   - Target Perbaikan: Komitmen lu buat ngebenerin kesalahan/meningkatkan performa di hari esok.
+
+E. Screen Time (Waktu Layar)
+   Tracker khusus buat mantau durasi pemakaian gadget lu.
+   - Total Durasi: Jam total layar nyala seharian.
+   - Top 3 Apps: Lu juga nyatet 3 aplikasi yang paling nyedot waktu lu beserta rincian durasi per aplikasinya (biar ketahuan aplikasi mana yang bikin kecanduan).
+
+F. Weekly Review (Review Mingguan)
+   Menu untuk melihat ringkasan pencapaian selama 1 minggu penuh. Berguna banget buat ngeliat tren produktivitas lu, apakah minggu ini lebih baik dari minggu kemarin, dan di area mana lu perlu waspada.

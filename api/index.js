@@ -221,7 +221,10 @@ app.get('/api/cron-notify', async (req, res) => {
     for (const sub of subs.rows) {
       const pushSub = { endpoint: sub.endpoint, keys: sub.keys };
       try {
-        await webpush.sendNotification(pushSub, payload);
+        await webpush.sendNotification(pushSub, payload, {
+          urgency: 'high',
+          TTL: 28800
+        });
       } catch (e) {
         if (e.statusCode === 410) {
           // Kalau browser udah uninstall notif, hapus dari database
