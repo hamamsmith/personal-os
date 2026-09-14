@@ -1,0 +1,81 @@
+<div class="page container" id="weekly">
+<!-- Stat Boxes -->
+<div class="summary-grid" style="margin-bottom: 16px;">
+<div class="summary-box"><div class="label">🏆 Kemenangan</div><div class="value accent" id="wkTotalWins">-</div></div>
+<div class="summary-box">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+<div class="label" id="wkRateLabel" style="margin-bottom:0;">📊 Overall Rate</div>
+<select id="wkRateFilter" onchange="changeWkRateFilter()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 2px 6px; border-radius: 6px; font-size: 10px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif; cursor:pointer;">
+<option value="overall">OVERALL</option>
+<option value="sukses">SUKSES</option>
+<option value="kontrol">KONTROL</option>
+</select>
+</div>
+<div class="value accent" id="wkRateDisplay" style="margin-top:8px;">-</div>
+</div>
+<div class="summary-box"><div class="label">⚡ Avg Energi</div><div class="value" id="wkAvgEnergy">-</div></div>
+<div class="summary-box"><div class="label" data-i18n="lbl_avg_screen">📱 Avg Screen</div><div class="value" id="wkAvgScreen">-</div></div>
+</div>
+<!-- Mood Tracker Minggu Ini -->
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+<h3 style="margin:0;">😊 Mood Minggu Ini</h3>
+<div id="wkMoodSummary" style="font-size:11px; color:var(--text-muted);">-</div>
+</div>
+<div id="wkMoodGrid" style="display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap:4px; text-align:center; margin-bottom:16px;"></div>
+<div id="wkMoodAnalysis" style="background: rgba(255,255,255,0.04); border-left: 3px solid #10B981; padding: 15px; border-radius: 4px 8px 8px 4px; font-size: 14px; line-height: 1.6; color: var(--text-main);">
+                    Sistem sedang menunggu data...
+                </div>
+</div>
+<!-- Pola Minggu Ini -->
+<div class="card">
+<h3 style="margin-bottom: 16px;">Pola Minggu Ini</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+<div style="flex: 1; min-width: 120px; background: rgba(239,68,68,0.1); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--danger-glow);">
+<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">💀 Godaan Terberat</div>
+<div id="wkWeakness" style="font-weight: 700; font-size: 14px; margin-top: 6px; color: #F87171; line-height: 1.3;">-</div>
+</div>
+<div style="flex: 1; min-width: 120px; background: rgba(16,185,129,0.1); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(16,185,129,0.3);">
+<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">⚡ Kebiasaan Terbaik</div>
+<div id="wkStrength" style="font-weight: 700; font-size: 14px; margin-top: 6px; color: var(--success); line-height: 1.3;">-</div>
+</div>
+</div>
+<div style="background: rgba(124,58,237,0.1); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(124,58,237,0.3); margin-bottom: 16px;">
+<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">💪 Terkendali Terbaik</div>
+<div id="wkBestControl" style="font-weight: 700; font-size: 14px; color: var(--primary); line-height: 1.3;">-</div>
+</div>
+<label>Analisa Minggu Ini</label>
+<div id="wkRootCause" style="background: rgba(255,255,255,0.04); border-left: 3px solid #F87171; padding: 15px; border-radius: 4px 8px 8px 4px; font-size: 14px; line-height: 1.6; color: var(--text-main); margin-bottom: 16px;">
+                    Sistem sedang menunggu data...
+                </div>
+<label>Rekomendasi Aksi Minggu Depan</label>
+<div id="wkActionPlan" style="background: rgba(255,255,255,0.04); border-left: 3px solid var(--primary); padding: 15px; border-radius: 4px 8px 8px 4px; font-size: 14px; line-height: 1.6; color: var(--text-main);">
+                    Sistem sedang menunggu data...
+                </div>
+</div>
+<!-- Habit Tracker Harian -->
+<div class="card">
+<h3 style="margin-bottom: 4px;">📅 Habit Tracker Minggu Ini</h3>
+<p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Konsistensi kebiasaan positif lu 7 hari terakhir</p>
+<div id="wkHabitTracker">
+<p style="font-size: 14px; color: var(--text-muted); text-align: center;">Belum ada habit positif yang direkam minggu ini.</p>
+</div>
+</div>
+<!-- Breakdown Battle Negatif -->
+<div class="card">
+<h3 style="margin-bottom: 4px;">🔴 Battle Negatif Minggu Ini</h3>
+<p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Godaan yang datang &amp; seberapa bisa lu kendalikan</p>
+<div id="wkNegatifBreakdown">
+<p style="font-size: 14px; color: var(--text-muted); text-align: center;">Tidak ada battle negatif minggu ini. Luar biasa! 🎉</p>
+</div>
+</div>
+<!-- Refleksi & Target Perbaikan -->
+<div class="card">
+<h3 style="margin-bottom: 4px;">🧠 Refleksi &amp; Target Perbaikan</h3>
+<p id="wkRefleksiSubtitle" style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Pola pikiran &amp; resolusi lu minggu ini</p>
+<div id="wkRepeatedFix" style="margin-bottom: 16px;"></div>
+<div id="wkLessonsList">
+<p style="font-size: 14px; color: var(--text-muted); text-align: center; margin-top: 10px;">Belum ada refleksi dari debrief minggu ini.</p>
+</div>
+</div>
+</div>

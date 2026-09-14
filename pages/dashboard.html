@@ -1,0 +1,55 @@
+<div class="page active container" id="dashboard">
+<div class="summary-grid">
+<div class="summary-box"><div class="label" data-i18n="lbl_self_control">🟢 Self Control</div><div class="value" id="valControlPoint">0</div><div id="valControlDetail" style="font-size:10px; color:var(--text-muted); margin-top:2px;"><span data-i18n="lbl_win_lose">0 Win | 0 Lose</span></div></div>
+<div class="summary-box"><div class="label" data-i18n="lbl_consistency">🔵 Consistency</div><div class="value accent" id="valConsistencyPoint">0</div><div style="font-size:10px; color:var(--text-muted); margin-top:2px;"><span data-i18n="lbl_total_log">Total Logs</span></div></div>
+<div class="summary-box">
+<div style="display:flex; justify-content:space-between; align-items:center;">
+<div class="label" data-i18n="lbl_success_rate">📊 Success Rate</div>
+</div>
+<div class="value success" id="valRateDisplay">0%</div>
+</div>
+<div class="summary-box">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+<div class="label" data-i18n="lbl_avg_screen">📱 Avg Screen</div>
+<select id="screenFilter" onchange="changeScreenFilter()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 2px 6px; border-radius: 6px; font-size: 10px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif; cursor:pointer;">
+<option data-i18n="opt_1week" value="7">1 Week</option>
+<option data-i18n="opt_1month" value="30">1 Month</option>
+<option data-i18n="opt_all" value="all">All Time</option>
+</select>
+</div>
+<div class="value" id="valAvgScreen">-</div>
+</div>
+</div>
+<div class="card" style="padding: 14px 16px; margin-bottom: 0;">
+<div style="display:flex; gap:16px; flex-wrap: wrap; align-items:center;">
+<div style="flex:1; min-width:120px;">
+<div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;"><span data-i18n="lbl_freq_trigger">⚡ MOST FREQUENT TRIGGER</span></div>
+<div id="valMostFrequent" style="font-size:13px; color:var(--text-title); font-weight:600;">-</div>
+</div>
+<div style="flex:1; min-width:120px;">
+<div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;"><span data-i18n="lbl_rate_small">🎯 SUCCESS RATE</span></div>
+<div id="valRateDisplaySmall" style="font-size:13px; color:var(--text-title); font-weight:600;">-</div>
+</div>
+</div>
+</div>
+<div class="card">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+<h3 style="margin: 0;"><span data-i18n="lbl_win_vs_lose">✅ Win vs ❌ Lose</span></h3>
+<div style="display: flex; align-items: center; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px 8px; border: 1px solid var(--glass-border);">
+<button onclick="shiftWeek(-1)" style="cursor:pointer; padding:4px 10px; color:var(--primary); font-size:16px; background:none; border:none; line-height:1;">◄</button>
+<span id="chartWeekLabel" style="font-size:11px; font-weight:600; margin:0 8px; color:var(--text-muted); text-transform:uppercase; min-width:80px; text-align:center;">Loading...</span>
+<button id="btnNextWeek" onclick="shiftWeek(1)" style="cursor:pointer; padding:4px 10px; color:var(--primary); font-size:16px; background:none; border:none; line-height:1;">►</button>
+</div>
+</div>
+<div class="chart-container"><canvas id="barChartWinLose"></canvas></div>
+</div>
+<div class="card">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+<h3 style="margin: 0;"><span data-i18n="lbl_freq_trigger_chart">Most Frequent Triggers</span></h3>
+<select id="filterBattleFreq" onchange="filterBattleFreqChanged()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 4px 8px; border-radius: 8px; font-size: 11px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif;">
+<option data-i18n="opt_1week" value="7">1 Week</option><option data-i18n="opt_1month" value="30">1 Month</option><option data-i18n="opt_all" value="all">All Time</option>
+</select>
+</div>
+<div class="chart-container"><canvas id="barChartBattle"></canvas></div>
+</div>
+</div>

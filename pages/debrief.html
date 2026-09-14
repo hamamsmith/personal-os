@@ -1,0 +1,48 @@
+<div class="page container" id="debrief">
+<div class="card" style="padding: 16px; margin-bottom: 20px;">
+<div id="latestEnergyCard" onclick="toggleEnergyHistory()" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(0.98)'" style="cursor:pointer; transition: 0.2s;">
+<p style="font-size: 13px; color: var(--text-muted); text-align: center;">Memuat data...</p>
+</div>
+<div id="debriefEnergyTimeline" style="display: none; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--glass-border);">
+</div>
+</div>
+<div class="card" id="debriefForm">
+<label data-i18n="lbl_date">Date (Today or Yesterday)</label>
+<div class="picker-container" style="margin-bottom: 20px;">
+<select id="debriefDatePicker" style="font-size: 15px;"></select>
+<span class="lbl">▼</span>
+</div>
+<label data-i18n="lbl_mood">General Mood?</label>
+<div class="emoji-grid" id="mood-grid">
+<div class="emoji-btn" onclick="selectRadio(this, 'mood')">😞</div>
+<div class="emoji-btn" onclick="selectRadio(this, 'mood')">😕</div>
+<div class="emoji-btn" onclick="selectRadio(this, 'mood')">😐</div>
+<div class="emoji-btn" onclick="selectRadio(this, 'mood')">🙂</div>
+<div class="emoji-btn" onclick="selectRadio(this, 'mood')">😁</div>
+</div>
+<input id="moodVal" type="hidden"/>
+<label data-i18n="lbl_energy">Energy Level (1-5)</label>
+<div class="picker-container" style="margin-bottom: 20px;">
+<select id="energyVal" style="font-size: 15px;">
+<option data-i18n="opt_energy_default" disabled="" selected="" value="">How energetic are you today?</option>
+<option data-i18n="opt_energy_1" value="1">1 - Completely Drained 🪫</option>
+<option data-i18n="opt_energy_2" value="2">2 - Low Battery 🔋</option>
+<option data-i18n="opt_energy_3" value="3">3 - Sufficient 🔋</option>
+<option data-i18n="opt_energy_4" value="4">4 - Energetic 🙂</option>
+<option data-i18n="opt_energy_5" value="5">5 - On Fire ⚡</option>
+</select>
+<span class="lbl">▼</span>
+</div>
+<label data-i18n="lbl_lesson">One important lesson today</label>
+<textarea data-i18n="ph_lesson" id="pelajaranVal" placeholder="What did you realize today?" style="min-height: 80px;"></textarea>
+<label data-i18n="lbl_improve">What to improve tomorrow?</label>
+<textarea data-i18n="ph_improve" id="perbaikanVal" placeholder="Target for tomorrow..." style="min-height: 80px;"></textarea>
+<button class="btn-submit" data-i18n="btn_finish_day" id="btnSelesaiHari" onclick="submitDebrief()">FINISH DAY</button>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; margin-top: 40px;">
+<h3><span data-i18n="lbl_prev_history">Previous History</span></h3>
+</div>
+<div id="debriefHistoryList">
+<p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;"><span data-i18n="empty_debrief">No debrief records yet.</span></p>
+</div>
+</div>

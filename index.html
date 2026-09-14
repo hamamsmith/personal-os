@@ -1,411 +1,98 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Personal OS</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Personal OS</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Outfit:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="css/style.css" rel="stylesheet"/>
 </head>
 <body>
-    
-    <div class="ambient-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
-
-    <!-- LANDING SCREEN -->
-    <div id="landingScreen">
-        <div class="landing-content">
-            <h1 class="landing-title">Elevate Your Routine.</h1>
-            <p class="landing-subtitle">A professional, distraction-free environment to track habits, take control, and debrief your life.</p>
-            <div class="landing-features">
-                <div class="feature-pill">✦ Habit Tracker</div>
-                <div class="feature-pill">✦ Daily Debrief</div>
-                <div class="feature-pill">✦ Analytics</div>
-            </div>
-            <button class="btn-enter" onclick="showLoginScreen()">ENTER SYSTEM</button>
-        </div>
-    </div>
-
-    <!-- LOGIN SCREEN -->
-    <div id="loginScreen">
-        <form class="login-box" onsubmit="loginOS(event)">
-            <div class="login-logo">Personal<span>OS</span></div>
-            <div class="login-subtitle">Secured Access Interface</div>
-            <input type="text" class="login-input" placeholder="Username" required>
-            <input type="password" class="login-input" placeholder="Password" required>
-            <button type="submit" class="btn-submit" style="margin-top: 10px;">ACCESS OS</button>
-        </form>
-    </div>
-
-    
-
-    <header class="topbar">
-        <div class="hamburger" style="margin-right:0;" onclick="toggleSidebar()">☰</div>
-        <div class="topbar-title" id="topbar-title" style="position: absolute; left: 50%; transform: translateX(-50%);" data-i18n="dashboard_title">Dashboard.</div>
-        <div id="headerBell" onclick="openNotifModal()" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.2);" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1.05)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='scale(1)';">
-            <span style="font-size: 18px; filter: drop-shadow(0 2px 4px rgba(124,58,237,0.5));">🔔</span>
-        </div>
-        <div id="langToggleBtn" onclick="toggleLanguage()" style="cursor:pointer; font-weight:700; color:var(--text-muted); margin-left: auto; margin-right: 20px; font-size: 14px; background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--glass-border);">EN</div>
-    </header>
-    <div id="toast">✅ Data berhasil disimpan!</div>
-
-    <div class="sidebar-wrapper" id="sidebar">
-        <nav class="sidebar">
-            <a class="nav-item active" onclick="navTo('dashboard', 'Dashboard.', this)"><span class="nav-icon">✨</span><span data-i18n="nav_home">Home</span></a>
-            <a class="nav-item" onclick="navTo('battle', 'Take Control.', this)"><span class="nav-icon">⚔️</span><span data-i18n="nav_control">Control</span></a>
-            <a class="nav-item" onclick="navTo('braindump', 'Brain Dump.', this)"><span class="nav-icon">🧠</span><span data-i18n="nav_dump">Dump</span></a>
-            <a class="nav-item" onclick="navTo('debrief', 'Debrief Malam.', this)"><span class="nav-icon">🌙</span><span data-i18n="nav_debrief">Debrief</span></a>
-            <a class="nav-item" onclick="navTo('screentime', 'Screen Time.', this)"><span class="nav-icon">📱</span><span data-i18n="nav_screen">Screen</span></a>
-            <a class="nav-item" onclick="navTo('weekly', 'Weekly Review.', this)"><span class="nav-icon">🗓️</span><span data-i18n="nav_weekly">Weekly</span></a>
-            <a class="nav-item" onclick="logoutOS()"><span class="nav-icon">🚪</span><span data-i18n="nav_logout">Logout</span></a>
-        </nav>
-    </div>
-
-    <main class="main-content" id="main-content">
-        <div id="dashboard" class="page active container">
-            <div class="summary-grid">
-                <div class="summary-box"><div class="label" data-i18n="lbl_self_control">🟢 Self Control</div><div class="value" id="valControlPoint">0</div><div style="font-size:10px; color:var(--text-muted); margin-top:2px;" id="valControlDetail"><span data-i18n="lbl_win_lose">0 Win | 0 Lose</span></div></div>
-                <div class="summary-box"><div class="label" data-i18n="lbl_consistency">🔵 Consistency</div><div class="value accent" id="valConsistencyPoint">0</div><div style="font-size:10px; color:var(--text-muted); margin-top:2px;"><span data-i18n="lbl_total_log">Total Logs</span></div></div>
-                <div class="summary-box">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div class="label" data-i18n="lbl_success_rate">📊 Success Rate</div>
-                    </div>
-                    <div class="value success" id="valRateDisplay">0%</div>
-                </div>
-                <div class="summary-box">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                        <div class="label" data-i18n="lbl_avg_screen">📱 Avg Screen</div>
-                        <select id="screenFilter" onchange="changeScreenFilter()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 2px 6px; border-radius: 6px; font-size: 10px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif; cursor:pointer;">
-                            <option value="7" data-i18n="opt_1week">1 Week</option>
-                            <option value="30" data-i18n="opt_1month">1 Month</option>
-                            <option value="all" data-i18n="opt_all">All Time</option>
-                        </select>
-                    </div>
-                    <div class="value" id="valAvgScreen">-</div>
-                </div>
-            </div>
-
-            <div class="card" style="padding: 14px 16px; margin-bottom: 0;">
-                <div style="display:flex; gap:16px; flex-wrap: wrap; align-items:center;">
-                    <div style="flex:1; min-width:120px;">
-                        <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;"><span data-i18n="lbl_freq_trigger">⚡ MOST FREQUENT TRIGGER</span></div>
-                        <div style="font-size:13px; color:var(--text-title); font-weight:600;" id="valMostFrequent">-</div>
-                    </div>
-                    <div style="flex:1; min-width:120px;">
-                        <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:4px;"><span data-i18n="lbl_rate_small">🎯 SUCCESS RATE</span></div>
-                        <div style="font-size:13px; color:var(--text-title); font-weight:600;" id="valRateDisplaySmall">-</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="margin: 0;"><span data-i18n="lbl_win_vs_lose">✅ Win vs ❌ Lose</span></h3>
-                    <div style="display: flex; align-items: center; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px 8px; border: 1px solid var(--glass-border);">
-                        <button onclick="shiftWeek(-1)" style="cursor:pointer; padding:4px 10px; color:var(--primary); font-size:16px; background:none; border:none; line-height:1;">◄</button>
-                        <span id="chartWeekLabel" style="font-size:11px; font-weight:600; margin:0 8px; color:var(--text-muted); text-transform:uppercase; min-width:80px; text-align:center;">Loading...</span>
-                        <button id="btnNextWeek" onclick="shiftWeek(1)" style="cursor:pointer; padding:4px 10px; color:var(--primary); font-size:16px; background:none; border:none; line-height:1;">►</button>
-                    </div>
-                </div>
-                <div class="chart-container"><canvas id="barChartWinLose"></canvas></div>
-            </div>
-            
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h3 style="margin: 0;"><span data-i18n="lbl_freq_trigger_chart">Most Frequent Triggers</span></h3>
-                    <select id="filterBattleFreq" onchange="filterBattleFreqChanged()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 4px 8px; border-radius: 8px; font-size: 11px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif;">
-                        <option value="7" data-i18n="opt_1week">1 Week</option><option value="30" data-i18n="opt_1month">1 Month</option><option value="all" data-i18n="opt_all">All Time</option>
-                    </select>
-                </div>
-                <div class="chart-container"><canvas id="barChartBattle"></canvas></div>
-            </div>
-        </div>
-
-        <!-- BATTLE PAGE (LIST VIEW) -->
-        <div id="battle" class="page container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 data-i18n="lbl_today">Today</h3>
-                <button class="btn-submit" style="width: auto; padding: 10px 20px; margin-top: 0; font-size: 14px;" data-i18n="btn_add" onclick="openBattleModal()">+ Add</button>
-            </div>
-            <div id="battleTodayList">
-                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;">Loading...</p>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 16px;">
-                <h3><span data-i18n="lbl_prev_history">Previous History</span></h3>
-            </div>
-            <div id="battleHistoryList">
-                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;"><span data-i18n="empty_battle">No battle records yet.</span></p>
-            </div>
-        </div>
-
-        <!-- BRAIN DUMP PAGE -->
-        <div id="braindump" class="page container">
-            <div class="card">
-                <label data-i18n="lbl_empty_mind">Clear Your Mind</label>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;"><span data-i18n="desc_empty_mind">Write down whatever is bothering you to clear your head.</span></p>
-                <textarea id="dumpContent" style="min-height: 250px; font-size: 18px;" placeholder="I feel... / I\'m thinking about..." data-i18n="ph_dump"></textarea>
-                <button class="btn-submit" data-i18n="btn_release" onclick="submitBrainDump()">RELEASE THOUGHTS</button>
-            </div>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; margin-top: 40px;">
-                <h3><span data-i18n="lbl_prev_history">Previous History</span></h3>
-            </div>
-            <div id="brainDumpHistoryList">
-                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 30px;"><span data-i18n="empty_dump">No brain dump records yet.</span></p>
-            </div>
-        </div>
-
-        <!-- DEBRIEF PAGE -->
-        <div id="debrief" class="page container">
-            <div class="card" style="padding: 16px; margin-bottom: 20px;">
-                <div id="latestEnergyCard" onclick="toggleEnergyHistory()" style="cursor:pointer; transition: 0.2s;" onmouseover="this.style.transform='scale(0.98)'" onmouseout="this.style.transform='scale(1)'">
-                    <p style="font-size: 13px; color: var(--text-muted); text-align: center;">Memuat data...</p>
-                </div>
-                
-                <div id="debriefEnergyTimeline" style="display: none; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--glass-border);">
-                </div>
-            </div>
-            
-            <div class="card" id="debriefForm">
-                <label data-i18n="lbl_date">Date (Today or Yesterday)</label>
-                <div class="picker-container" style="margin-bottom: 20px;">
-                    <select id="debriefDatePicker" style="font-size: 15px;"></select>
-                    <span class="lbl">▼</span>
-                </div>
-                <label data-i18n="lbl_mood">General Mood?</label>
-                <div class="emoji-grid" id="mood-grid">
-                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">😞</div>
-                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">😕</div>
-                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">😐</div>
-                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">🙂</div>
-                    <div class="emoji-btn" onclick="selectRadio(this, 'mood')">😁</div>
-                </div>
-                <input type="hidden" id="moodVal">
-                <label data-i18n="lbl_energy">Energy Level (1-5)</label>
-                <div class="picker-container" style="margin-bottom: 20px;">
-                    <select id="energyVal" style="font-size: 15px;">
-                        <option value="" disabled selected data-i18n="opt_energy_default">How energetic are you today?</option>
-                        <option value="1" data-i18n="opt_energy_1">1 - Completely Drained 🪫</option>
-                        <option value="2" data-i18n="opt_energy_2">2 - Low Battery 🔋</option>
-                        <option value="3" data-i18n="opt_energy_3">3 - Sufficient 🔋</option>
-                        <option value="4" data-i18n="opt_energy_4">4 - Energetic 🙂</option>
-                        <option value="5" data-i18n="opt_energy_5">5 - On Fire ⚡</option>
-                    </select>
-                    <span class="lbl">▼</span>
-                </div>
-                <label data-i18n="lbl_lesson">One important lesson today</label>
-                <textarea id="pelajaranVal" placeholder="What did you realize today?" data-i18n="ph_lesson" style="min-height: 80px;"></textarea>
-                <label data-i18n="lbl_improve">What to improve tomorrow?</label>
-                <textarea id="perbaikanVal" placeholder="Target for tomorrow..." data-i18n="ph_improve" style="min-height: 80px;"></textarea>
-                <button class="btn-submit" id="btnSelesaiHari" data-i18n="btn_finish_day" onclick="submitDebrief()">FINISH DAY</button>
-            </div>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; margin-top: 40px;">
-                <h3><span data-i18n="lbl_prev_history">Previous History</span></h3>
-            </div>
-            <div id="debriefHistoryList">
-                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;"><span data-i18n="empty_debrief">No debrief records yet.</span></p>
-            </div>
-        </div>
-        
-        <!-- SCREEN TIME PAGE -->
-        <div id="screentime" class="page container">
-            <div class="card">
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;"><span data-i18n="desc_screen">Log your screen time today to stay mindful of your digital consumption.</span></p>
-                <label data-i18n="lbl_date">Date (Today or Yesterday)</label>
-                <div class="picker-container" style="margin-bottom: 20px;">
-                    <select id="screenDatePicker" style="font-size: 15px;"></select>
-                    <span class="lbl">▼</span>
-                </div>
-                <label data-i18n="lbl_total_duration">Total Duration</label>
-                <div class="time-picker-row">
-                    <div class="picker-container"><select id="totJam"></select><span class="lbl">Jam</span></div>
-                    <div class="picker-container"><select id="totMenit"></select><span class="lbl">Mnt</span></div>
-                </div>
-                <label style="margin-top:20px;" data-i18n="lbl_top_apps">Top 3 Most Used Apps</label>
-                <div class="app-row">
-                    <input type="text" id="app1Name" placeholder="App Name" data-i18n="ph_app_name">
-                    <div class="picker-container"><select id="app1Jam"></select><span class="lbl">Jam</span></div>
-                    <div class="picker-container"><select id="app1Menit"></select><span class="lbl">Mnt</span></div>
-                </div>
-                <div class="app-row">
-                    <input type="text" id="app2Name" placeholder="App Name" data-i18n="ph_app_name">
-                    <div class="picker-container"><select id="app2Jam"></select><span class="lbl">Jam</span></div>
-                    <div class="picker-container"><select id="app2Menit"></select><span class="lbl">Mnt</span></div>
-                </div>
-                <div class="app-row">
-                    <input type="text" id="app3Name" placeholder="App Name" data-i18n="ph_app_name">
-                    <div class="picker-container"><select id="app3Jam"></select><span class="lbl">Jam</span></div>
-                    <div class="picker-container"><select id="app3Menit"></select><span class="lbl">Mnt</span></div>
-                </div>
-                <button class="btn-submit" id="btnSimpanScreen" style="margin-top: 20px;" data-i18n="btn_save_screen" onclick="submitScreenTime()">SAVE SCREEN TIME</button>
-            </div>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; margin-top: 40px;">
-                <h3><span data-i18n="lbl_prev_history">Previous History</span></h3>
-            </div>
-            <div id="screenHistoryList">
-                <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;"><span data-i18n="empty_screen">No screen time records yet.</span></p>
-            </div>
-        </div>
-
-        <!-- WEEKLY REVIEW PAGE -->
-        <div id="weekly" class="page container">
-            <!-- Stat Boxes -->
-            <div class="summary-grid" style="margin-bottom: 16px;">
-                <div class="summary-box"><div class="label">🏆 Kemenangan</div><div class="value accent" id="wkTotalWins">-</div></div>
-                <div class="summary-box">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
-                        <div class="label" id="wkRateLabel" style="margin-bottom:0;">📊 Overall Rate</div>
-                        <select id="wkRateFilter" onchange="changeWkRateFilter()" style="background: rgba(0,0,0,0.3); color: var(--text-muted); border: 1px solid var(--glass-border); padding: 2px 6px; border-radius: 6px; font-size: 10px; outline: none; font-weight: 600; font-family: 'Inter', sans-serif; cursor:pointer;">
-                            <option value="overall">OVERALL</option>
-                            <option value="sukses">SUKSES</option>
-                            <option value="kontrol">KONTROL</option>
-                        </select>
-                    </div>
-                    <div class="value accent" id="wkRateDisplay" style="margin-top:8px;">-</div>
-                </div>
-                <div class="summary-box"><div class="label">⚡ Avg Energi</div><div class="value" id="wkAvgEnergy">-</div></div>
-                <div class="summary-box"><div class="label" data-i18n="lbl_avg_screen">📱 Avg Screen</div><div class="value" id="wkAvgScreen">-</div></div>
-            </div>
-
-            <!-- Mood Tracker Minggu Ini -->
-            <div class="card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <h3 style="margin:0;">😊 Mood Minggu Ini</h3>
-                    <div style="font-size:11px; color:var(--text-muted);" id="wkMoodSummary">-</div>
-                </div>
-                <div id="wkMoodGrid" style="display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap:4px; text-align:center; margin-bottom:16px;"></div>
-                <div style="background: rgba(255,255,255,0.04); border-left: 3px solid #10B981; padding: 15px; border-radius: 4px 8px 8px 4px; font-size: 14px; line-height: 1.6; color: var(--text-main);" id="wkMoodAnalysis">
-                    Sistem sedang menunggu data...
-                </div>
-            </div>
-
-            <!-- Pola Minggu Ini -->
-            <div class="card">
-                <h3 style="margin-bottom: 16px;">Pola Minggu Ini</h3>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
-                    <div style="flex: 1; min-width: 120px; background: rgba(239,68,68,0.1); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--danger-glow);">
-                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">💀 Godaan Terberat</div>
-                        <div style="font-weight: 700; font-size: 14px; margin-top: 6px; color: #F87171; line-height: 1.3;" id="wkWeakness">-</div>
-                    </div>
-                    <div style="flex: 1; min-width: 120px; background: rgba(16,185,129,0.1); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(16,185,129,0.3);">
-                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">⚡ Kebiasaan Terbaik</div>
-                        <div style="font-weight: 700; font-size: 14px; margin-top: 6px; color: var(--success); line-height: 1.3;" id="wkStrength">-</div>
-                    </div>
-                </div>
-                <div style="background: rgba(124,58,237,0.1); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(124,58,237,0.3); margin-bottom: 16px;">
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">💪 Terkendali Terbaik</div>
-                    <div style="font-weight: 700; font-size: 14px; color: var(--primary); line-height: 1.3;" id="wkBestControl">-</div>
-                </div>
-
-                <label>Analisa Minggu Ini</label>
-                <div style="background: rgba(255,255,255,0.04); border-left: 3px solid #F87171; padding: 15px; border-radius: 4px 8px 8px 4px; font-size: 14px; line-height: 1.6; color: var(--text-main); margin-bottom: 16px;" id="wkRootCause">
-                    Sistem sedang menunggu data...
-                </div>
-
-                <label>Rekomendasi Aksi Minggu Depan</label>
-                <div style="background: rgba(255,255,255,0.04); border-left: 3px solid var(--primary); padding: 15px; border-radius: 4px 8px 8px 4px; font-size: 14px; line-height: 1.6; color: var(--text-main);" id="wkActionPlan">
-                    Sistem sedang menunggu data...
-                </div>
-            </div>
-
-            <!-- Habit Tracker Harian -->
-            <div class="card">
-                <h3 style="margin-bottom: 4px;">📅 Habit Tracker Minggu Ini</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Konsistensi kebiasaan positif lu 7 hari terakhir</p>
-                <div id="wkHabitTracker">
-                    <p style="font-size: 14px; color: var(--text-muted); text-align: center;">Belum ada habit positif yang direkam minggu ini.</p>
-                </div>
-            </div>
-
-            <!-- Breakdown Battle Negatif -->
-            <div class="card">
-                <h3 style="margin-bottom: 4px;">🔴 Battle Negatif Minggu Ini</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Godaan yang datang & seberapa bisa lu kendalikan</p>
-                <div id="wkNegatifBreakdown">
-                    <p style="font-size: 14px; color: var(--text-muted); text-align: center;">Tidak ada battle negatif minggu ini. Luar biasa! 🎉</p>
-                </div>
-            </div>
-
-            <!-- Refleksi & Target Perbaikan -->
-            <div class="card">
-                <h3 style="margin-bottom: 4px;">🧠 Refleksi & Target Perbaikan</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;" id="wkRefleksiSubtitle">Pola pikiran & resolusi lu minggu ini</p>
-                <div id="wkRepeatedFix" style="margin-bottom: 16px;"></div>
-                <div id="wkLessonsList">
-                    <p style="font-size: 14px; color: var(--text-muted); text-align: center; margin-top: 10px;">Belum ada refleksi dari debrief minggu ini.</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-
-    <!-- TAKE CONTROL FORM MODAL -->
-    <div class="modal-overlay" id="battleModal">
-        <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin-bottom: 0;">Take Control</h3>
-                <span onclick="closeBattleModal()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">&times;</span>
-            </div>
-
-            <!-- Step 1: Tanggal -->
-            <label>1. Tanggal (Hari ini/Kemarin)</label>
-            <div class="picker-container" style="margin-bottom: 20px;">
-                <select id="battleDatePicker" style="font-size: 15px;"></select>
-                <span class="lbl">▼</span>
-            </div>
-
-            <!-- Step 2: Trigger -->
-            <label>2. Pilih Trigger</label>
-            <div class="picker-container" style="margin-bottom: 10px;">
-                <select id="battleTypeVal" onchange="checkCustomTrigger()" style="font-size: 15px;">
-                    <option value="" disabled selected>Pilih trigger...</option>
-                </select>
-                <span class="lbl">▼</span>
-            </div>
-            <input type="text" id="customTriggerInput" placeholder="Ketik trigger lu di sini..." style="display:none; margin-bottom: 20px; font-size: 15px; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: var(--text-main); width: 100%; box-sizing: border-box; outline: none;">
-            <input type="hidden" id="battleKategoriVal" value="Lainnya">
-
-            <!-- Step 3: Hasil -->
-            <label>3. Hasil</label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                <div class="radio-btn" onclick="selectRadio(this, 'battleOutcome')">✅ Berhasil</div>
-                <div class="radio-btn" onclick="selectRadio(this, 'battleOutcome')">❌ Gagal</div>
-            </div>
-            <input type="hidden" id="battleOutcomeVal">
-
-            <!-- Step 4: Catatan -->
-            <label>4. Catatan (Opsional)</label>
-            <textarea id="battleNote" placeholder="Tulis konteks singkat..."></textarea>
-            <button class="btn-submit" onclick="submitBattle()">SIMPAN</button>
-        </div>
-    </div>
-
-    <!-- BATTLE DETAIL POPUP -->
-    <div class="modal-overlay" id="battleDetailModal" onclick="if(event.target===this)closeBattleDetail()">
-        <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <div>
-                    <h3 style="margin-bottom: 4px;" id="battleDetailTitle">-</h3>
-                    <p style="font-size: 12px; color: var(--text-muted);" id="battleDetailSub">-</p>
-                </div>
-                <span onclick="closeBattleDetail()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">&times;</span>
-            </div>
-            <div id="battleDetailList" style="max-height: 60vh; overflow-y: auto;"></div>
-        </div>
-    </div>
-
-    <!-- NOTIF MODAL -->
-    <div class="modal-overlay" id="notifModal" onclick="if(event.target===this)closeNotifModal()">
-        <!-- Isi modal digenerate lewat JS biar dinamis -->
-    </div>
-
-    <!-- JAVASCRIPT -->
-    
-    <script src="js/i18n.js"></script>
-    <script src="js/app.js"></script>
+<div class="ambient-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<!-- LANDING SCREEN -->
+<div id="landingScreenContainer"></div>
+<!-- LOGIN SCREEN -->
+<div id="loginScreenContainer"></div>
+<header class="topbar">
+<div class="hamburger" onclick="toggleSidebar()" style="margin-right:0;">☰</div>
+<div class="topbar-title" data-i18n="dashboard_title" id="topbar-title" style="position: absolute; left: 50%; transform: translateX(-50%);">Dashboard.</div>
+<div id="headerBell" onclick="openNotifModal()" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='scale(1)';" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1.05)';" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+<span style="font-size: 18px; filter: drop-shadow(0 2px 4px rgba(124,58,237,0.5));">🔔</span>
+</div>
+<div id="langToggleBtn" onclick="toggleLanguage()" style="cursor:pointer; font-weight:700; color:var(--text-muted); margin-left: auto; margin-right: 20px; font-size: 14px; background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--glass-border);">EN</div>
+</header>
+<div id="toast">✅ Data berhasil disimpan!</div>
+<div class="sidebar-wrapper" id="sidebar">
+<nav class="sidebar">
+<a class="nav-item active" onclick="navTo('dashboard', 'Dashboard.', this)"><span class="nav-icon">✨</span><span data-i18n="nav_home">Home</span></a>
+<a class="nav-item" onclick="navTo('battle', 'Take Control.', this)"><span class="nav-icon">⚔️</span><span data-i18n="nav_control">Control</span></a>
+<a class="nav-item" onclick="navTo('braindump', 'Brain Dump.', this)"><span class="nav-icon">🧠</span><span data-i18n="nav_dump">Dump</span></a>
+<a class="nav-item" onclick="navTo('debrief', 'Debrief Malam.', this)"><span class="nav-icon">🌙</span><span data-i18n="nav_debrief">Debrief</span></a>
+<a class="nav-item" onclick="navTo('screentime', 'Screen Time.', this)"><span class="nav-icon">📱</span><span data-i18n="nav_screen">Screen</span></a>
+<a class="nav-item" onclick="navTo('weekly', 'Weekly Review.', this)"><span class="nav-icon">🗓️</span><span data-i18n="nav_weekly">Weekly</span></a>
+<a class="nav-item" onclick="logoutOS()"><span class="nav-icon">🚪</span><span data-i18n="nav_logout">Logout</span></a>
+</nav>
+</div>
+<main class="main-content" id="main-content"></main>
+<!-- TAKE CONTROL FORM MODAL -->
+<div class="modal-overlay" id="battleModal">
+<div class="modal-content">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+<h3 style="margin-bottom: 0;">Take Control</h3>
+<span onclick="closeBattleModal()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">×</span>
+</div>
+<!-- Step 1: Tanggal -->
+<label>1. Tanggal (Hari ini/Kemarin)</label>
+<div class="picker-container" style="margin-bottom: 20px;">
+<select id="battleDatePicker" style="font-size: 15px;"></select>
+<span class="lbl">▼</span>
+</div>
+<!-- Step 2: Trigger -->
+<label>2. Pilih Trigger</label>
+<div class="picker-container" style="margin-bottom: 10px;">
+<select id="battleTypeVal" onchange="checkCustomTrigger()" style="font-size: 15px;">
+<option disabled="" selected="" value="">Pilih trigger...</option>
+</select>
+<span class="lbl">▼</span>
+</div>
+<input id="customTriggerInput" placeholder="Ketik trigger lu di sini..." style="display:none; margin-bottom: 20px; font-size: 15px; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: var(--text-main); width: 100%; box-sizing: border-box; outline: none;" type="text"/>
+<input id="battleKategoriVal" type="hidden" value="Lainnya"/>
+<!-- Step 3: Hasil -->
+<label>3. Hasil</label>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+<div class="radio-btn" onclick="selectRadio(this, 'battleOutcome')">✅ Berhasil</div>
+<div class="radio-btn" onclick="selectRadio(this, 'battleOutcome')">❌ Gagal</div>
+</div>
+<input id="battleOutcomeVal" type="hidden"/>
+<!-- Step 4: Catatan -->
+<label>4. Catatan (Opsional)</label>
+<textarea id="battleNote" placeholder="Tulis konteks singkat..."></textarea>
+<button class="btn-submit" onclick="submitBattle()">SIMPAN</button>
+</div>
+</div>
+<!-- BATTLE DETAIL POPUP -->
+<div class="modal-overlay" id="battleDetailModal" onclick="if(event.target===this)closeBattleDetail()">
+<div class="modal-content">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+<div>
+<h3 id="battleDetailTitle" style="margin-bottom: 4px;">-</h3>
+<p id="battleDetailSub" style="font-size: 12px; color: var(--text-muted);">-</p>
+</div>
+<span onclick="closeBattleDetail()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">×</span>
+</div>
+<div id="battleDetailList" style="max-height: 60vh; overflow-y: auto;"></div>
+</div>
+</div>
+<!-- NOTIF MODAL -->
+<div class="modal-overlay" id="notifModal" onclick="if(event.target===this)closeNotifModal()">
+<!-- Isi modal digenerate lewat JS biar dinamis -->
+</div>
+<!-- JAVASCRIPT -->
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

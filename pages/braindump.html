@@ -1,0 +1,14 @@
+<div class="page container" id="braindump">
+<div class="card">
+<label data-i18n="lbl_empty_mind">Clear Your Mind</label>
+<p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;"><span data-i18n="desc_empty_mind">Write down whatever is bothering you to clear your head.</span></p>
+<textarea data-i18n="ph_dump" id="dumpContent" placeholder="I feel... / I\'m thinking about..." style="min-height: 250px; font-size: 18px;"></textarea>
+<button class="btn-submit" data-i18n="btn_release" onclick="submitBrainDump()">RELEASE THOUGHTS</button>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; margin-top: 40px;">
+<h3><span data-i18n="lbl_prev_history">Previous History</span></h3>
+</div>
+<div id="brainDumpHistoryList">
+<p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 30px;"><span data-i18n="empty_dump">No brain dump records yet.</span></p>
+</div>
+</div>

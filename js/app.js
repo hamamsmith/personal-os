@@ -1,3 +1,54 @@
+
+async function loadPages() {
+    const pages = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
+    const main = document.getElementById('main-content');
+    
+    // Load main pages
+    for (const page of pages) {
+        try {
+            const res = await fetch(`pages/${page}.html`);
+            const html = await res.text();
+            main.innerHTML += html;
+        } catch (e) {
+            console.error("Failed to load page: " + page);
+        }
+    }
+    
+    // Load Landing and Login Screens
+    try {
+        const landingRes = await fetch(`pages/landingScreen.html`);
+        document.getElementById('landingScreenContainer').outerHTML = await landingRes.text();
+        
+        const loginRes = await fetch(`pages/loginScreen.html`);
+        document.getElementById('loginScreenContainer').outerHTML = await loginRes.text();
+    } catch (e) {}
+
+    // Apply i18n to newly loaded elements
+    const savedLang = localStorage.getItem('lang') || 'en';
+    setLanguage(savedLang);
+    
+    // Check initial route
+    const hash = window.location.hash.substring(1);
+    if(hash && pages.includes(hash)) {
+        const btn = document.querySelector(`.nav-item[onclick*="${hash}"]`);
+        if(btn) navTo(hash, btn.querySelector('span:last-child').innerText, btn, false);
+    }
+}
+
+// Ensure loadPages is called on load
+document.addEventListener('DOMContentLoaded', loadPages);
+
+// Handle History API Popstate
+window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.pageId) {
+        const btn = document.querySelector(`.nav-item[onclick*="${e.state.pageId}"]`);
+        navTo(e.state.pageId, e.state.title, btn, false);
+    } else {
+        const dashboardBtn = document.querySelector(`.nav-item[onclick*="dashboard"]`);
+        if(dashboardBtn) navTo('dashboard', 'Dashboard.', dashboardBtn, false);
+    }
+});
+
 // Prevent flicker by applying class immediately before rendering UI
         if (localStorage.getItem('isLoggedIn') !== 'true') {
             document.body.classList.add('locked');

@@ -1,0 +1,38 @@
+<div class="page container" id="screentime">
+<div class="card">
+<p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;"><span data-i18n="desc_screen">Log your screen time today to stay mindful of your digital consumption.</span></p>
+<label data-i18n="lbl_date">Date (Today or Yesterday)</label>
+<div class="picker-container" style="margin-bottom: 20px;">
+<select id="screenDatePicker" style="font-size: 15px;"></select>
+<span class="lbl">▼</span>
+</div>
+<label data-i18n="lbl_total_duration">Total Duration</label>
+<div class="time-picker-row">
+<div class="picker-container"><select id="totJam"></select><span class="lbl">Jam</span></div>
+<div class="picker-container"><select id="totMenit"></select><span class="lbl">Mnt</span></div>
+</div>
+<label data-i18n="lbl_top_apps" style="margin-top:20px;">Top 3 Most Used Apps</label>
+<div class="app-row">
+<input data-i18n="ph_app_name" id="app1Name" placeholder="App Name" type="text"/>
+<div class="picker-container"><select id="app1Jam"></select><span class="lbl">Jam</span></div>
+<div class="picker-container"><select id="app1Menit"></select><span class="lbl">Mnt</span></div>
+</div>
+<div class="app-row">
+<input data-i18n="ph_app_name" id="app2Name" placeholder="App Name" type="text"/>
+<div class="picker-container"><select id="app2Jam"></select><span class="lbl">Jam</span></div>
+<div class="picker-container"><select id="app2Menit"></select><span class="lbl">Mnt</span></div>
+</div>
+<div class="app-row">
+<input data-i18n="ph_app_name" id="app3Name" placeholder="App Name" type="text"/>
+<div class="picker-container"><select id="app3Jam"></select><span class="lbl">Jam</span></div>
+<div class="picker-container"><select id="app3Menit"></select><span class="lbl">Mnt</span></div>
+</div>
+<button class="btn-submit" data-i18n="btn_save_screen" id="btnSimpanScreen" onclick="submitScreenTime()" style="margin-top: 20px;">SAVE SCREEN TIME</button>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; margin-top: 40px;">
+<h3><span data-i18n="lbl_prev_history">Previous History</span></h3>
+</div>
+<div id="screenHistoryList">
+<p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px;"><span data-i18n="empty_screen">No screen time records yet.</span></p>
+</div>
+</div>
