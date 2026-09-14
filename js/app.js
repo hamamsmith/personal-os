@@ -1,9 +1,8 @@
-
 async function loadPages() {
     const pages = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
     const main = document.getElementById('main-content');
-    
-    const CACHE_VER = "3"; // increment to bust cache
+    // Load main pages
+    const CACHE_VER = "4"; // increment to bust cache
     for (const page of pages) {
         try {
             const res = await fetch(`pages/${page}.html?v=${CACHE_VER}`);
@@ -38,16 +37,23 @@ async function loadPages() {
 // Ensure loadPages is called on load
 document.addEventListener('DOMContentLoaded', loadPages);
 
-// Handle History API Popstate
-window.addEventListener('popstate', (e) => {
-    if (e.state && e.state.pageId) {
-        const btn = document.querySelector(`.nav-item[onclick*="${e.state.pageId}"]`);
-        navTo(e.state.pageId, e.state.title, btn, false);
-    } else {
-        const dashboardBtn = document.querySelector(`.nav-item[onclick*="dashboard"]`);
-        if(dashboardBtn) navTo('dashboard', 'Dashboard.', dashboardBtn, false);
+window.addEventListener('hashchange', () => {
+    let hash = window.location.hash.substring(1);
+    if (!hash) hash = 'dashboard';
+    const btn = document.querySelector(`.nav-item[onclick*="${hash}"]`);
+    if (btn) {
+        const onclickAttr = btn.getAttribute('onclick');
+        const match = onclickAttr ? onclickAttr.match(/navTo\('[^']+',\s*'([^']+)'/) : null;
+        const title = match ? match[1] : hash;
+        navTo(hash, title, btn, false);
+    } else if (hash === 'dashboard') {
+        navTo('dashboard', 'Dashboard.', null, false);
     }
 });
+
+
+// Handle History API Popstate
+
 
 // Prevent flicker by applying class immediately before rendering UI
         if (localStorage.getItem('isLoggedIn') !== 'true') {
@@ -140,17 +146,32 @@ function loginOS(e) {
             }
         });
 
-        function navTo(pageId, pageTitle, el) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            document.getElementById('topbar-title').innerText = pageTitle;
-            setTimeout(() => { document.getElementById(pageId).classList.add('active'); window.scrollTo({top: 0, behavior: 'smooth'}); }, 50);
-            if(el) el.classList.add('active'); 
-            closeMobileSidebar();
-            if (['battle', 'braindump', 'debrief', 'screentime', 'weekly'].includes(pageId)) {
-                loadDashboardData();
-            }
-        }
+        function navTo(pageId, pageTitle, el, pushHistory = true) {
+    if (pushHistory) {
+        // Only set hash, let hashchange handle the rest
+        window.location.hash = pageId;
+        return;
+    }
+
+    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+    
+    const topbarTitle = document.getElementById('topbar-title');
+    if (topbarTitle) topbarTitle.innerText = pageTitle;
+    
+    setTimeout(() => { 
+        const targetPage = document.getElementById(pageId);
+        if(targetPage) targetPage.classList.add('active'); 
+        window.scrollTo({top: 0, behavior: 'smooth'}); 
+    }, 50);
+    
+    if(el) el.classList.add('active'); 
+    closeMobileSidebar();
+    
+    if (['battle', 'braindump', 'debrief', 'screentime', 'weekly'].includes(pageId)) {
+        loadDashboardData();
+    }
+}
 
         function formatTanggal(dateStr) {
             if (!dateStr || dateStr.length < 10) return dateStr;

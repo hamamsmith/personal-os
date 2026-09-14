@@ -42,36 +42,36 @@
 <div class="modal-overlay" id="battleModal">
 <div class="modal-content">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-<h3 style="margin-bottom: 0;">Take Control</h3>
+<h3 style="margin-bottom: 0;" data-i18n="modal_battle_title">Take Control</h3>
 <span onclick="closeBattleModal()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">×</span>
 </div>
 <!-- Step 1: Tanggal -->
-<label>1. Tanggal (Hari ini/Kemarin)</label>
+<label data-i18n="lbl_battle_date">1. Date (Today/Yesterday)</label>
 <div class="picker-container" style="margin-bottom: 20px;">
 <select id="battleDatePicker" style="font-size: 15px;"></select>
 <span class="lbl">▼</span>
 </div>
 <!-- Step 2: Trigger -->
-<label>2. Pilih Trigger</label>
+<label data-i18n="lbl_battle_trigger">2. Select Trigger</label>
 <div class="picker-container" style="margin-bottom: 10px;">
 <select id="battleTypeVal" onchange="checkCustomTrigger()" style="font-size: 15px;">
-<option disabled="" selected="" value="">Pilih trigger...</option>
+<option disabled="" selected="" value="" data-i18n="opt_battle_trigger_default">Select trigger...</option>
 </select>
 <span class="lbl">▼</span>
 </div>
-<input id="customTriggerInput" placeholder="Ketik trigger lu di sini..." style="display:none; margin-bottom: 20px; font-size: 15px; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: var(--text-main); width: 100%; box-sizing: border-box; outline: none;" type="text"/>
+<input id="customTriggerInput" placeholder="Type your trigger here..." data-i18n="ph_battle_custom_trigger" style="display:none; margin-bottom: 20px; font-size: 15px; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: var(--text-main); width: 100%; box-sizing: border-box; outline: none;" type="text"/>
 <input id="battleKategoriVal" type="hidden" value="Lainnya"/>
 <!-- Step 3: Hasil -->
-<label>3. Hasil</label>
+<label data-i18n="lbl_battle_outcome">3. Outcome</label>
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-<div class="radio-btn" onclick="selectRadio(this, 'battleOutcome')">✅ Berhasil</div>
-<div class="radio-btn" onclick="selectRadio(this, 'battleOutcome')">❌ Gagal</div>
+<div class="radio-btn" data-i18n="lbl_battle_win" onclick="selectRadio(this, \'battleOutcome\')">✅ Win</div>
+<div class="radio-btn" data-i18n="lbl_battle_lose" onclick="selectRadio(this, \'battleOutcome\')">❌ Lose</div>
 </div>
 <input id="battleOutcomeVal" type="hidden"/>
 <!-- Step 4: Catatan -->
-<label>4. Catatan (Opsional)</label>
-<textarea id="battleNote" placeholder="Tulis konteks singkat..."></textarea>
-<button class="btn-submit" onclick="submitBattle()">SIMPAN</button>
+<label data-i18n="lbl_battle_note">4. Notes (Optional)</label>
+<textarea id="battleNote" placeholder="Write brief context..." data-i18n="ph_battle_note"></textarea>
+<button class="btn-submit" data-i18n="btn_save" onclick="submitBattle()">SAVE</button>
 </div>
 </div>
 <!-- BATTLE DETAIL POPUP -->
@@ -92,7 +92,7 @@
 <!-- Isi modal digenerate lewat JS biar dinamis -->
 </div>
 <!-- JAVASCRIPT -->
-<script src="js/i18n.js?v=3"></script>
-<script src="js/app.js?v=3"></script>
+<script src="js/i18n.js?v=5"></script>
+<script src="js/app.js?v=5"></script>
 </body>
 </html>
