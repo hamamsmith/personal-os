@@ -41,6 +41,12 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        /* Custom Scrollbar (Impeccable Detail) */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
         body {
             background-color: var(--bg-base);
@@ -76,14 +82,15 @@
         .main-content { flex-grow: 1; margin-left: calc(var(--sidebar-width) + 40px); margin-top: var(--topbar-height); padding: 30px 20px 50px 20px; display: flex; justify-content: center; transition: margin-left 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .main-content.expanded { margin-left: 0; }
         .container { width: 100%; max-width: 600px; }
-        .page { display: none; opacity: 0; transform: translateX(15px); transition: all 0.4s; }
-        .page.active { display: block; opacity: 1; transform: translateX(0); }
+        .page { display: none; opacity: 0; transform: translateY(15px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .page.active { display: block; opacity: 1; transform: translateY(0); }
 
         h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; color: var(--text-title); letter-spacing: -0.5px; }
         h1 { font-size: 30px; font-weight: 700; margin-bottom: 24px; }
         h3 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
 
-        .card { background: var(--glass-bg); backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
+        .card { background: var(--glass-bg); backdrop-filter: blur(16px); border-radius: var(--radius-lg); padding: 30px; margin-bottom: 24px; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border 0.3s ease; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.15); }
         label { display: block; margin-bottom: 10px; font-weight: 500; color: var(--text-muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
         input[type="text"], input[type="number"], textarea { width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-title); padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px; font-size: 16px; outline: none; transition: 0.3s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); font-family: 'Inter', sans-serif; }
         input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.2); }
