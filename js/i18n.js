@@ -180,6 +180,11 @@ function setLanguage(lang) {
     if (toggleBtn) {
         toggleBtn.innerText = lang === 'en' ? 'EN' : 'ID';
     }
+    
+    const landingToggleBtn = document.getElementById('landingLangToggleBtn');
+    if (landingToggleBtn) {
+        landingToggleBtn.innerText = lang === 'en' ? 'EN' : 'ID';
+    }
 }
 
 function toggleLanguage() {

@@ -3,10 +3,10 @@ async function loadPages() {
     const pages = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
     const main = document.getElementById('main-content');
     
-    // Load main pages
+    const CACHE_VER = "3"; // increment to bust cache
     for (const page of pages) {
         try {
-            const res = await fetch(`pages/${page}.html`);
+            const res = await fetch(`pages/${page}.html?v=${CACHE_VER}`);
             const html = await res.text();
             main.innerHTML += html;
         } catch (e) {
@@ -16,10 +16,10 @@ async function loadPages() {
     
     // Load Landing and Login Screens
     try {
-        const landingRes = await fetch(`pages/landingScreen.html`);
+        const landingRes = await fetch(`pages/landingScreen.html?v=${CACHE_VER}`);
         document.getElementById('landingScreenContainer').outerHTML = await landingRes.text();
         
-        const loginRes = await fetch(`pages/loginScreen.html`);
+        const loginRes = await fetch(`pages/loginScreen.html?v=${CACHE_VER}`);
         document.getElementById('loginScreenContainer').outerHTML = await loginRes.text();
     } catch (e) {}
 
