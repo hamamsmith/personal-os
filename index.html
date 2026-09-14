@@ -157,17 +157,42 @@
             .modal-overlay { backdrop-filter: blur(4px) !important; }
         }
 
-        /* --- LOGIN SCREEN STYLES --- */
+        /* --- ROUTING STYLES (LANDING -> LOGIN -> APP) --- */
         body.locked .topbar,
         body.locked .sidebar-wrapper,
         body.locked .main-content {
             display: none !important;
         }
-        body.locked #loginScreen {
-            display: flex !important;
-            opacity: 1;
-            pointer-events: auto;
+        body.locked #landingScreen { display: flex !important; opacity: 1; pointer-events: auto; }
+        body.locked #loginScreen { display: none; }
+        body.locked.show-login #landingScreen { display: none !important; }
+        body.locked.show-login #loginScreen { display: flex !important; opacity: 1; pointer-events: auto; }
+
+        /* Landing Screen Base Styles */
+        #landingScreen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: none; opacity: 0; pointer-events: none;
+            justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 0.5s ease;
+            background: rgba(11, 12, 16, 0.4);
+            backdrop-filter: blur(10px);
         }
+        .landing-content { text-align: center; max-width: 800px; padding: 40px; z-index: 10; }
+        .landing-title {
+            font-family: 'Outfit', sans-serif; font-size: 64px; font-weight: 800; line-height: 1.1;
+            margin-bottom: 16px; background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -2px;
+            animation: slideUp 1s ease-out;
+        }
+        .landing-subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 40px; font-weight: 400; line-height: 1.6; animation: slideUp 1s ease-out 0.2s both; }
+        .landing-features { display: flex; justify-content: center; gap: 16px; margin-bottom: 48px; flex-wrap: wrap; animation: slideUp 1s ease-out 0.4s both; }
+        .feature-pill { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 20px; border-radius: 100px; font-size: 14px; font-weight: 500; color: var(--text-main); backdrop-filter: blur(10px); }
+        .btn-enter { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none; padding: 18px 40px; border-radius: 100px; font-size: 16px; font-weight: 700; font-family: 'Outfit', sans-serif; letter-spacing: 1px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 8px 25px var(--primary-glow); animation: slideUp 1s ease-out 0.6s both; }
+        .btn-enter:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 12px 30px rgba(124, 58, 237, 0.6); }
+        @keyframes slideUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .landing-title { font-size: 42px; letter-spacing: -1px; } .landing-subtitle { font-size: 15px; padding: 0 20px; } .landing-features { gap: 10px; } .feature-pill { font-size: 12px; padding: 6px 16px; } }
+
+        /* --- LOGIN SCREEN STYLES --- */
         #loginScreen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             display: none; opacity: 0; pointer-events: none;
@@ -225,6 +250,20 @@
     </script>
     <div class="ambient-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
 
+    <!-- LANDING SCREEN -->
+    <div id="landingScreen">
+        <div class="landing-content">
+            <h1 class="landing-title">Elevate Your Routine.</h1>
+            <p class="landing-subtitle">A professional, distraction-free environment to track habits, take control, and debrief your life.</p>
+            <div class="landing-features">
+                <div class="feature-pill">✦ Habit Tracker</div>
+                <div class="feature-pill">✦ Daily Debrief</div>
+                <div class="feature-pill">✦ Analytics</div>
+            </div>
+            <button class="btn-enter" onclick="showLoginScreen()">ENTER SYSTEM</button>
+        </div>
+    </div>
+
     <!-- LOGIN SCREEN -->
     <div id="loginScreen">
         <form class="login-box" onsubmit="loginOS(event)">
@@ -235,6 +274,16 @@
             <button type="submit" class="btn-submit" style="margin-top: 10px;">ACCESS OS</button>
         </form>
     </div>
+
+    <script>
+        function showLoginScreen() {
+            const landing = document.getElementById('landingScreen');
+            landing.style.opacity = '0';
+            setTimeout(() => {
+                document.body.classList.add('show-login');
+            }, 500);
+        }
+    </script>
 
     <header class="topbar">
         <div class="hamburger" style="margin-right:0;" onclick="toggleSidebar()">☰</div>
@@ -608,7 +657,8 @@
             loginScreen.style.opacity = '0';
             setTimeout(() => {
                 document.body.classList.remove('locked');
-                loginScreen.style.display = 'none';
+                document.body.classList.remove('show-login');
+                loginScreen.style.opacity = ''; // reset inline style
             }, 500);
         }
 
@@ -616,15 +666,14 @@
             if(confirm("Lu yakin mau keluar dari sesi ini?")) {
                 localStorage.removeItem('isLoggedIn');
                 document.body.classList.add('locked');
+                document.body.classList.remove('show-login');
                 closeMobileSidebar();
                 
+                const landing = document.getElementById('landingScreen');
+                landing.style.opacity = '1';
                 const loginScreen = document.getElementById('loginScreen');
-                loginScreen.style.display = 'flex';
-                setTimeout(() => {
-                    loginScreen.style.opacity = '1';
-                    const inputs = loginScreen.querySelectorAll('input');
-                    inputs.forEach(i => i.value = '');
-                }, 50);
+                const inputs = loginScreen.querySelectorAll('input');
+                inputs.forEach(i => i.value = '');
             }
         }
 
