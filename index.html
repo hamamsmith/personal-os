@@ -246,6 +246,7 @@
             <a class="nav-item" onclick="navTo('debrief', 'Debrief Malam.', this)"><span class="nav-icon">🌙</span><span>Debrief</span></a>
             <a class="nav-item" onclick="navTo('screentime', 'Screen Time.', this)"><span class="nav-icon">📱</span><span>Screen</span></a>
             <a class="nav-item" onclick="navTo('weekly', 'Weekly Review.', this)"><span class="nav-icon">🗓️</span><span>Weekly</span></a>
+            <a class="nav-item" onclick="logoutOS()"><span class="nav-icon">🚪</span><span>Logout</span></a>
         </nav>
     </div>
 
@@ -602,6 +603,22 @@
                 document.body.classList.remove('locked');
                 loginScreen.style.display = 'none';
             }, 500);
+        }
+
+        function logoutOS() {
+            if(confirm("Lu yakin mau keluar dari sesi ini?")) {
+                localStorage.removeItem('isLoggedIn');
+                document.body.classList.add('locked');
+                closeMobileSidebar();
+                
+                const loginScreen = document.getElementById('loginScreen');
+                loginScreen.style.display = 'flex';
+                setTimeout(() => {
+                    loginScreen.style.opacity = '1';
+                    const inputs = loginScreen.querySelectorAll('input');
+                    inputs.forEach(i => i.value = '');
+                }, 50);
+            }
         }
 
         let chartWinLoseInst = null;
