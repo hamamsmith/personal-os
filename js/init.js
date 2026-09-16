@@ -83,7 +83,20 @@ async function testPush() {
     btn.innerText = origTxt;
 }
 
-window.onload = function() {
+window.onload = async function() {
+    try {
+        const [headerRes, footerRes] = await Promise.all([
+            fetch('pages/header.html?v=34'),
+            fetch('pages/footer.html?v=34')
+        ]);
+        const headerHtml = await headerRes.text();
+        const footerHtml = await footerRes.text();
+        document.getElementById('headerContainer').innerHTML = headerHtml;
+        document.getElementById('footerContainer').innerHTML = footerHtml;
+    } catch (e) {
+        console.error('Gagal meload header/footer', e);
+    }
+
     if (typeof initTimePickers === 'function') initTimePickers();
     
     if (typeof Chart !== 'undefined') {

@@ -1,0 +1,15 @@
+<nav class="landing-nav">
+    <div class="landing-nav-inner">
+        <div class="landing-logo">Personal<span>OS</span></div>
+        <div id="landingLangToggleBtn" onclick="toggleLanguage()" class="landing-lang-btn">EN</div>
+    </div>
+</nav>
+
+<header class="topbar">
+    <div class="hamburger" onclick="toggleSidebar()" style="margin-right:0;">☰</div>
+    <div class="topbar-title" data-i18n="dashboard_title" id="topbar-title" style="position: absolute; left: 50%; transform: translateX(-50%);">Dashboard.</div>
+    <div id="headerBell" onclick="openNotifModal()" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='scale(1)';" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1.05)';" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+        <span style="font-size: 18px; filter: drop-shadow(0 2px 4px rgba(124,58,237,0.5));">🔔</span>
+    </div>
+    <div id="langToggleBtn" onclick="toggleLanguage()" style="cursor:pointer; font-weight:700; color:var(--text-muted); margin-left: auto; margin-right: 20px; font-size: 14px; background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--glass-border);">EN</div>
+</header>

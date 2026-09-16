@@ -40,13 +40,15 @@
         body {
             margin: 0;
             padding: 0;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-base);
             color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            overscroll-behavior: none;
-            min-height: 100vh;
-            width: 100%;
             overflow-x: hidden;
+            display: block; /* Kembalikan ke block biar ngga terlempar */
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px; /* Space for global footer */
         }
 
         .ambient-bg { position: fixed; top: 0; left: 0; width: 100%; min-height: 100vh; z-index: -1; overflow: hidden; background: var(--bg-base); }
@@ -158,6 +160,9 @@
         body.locked #loginScreen { display: none; }
         body.locked.show-login #landingScreen { display: none !important; }
         body.locked.show-login #loginScreen { display: flex !important; opacity: 1; pointer-events: auto; min-height: 100vh; padding-top: 80px; padding-bottom: 80px; }
+        
+        body:not(.locked) .landing-nav { display: none !important; }
+        body.locked .landing-nav { display: flex; }
 
         /* Landing Screen Base Styles */
 
