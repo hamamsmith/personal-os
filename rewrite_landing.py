@@ -1,4 +1,4 @@
-<div id="landingScreen">
+landing_html = """<div id="landingScreen">
     <nav class="landing-nav">
         <div class="landing-logo">Personal<span>OS</span></div>
         <div id="landingLangToggleBtn" onclick="toggleLanguage()" class="landing-lang-btn">EN</div>
@@ -67,3 +67,9 @@
         </footer>
     </div>
 </div>
+"""
+
+with open('pages/landingScreen.html', 'w', encoding='utf-8') as f:
+    f.write(landing_html)
+
+print("Updated landingScreen.html")
