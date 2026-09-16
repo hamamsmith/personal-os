@@ -38,13 +38,15 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
         body {
+            margin: 0;
+            padding: 0;
             background-color: var(--bg-base);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             overscroll-behavior: none;
-            min-min-height: 100vh;
+            min-height: 100vh;
+            width: 100%;
             overflow-x: hidden;
-            display: flex;
         }
 
         .ambient-bg { position: fixed; top: 0; left: 0; width: 100%; min-height: 100vh; z-index: -1; overflow: hidden; background: var(--bg-base); }
