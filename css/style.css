@@ -173,10 +173,14 @@
         }
         
         .landing-nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px max(40px, calc(50vw - 580px)); position: relative; top: 0; left: 0; width: 100%; z-index: 100;
+            display: flex; align-items: center;
+            position: relative; top: 0; left: 0; width: 100%; z-index: 100;
             background: rgba(11, 12, 16, 0.8); backdrop-filter: blur(10px);
             box-sizing: border-box; border-bottom: 1px solid var(--glass-border);
+        }
+        .landing-nav-inner {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1200px; width: 100%; margin: 0 auto; padding: 20px 20px;
         }
         .landing-logo { font-size: 24px; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: -0.5px; }
         .landing-logo span { color: var(--primary); }
@@ -250,14 +254,14 @@
                 /* Footer */
         .landing-footer {
             position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100;
-            color: var(--text-muted); font-size: 14px; padding: 15px max(40px, calc(50vw - 580px));
+            color: var(--text-muted); font-size: 14px;
             border-top: 1px solid var(--glass-border);
             background: rgba(11, 12, 16, 0.8); backdrop-filter: blur(10px);
             box-sizing: border-box;
         }
         .footer-content {
             display: flex; justify-content: space-between; align-items: center;
-            max-width: 1200px; margin: 0 auto;
+            max-width: 1200px; margin: 0 auto; padding: 15px 20px;
         }
         .footer-right { display: flex; align-items: center; gap: 15px; }
         .footer-link {
@@ -268,8 +272,7 @@
         
         @media (max-width: 768px) {
             .footer-content { flex-direction: column; gap: 10px; text-align: center; }
-            .landing-footer { padding: 15px 20px; }
-            .landing-nav { padding: 15px 20px; }
+            .landing-nav-inner { padding: 15px 20px; }
         }
 
         @media (max-width: 768px) {
