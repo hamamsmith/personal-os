@@ -10,33 +10,45 @@ const TranslatorEngine = (() => {
     let currentLang = 'en';
     let isTranslating = false;
 
-    // Selector elemen yang PERLU diterjemahkan (bukan seluruh DOM)
-    const TRANSLATABLE_SELECTOR = [
-        'h1', 'h2', 'h3', 'h4',
-        'p',
-        'button', '.btn', '.btn-submit',
-        'label',
-        'a.nav-item span:not(.nav-icon)',
-        '.topbar-title',
-        '.landing-title', '.landing-subtitle',
-        '.feature-card h3', '.feature-card p',
-        '.card h1', '.card h3', '.card p',
-        '[data-translate="true"]',
-        '.summary-box .label',
-        '.footer-left p', '.footer-link',
-        '.empty-state', '.empty-msg',
-        '.modal-content h3', '.modal-content h4', '.modal-content p',
-        'option', 'select', 'th', 'td',
-        '.nav-item span:not(.nav-icon)',
-        '.section-title', '.section-desc',
-        'span.label', '.desc', '.title'
-    ].join(', ');
+    // Tag yang DILEWAT (tidak perlu ditranslate)
+    const SKIP_TAGS = new Set(['SCRIPT','STYLE','NOSCRIPT','CODE','PRE','INPUT','TEXTAREA','SELECT','SVG','CANVAS','IFRAME','IMG','BR','HR','HEAD','META','LINK','TITLE']);
 
-    // Simpan teks asli (Inggris) sebelum translate
+    // Ambil semua elemen yang punya teks langsung (bukan dari child element)
+    function getTranslatableElements() {
+        const result = [];
+        const seen = new Set();
+
+        document.querySelectorAll('*').forEach(el => {
+            if (SKIP_TAGS.has(el.tagName)) return;
+            if (seen.has(el)) return;
+
+            // Hanya ambil kalau teks langsung di element ini (bukan dari child)
+            let directText = '';
+            el.childNodes.forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    directText += node.textContent;
+                }
+            });
+
+            const trimmed = directText.trim();
+            // Skip kalau kosong, hanya angka, hanya emoji, atau terlalu pendek
+            if (trimmed.length < 2) return;
+            if (/^[\d\s.,:%+\-\/\\|×÷=@#$%^&*()[\]{}<>]+$/.test(trimmed)) return;
+            // Harus ada setidaknya satu huruf (latin/asia)
+            if (!/[a-zA-Z\u00C0-\u024F\u4E00-\u9FFF\u3040-\u30FF\u0080-\u00FF]/.test(trimmed)) return;
+
+            seen.add(el);
+            result.push({ el, originalText: trimmed });
+        });
+
+        return result;
+    }
+
+    // Simpan teks asli (Inggris) di data attribute
     function saveOriginals() {
-        document.querySelectorAll(TRANSLATABLE_SELECTOR).forEach(el => {
-            if (!el.dataset.originalText && el.innerText && el.innerText.trim().length > 0) {
-                el.dataset.originalText = el.innerText.trim();
+        getTranslatableElements().forEach(({ el, originalText }) => {
+            if (!el.dataset.originalText) {
+                el.dataset.originalText = originalText;
             }
         });
     }
@@ -45,7 +57,12 @@ const TranslatorEngine = (() => {
     function restoreOriginals() {
         document.querySelectorAll('[data-original-text]').forEach(el => {
             if (el.dataset.originalText) {
-                el.innerText = el.dataset.originalText;
+                // Temukan text node langsung dan update
+                el.childNodes.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 1) {
+                        node.textContent = el.dataset.originalText;
+                    }
+                });
             }
         });
     }
@@ -89,7 +106,6 @@ const TranslatorEngine = (() => {
 
         try {
             if (to === 'en') {
-                // Kembalikan ke Bahasa Inggris (teks asli)
                 restoreOriginals();
                 return;
             }
@@ -97,24 +113,28 @@ const TranslatorEngine = (() => {
             // Simpan teks asli dulu
             saveOriginals();
 
-            // Ambil semua elemen yang perlu ditranslate
-            const elements = [...document.querySelectorAll(TRANSLATABLE_SELECTOR)]
-                .filter(el => el.dataset.originalText && el.dataset.originalText.trim().length > 1);
+            // Ambil SEMUA elemen berteks di halaman
+            const elements = getTranslatableElements()
+                .filter(({ el }) => el.dataset.originalText && el.dataset.originalText.trim().length > 1);
 
-            // Batch 4 sekaligus biar tidak spam API
-            const BATCH_SIZE = 4;
+            // Batch 5 sekaligus biar tidak spam API tapi tetap cepat
+            const BATCH_SIZE = 5;
             for (let i = 0; i < elements.length; i += BATCH_SIZE) {
                 const batch = elements.slice(i, i + BATCH_SIZE);
-                await Promise.all(batch.map(async el => {
+                await Promise.all(batch.map(async ({ el }) => {
                     const original = el.dataset.originalText;
                     const translated = await translateOne(original, from, to);
-                    el.innerText = translated;
+                    // Update text node langsung (jaga icon/child element)
+                    el.childNodes.forEach(node => {
+                        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 1) {
+                            node.textContent = translated;
+                        }
+                    });
                 }));
             }
         } catch(e) {
             console.error('Gagal menerjemahkan halaman:', e);
         } finally {
-            // Pastikan loader SELALU hilang
             showLoader(false);
             isTranslating = false;
         }
