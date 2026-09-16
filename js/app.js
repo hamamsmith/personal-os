@@ -2,7 +2,7 @@ async function loadPages() {
     const pages = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
     const main = document.getElementById('main-content');
     // Load main pages
-    const CACHE_VER = "14"; // increment to bust cache
+    const CACHE_VER = "15"; // increment to bust cache
     for (const page of pages) {
         try {
             const res = await fetch(`pages/${page}.html?v=${CACHE_VER}`);
