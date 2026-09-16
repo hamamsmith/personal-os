@@ -13,10 +13,25 @@
 </head>
 <body>
 <div class="ambient-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
-<!-- LANDING SCREEN -->
-<div id="landingScreenContainer"></div>
-<!-- LOGIN SCREEN -->
-<div id="loginScreenContainer"></div>
+<!-- LOGGED OUT LAYOUT -->
+<div id="authLayout">
+    <nav class="landing-nav">
+        <div class="landing-logo">Personal<span>OS</span></div>
+        <div id="landingLangToggleBtn" onclick="toggleLanguage()" class="landing-lang-btn">EN</div>
+    </nav>
+    
+    <div class="auth-content">
+        <!-- LANDING SCREEN -->
+        <div id="landingScreenContainer"></div>
+        <!-- LOGIN SCREEN -->
+        <div id="loginScreenContainer"></div>
+    </div>
+
+    <footer class="landing-footer">
+        <p>&copy; 2026 Personal OS. <span data-i18n="footer_tagline">Designed for focus.</span></p>
+    </footer>
+</div>
+
 <header class="topbar">
 <div class="hamburger" onclick="toggleSidebar()" style="margin-right:0;">☰</div>
 <div class="topbar-title" data-i18n="dashboard_title" id="topbar-title" style="position: absolute; left: 50%; transform: translateX(-50%);">Dashboard.</div>
