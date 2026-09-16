@@ -23,7 +23,10 @@ async function loadPages() {
     } catch (e) {}
 
     // Apply i18n to newly loaded elements
-    const savedLang = localStorage.getItem('lang') || 'en';
+    let savedLang = 'en';
+    try {
+        savedLang = localStorage.getItem('lang') || 'en';
+    } catch(e) {}
     setLanguage(savedLang);
     
     // Check initial route
@@ -56,7 +59,11 @@ window.addEventListener('hashchange', () => {
 
 
 // Prevent flicker by applying class immediately before rendering UI
-        if (localStorage.getItem('isLoggedIn') !== 'true') {
+        try {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                document.body.classList.add('locked');
+            }
+        } catch(e) {
             document.body.classList.add('locked');
         }
 
@@ -70,7 +77,7 @@ function showLoginScreen() {
 
 function loginOS(e) {
             e.preventDefault();
-            localStorage.setItem('isLoggedIn', 'true');
+            try { localStorage.setItem('isLoggedIn', 'true'); } catch(e) {}
             
             // Animasi transisi keluar
             const loginScreen = document.getElementById('loginScreen');
@@ -84,7 +91,7 @@ function loginOS(e) {
 
         function logoutOS() {
             if(confirm("Lu yakin mau keluar dari sesi ini?")) {
-                localStorage.removeItem('isLoggedIn');
+                try { localStorage.removeItem('isLoggedIn'); } catch(e) {}
                 document.body.classList.add('locked');
                 document.body.classList.remove('show-login');
                 closeMobileSidebar();

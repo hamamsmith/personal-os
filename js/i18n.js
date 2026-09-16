@@ -77,6 +77,18 @@ const translations = {
         "btn_save_weekly": "SAVE WEEKLY REVIEW",
         "empty_weekly": "No weekly review records yet.",
         "lang_toggle": "EN / ID"
+
+        "modal_battle_title": "Take Control",
+        "lbl_battle_date": "1. Date (Today/Yesterday)",
+        "lbl_battle_trigger": "2. Select Trigger",
+        "opt_battle_trigger_default": "Select trigger...",
+        "ph_battle_custom_trigger": "Type your trigger here...",
+        "lbl_battle_outcome": "3. Outcome",
+        "lbl_battle_win": "✅ Win",
+        "lbl_battle_lose": "❌ Lose",
+        "lbl_battle_note": "4. Notes (Optional)",
+        "ph_battle_note": "Write brief context...",
+        "btn_save": "SAVE",
     },
     id: {
         "nav_home": "Utama",
@@ -156,11 +168,23 @@ const translations = {
         "btn_save_weekly": "SIMPAN WEEKLY REVIEW",
         "empty_weekly": "Belum ada catatan mingguan sebelumnya.",
         "lang_toggle": "ID / EN"
+
+        "modal_battle_title": "Ambil Kendali",
+        "lbl_battle_date": "1. Tanggal (Hari ini/Kemarin)",
+        "lbl_battle_trigger": "2. Pilih Trigger",
+        "opt_battle_trigger_default": "Pilih trigger...",
+        "ph_battle_custom_trigger": "Ketik trigger lu di sini...",
+        "lbl_battle_outcome": "3. Hasil",
+        "lbl_battle_win": "✅ Berhasil",
+        "lbl_battle_lose": "❌ Gagal",
+        "lbl_battle_note": "4. Catatan (Opsional)",
+        "ph_battle_note": "Tulis konteks singkat...",
+        "btn_save": "SIMPAN",
     }
 };
 
 function setLanguage(lang) {
-    localStorage.setItem('lang', lang);
+    try { localStorage.setItem('lang', lang); } catch(e) {}
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (translations[lang] && translations[lang][key]) {
@@ -188,7 +212,8 @@ function setLanguage(lang) {
 }
 
 function toggleLanguage() {
-    const currentLang = localStorage.getItem('lang') || 'en';
+    let currentLang = 'en';
+    try { currentLang = localStorage.getItem('lang') || 'en'; } catch(e) {}
     const newLang = currentLang === 'en' ? 'id' : 'en';
     setLanguage(newLang);
 }
