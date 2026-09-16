@@ -160,15 +160,22 @@
         /* Landing Screen Base Styles */
 
         #authLayout { display: none; }
-        body.locked #authLayout { display: block; }
+        body.locked #authLayout {
+            display: block;
+            width: 100%;
+            min-height: 100vh;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
 
         #landingScreen {
-            position: relative; top: 0; left: 0; width: 100%; min-height: 100vh; padding-bottom: 80px;
-            display: none; opacity: 0; pointer-events: none;
+            width: 100%; min-height: 100vh; padding-bottom: 80px;
+            display: none;
+            opacity: 0; pointer-events: none;
             z-index: 1; transition: opacity 0.5s ease;
             background: rgba(11, 12, 16, 0.6);
             backdrop-filter: blur(15px);
-            overflow-y: auto; overflow-x: hidden;
+            overflow: hidden;
             color: var(--text-main);
         }
         
@@ -191,7 +198,12 @@
         }
         .landing-lang-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-        .landing-container { max-width: 1200px; margin: 0 auto; padding: 100px 40px 120px; }
+        .landing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 40px 120px;
+            box-sizing: border-box;
+        }
         
         /* Hero Section */
         .landing-hero {
