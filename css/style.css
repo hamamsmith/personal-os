@@ -170,7 +170,7 @@
         
         .landing-nav {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 40px; position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+            padding: 20px 40px; position: sticky; top: 0; z-index: 100;
             background: rgba(11, 12, 16, 0.8); backdrop-filter: blur(10px);
             box-sizing: border-box; border-bottom: 1px solid var(--glass-border);
         }
@@ -245,7 +245,7 @@
 
         /* Footer */
         .landing-footer {
-            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100;
+            position: sticky; bottom: 0; width: 100%; z-index: 100;
             text-align: center; color: var(--text-muted); font-size: 14px; padding: 15px 0;
             border-top: 1px solid var(--glass-border);
             background: rgba(11, 12, 16, 0.8); backdrop-filter: blur(10px);
