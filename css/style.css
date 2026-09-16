@@ -116,7 +116,7 @@
         .btn-submit:active { transform: translateY(2px); box-shadow: 0 4px 10px var(--primary-glow); }
         .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 
-        .modal-overlay { position: relative; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); z-index: 2000; display: none; justify-content: center; align-items: flex-start; padding: 40px 20px; overflow-y: auto; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); z-index: 2000; display: none; justify-content: center; align-items: flex-start; padding: 40px 20px; overflow-y: auto; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.show { display: flex; opacity: 1; }
         .modal-content { background: var(--bg-base); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 24px; width: 100%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); transform: translateY(-20px); transition: transform 0.3s; }
         .modal-overlay.show .modal-content { transform: translateY(0); }
