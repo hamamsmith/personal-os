@@ -25,6 +25,9 @@ const translations = {
         "feat_review_title": "Weekly Debrief",
         "feat_review_desc": "Reflect on your progress and plan your next strategic move.",
         "footer_tagline": "Designed for focus.",
+
+        "footer_privacy": "Privacy Policy",
+        "footer_terms": "Terms & Conditions",
         "btn_enter": "ENTER SYSTEM",
         "login_secured": "Secured Access Interface",
         "btn_access": "ACCESS OS",
