@@ -1,274 +1,202 @@
-const translations = {
-    en: {
-        "nav_home": "Home",
-        "nav_control": "Control",
-        "nav_dump": "Dump",
-        "nav_debrief": "Debrief",
-        "nav_screen": "Screen",
-        "nav_weekly": "Weekly",
-        "nav_logout": "Logout",
-        "dashboard_title": "Dashboard.",
-        "control_title": "Take Control.",
-        "dump_title": "Brain Dump.",
-        "debrief_title": "Daily Debrief.",
-        "screen_title": "Screen Time.",
-        "weekly_title": "Weekly Review.",
-        "landing_title": "Elevate Your Routine.",
-        "landing_subtitle": "A professional, distraction-free environment to track habits, take control, and debrief your life.",
+// ============================================================
+// TRANSLATOR ENGINE - Real-time Auto Translation
+// Menggunakan MyMemory API (Gratis, tanpa API key)
+// Semua teks diterjemahkan otomatis. Tidak ada dictionary manual.
+// ============================================================
 
-        "feat_track_title": "Track Habits",
-        "feat_track_desc": "Build consistency with a visually rewarding tracker.",
-        "feat_control_title": "Take Control",
-        "feat_control_desc": "Log your daily triggers, wins, and losses to master your behavior.",
-        "feat_dump_title": "Brain Dump",
-        "feat_dump_desc": "Instantly clear your mind and declutter your thoughts.",
-        "feat_review_title": "Weekly Debrief",
-        "feat_review_desc": "Reflect on your progress and plan your next strategic move.",
-        "footer_tagline": "Designed for focus.",
+const TranslatorEngine = (() => {
+    const CACHE_PREFIX = 'tr_cache_';
+    const API_URL = 'https://api.mymemory.translated.net/get';
+    let currentLang = 'id';
+    let isTranslating = false;
 
-        "footer_privacy": "Privacy Policy",
-        "footer_terms": "Terms & Conditions",
+    // Ambil semua node teks yang relevan di halaman
+    function getTranslatableNodes() {
+        const result = [];
+        const skipTags = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE', 'INPUT', 'TEXTAREA', 'SELECT']);
 
-        "privacy_h1": "1. Data Ownership & Storage",
-        "privacy_p1": "Personal OS is built with a privacy-first approach. All of your data—including your habits, daily triggers, battle logs, and brain dumps—is stored <strong>locally on your own device</strong> using your browser's LocalStorage. We do not use external databases, and we do not transmit your personal data to any servers.",
-        "privacy_h2": "2. Data Collection",
-        "privacy_p2": "Because Personal OS operates entirely within your browser, we do not collect, harvest, or process any personal identifiable information (PII). You do not need to create an account or provide an email address to use this service.",
-        "privacy_h3": "3. Cookies and Tracking",
-        "privacy_p3": "We do not use any third-party tracking cookies or analytics software (like Google Analytics) that monitor your behavior. The only data stored in your browser is the data required to make the application function (your habits and preferences).",
-        "privacy_h4": "4. Data Security",
-        "privacy_p4": "Since your data is stored locally on your device, the security of your data depends on the security of your own device. We recommend locking your device with a passcode and avoiding the use of Personal OS on public or shared computers where others might access your LocalStorage data.",
-        "terms_h1": "1. Acceptance of Terms",
-        "terms_p1": "By accessing and using Personal OS, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use this application.",
-        "terms_h2": "2. Use of the Application",
-        "terms_p2": "Personal OS is provided as a productivity tool designed for personal use. You agree to use it only for its intended purposes and in a way that does not infringe upon the rights of, restrict, or inhibit anyone else's use and enjoyment of the application.",
-        "terms_h3": "3. Disclaimer of Warranties",
-        "terms_p3": "This application is provided \"as is\" and \"as available\" without any representations or warranties, express or implied. Personal OS makes no representations or warranties in relation to this application or the information and materials provided. Your use of the application is entirely at your own risk.",
-        "terms_h4": "4. Data Loss",
-        "terms_p4": "Because Personal OS stores all data locally in your browser, <strong>clearing your browser data, cache, or local storage will result in the permanent loss of your data.</strong> Personal OS is not responsible for any data loss, and it is your responsibility to manually export or back up your data if you wish to keep it secure.",
-        "btn_enter": "ENTER SYSTEM",
-        "login_secured": "Secured Access Interface",
-        "btn_access": "ACCESS OS",
-        "toast_success": "✅ Data saved successfully!",
-        "lbl_self_control": "🟢 Self Control",
-        "lbl_win_lose": "Win | Lose",
-        "lbl_consistency": "🔵 Consistency",
-        "lbl_total_log": "Total Logs",
-        "lbl_success_rate": "📊 Success Rate",
-        "lbl_avg_screen": "📱 Avg Screen",
-        "opt_1week": "1 Week",
-        "opt_1month": "1 Month",
-        "opt_all": "All Time",
-        "lbl_freq_trigger": "⚡ MOST FREQUENT TRIGGER",
-        "lbl_rate_small": "🎯 SUCCESS RATE",
-        "lbl_win_vs_lose": "✅ Win vs ❌ Lose",
-        "loading": "Loading...",
-        "lbl_freq_trigger_chart": "Most Frequent Triggers",
-        "lbl_today": "Today",
-        "btn_add": "+ Add",
-        "lbl_prev_history": "Previous History",
-        "empty_battle": "No battle records yet.",
-        "lbl_empty_mind": "Clear Your Mind",
-        "desc_empty_mind": "Write down whatever is bothering you to clear your head.",
-        "ph_dump": "I feel... / I'm thinking about...",
-        "btn_release": "RELEASE THOUGHTS",
-        "empty_dump": "No brain dump records yet.",
-        "lbl_date": "Date (Today or Yesterday)",
-        "lbl_mood": "General Mood?",
-        "lbl_energy": "Energy Level (1-5)",
-        "opt_energy_default": "How energetic are you today?",
-        "opt_energy_1": "1 - Completely Drained 🪫",
-        "opt_energy_2": "2 - Low Battery 🔋",
-        "opt_energy_3": "3 - Sufficient 🔋",
-        "opt_energy_4": "4 - Energetic 🙂",
-        "opt_energy_5": "5 - On Fire ⚡",
-        "lbl_lesson": "One important lesson today",
-        "ph_lesson": "What did you realize today?",
-        "lbl_improve": "What to improve tomorrow?",
-        "ph_improve": "Target for tomorrow...",
-        "btn_finish_day": "FINISH DAY",
-        "empty_debrief": "No debrief records yet.",
-        "desc_screen": "Log your screen time today to stay mindful of your digital consumption.",
-        "lbl_total_duration": "Total Duration",
-        "lbl_top_apps": "Top 3 Most Used Apps",
-        "ph_app_name": "App Name",
-        "btn_save_screen": "SAVE SCREEN TIME",
-        "empty_screen": "No screen time records yet.",
-        "lbl_review_week": "Review of the Week",
-        "desc_weekly": "Evaluate your week. Look for patterns in what works and what fails.",
-        "lbl_week_date": "Date (End of Week)",
-        "lbl_week_score": "Overall Score (1-10)",
-        "opt_score_default": "How would you rate this week?",
-        "lbl_wins": "Biggest Wins",
-        "ph_wins": "What went well?",
-        "lbl_fails": "Biggest Failures/Distractions",
-        "ph_fails": "What went wrong?",
-        "lbl_next_action": "Action Plan for Next Week",
-        "ph_next_action": "Next week I will...",
-        "btn_save_weekly": "SAVE WEEKLY REVIEW",
-        "empty_weekly": "No weekly review records yet.",
-        "lang_toggle": "EN / ID",
-
-        "modal_battle_title": "Take Control",
-        "lbl_battle_date": "1. Date (Today/Yesterday)",
-        "lbl_battle_trigger": "2. Select Trigger",
-        "opt_battle_trigger_default": "Select trigger...",
-        "ph_battle_custom_trigger": "Type your trigger here...",
-        "lbl_battle_outcome": "3. Outcome",
-        "lbl_battle_win": "✅ Win",
-        "lbl_battle_lose": "❌ Lose",
-        "lbl_battle_note": "4. Notes (Optional)",
-        "ph_battle_note": "Write brief context...",
-        "btn_save": "SAVE",
-    },
-    id: {
-        "nav_home": "Utama",
-        "nav_control": "Kendali",
-        "nav_dump": "Pikiran",
-        "nav_debrief": "Evaluasi",
-        "nav_screen": "Layar",
-        "nav_weekly": "Mingguan",
-        "nav_logout": "Keluar",
-        "dashboard_title": "Dasbor.",
-        "control_title": "Ambil Kendali.",
-        "dump_title": "Kosongkan Pikiran.",
-        "debrief_title": "Evaluasi Harian.",
-        "screen_title": "Waktu Layar.",
-        "weekly_title": "Tinjauan Mingguan.",
-        "landing_title": "Tingkatkan Rutinitas.",
-        "landing_subtitle": "Lingkungan profesional bebas gangguan untuk melacak kebiasaan, mengambil kendali, dan mengevaluasi hidup lu.",
-        "footer_privacy": "Kebijakan Privasi",
-        "footer_terms": "Syarat & Ketentuan",
-        "privacy_h1": "1. Kepemilikan & Penyimpanan Data",
-        "privacy_p1": "Personal OS dibangun dengan pendekatan yang mengutamakan privasi. Seluruh data lu—termasuk kebiasaan, pemicu harian, riwayat aktivitas, dan catatan pikiran—disimpan <strong>secara lokal di perangkat lu sendiri</strong> menggunakan LocalStorage browser. Kami tidak menggunakan database eksternal, dan kami tidak mengirimkan data pribadi lu ke server mana pun.",
-        "privacy_h2": "2. Pengumpulan Data",
-        "privacy_p2": "Karena Personal OS beroperasi sepenuhnya di dalam browser lu, kami tidak mengumpulkan, mengambil, atau memproses informasi identitas pribadi (PII) apa pun. Lu gak perlu bikin akun atau ngasih alamat email buat pake layanan ini.",
-        "privacy_h3": "3. Cookie dan Pelacakan",
-        "privacy_p3": "Kami gak pake cookie pelacakan pihak ketiga atau perangkat lunak analitik (kayak Google Analytics) yang mantau perilaku lu. Satu-satunya data yang disimpan di browser lu adalah data yang dibutuhin biar aplikasinya jalan (kebiasaan dan pengaturan lu).",
-        "privacy_h4": "4. Keamanan Data",
-        "privacy_p4": "Karena data lu disimpan secara lokal di perangkat, keamanan data lu bergantung pada keamanan perangkat lu sendiri. Kami saranin buat ngunci perangkat lu pake kata sandi dan hindari pake Personal OS di komputer umum atau bersama di mana orang lain mungkin bisa ngakses data LocalStorage lu.",
-        "terms_h1": "1. Penerimaan Syarat",
-        "terms_p1": "Dengan ngakses dan make Personal OS, lu nerima dan setuju buat keiket sama syarat dan ketentuan perjanjian ini. Kalau lu gak setuju buat patuh sama syarat-syarat ini, tolong jangan pake aplikasi ini.",
-        "terms_h2": "2. Penggunaan Aplikasi",
-        "terms_p2": "Personal OS disediain sebagai alat produktivitas yang dirancang buat pemakaian pribadi. Lu setuju buat make ini cuma buat tujuan yang semestinya dan dengan cara yang gak ngelanggar hak, ngebatesin, atau ngehambat orang lain buat make dan nikmatin aplikasi ini.",
-        "terms_h3": "3. Penafian Jaminan",
-        "terms_p3": "Aplikasi ini disediain \"apa adanya\" dan \"sebagaimana tersedia\" tanpa pernyataan atau jaminan apa pun, baik tersurat maupun tersirat. Personal OS gak ngasih pernyataan atau jaminan sehubungan sama aplikasi ini atau informasi dan materi yang disediain. Risiko make aplikasi ini sepenuhnya ada di tangan lu.",
-        "terms_h4": "4. Kehilangan Data",
-        "terms_p4": "Karena Personal OS nyimpen semua data secara lokal di browser lu, <strong>ngapus data browser, cache, atau penyimpanan lokal bakal bikin data lu hilang permanen.</strong> Personal OS gak bertanggung jawab atas kehilangan data apa pun, dan itu tanggung jawab lu buat ngekspor atau nyadangin data lu secara manual kalau lu pengen data tetep aman.",
-        "btn_enter": "MASUK SISTEM",
-
-        "login_secured": "Antarmuka Akses Aman",
-        "btn_access": "AKSES OS",
-        "toast_success": "✅ Data berhasil disimpan!",
-        "lbl_self_control": "🟢 Kendali Diri",
-        "lbl_win_lose": "Berhasil | Gagal",
-        "lbl_consistency": "🔵 Konsistensi",
-        "lbl_total_log": "Total Catatan",
-        "lbl_success_rate": "📊 Tingkat Sukses",
-        "lbl_avg_screen": "📱 Rata-rata Layar",
-        "opt_1week": "1 Minggu",
-        "opt_1month": "1 Bulan",
-        "opt_all": "Semua",
-        "lbl_freq_trigger": "⚡ TRIGGER PALING SERING",
-        "lbl_rate_small": "🎯 TINGKAT SUKSES",
-        "lbl_win_vs_lose": "✅ Berhasil vs ❌ Gagal",
-        "loading": "Memuat...",
-        "lbl_freq_trigger_chart": "Trigger Paling Sering",
-        "lbl_today": "Hari Ini",
-        "btn_add": "+ Tambah",
-        "lbl_prev_history": "Riwayat Sebelumnya",
-        "empty_battle": "Belum ada catatan battle.",
-        "lbl_empty_mind": "Kosongkan Pikiran",
-        "desc_empty_mind": "Tulis apapun yang membebani pikiran lu sekarang biar otak plong.",
-        "ph_dump": "Gua ngerasa... / Gua kepikiran soal...",
-        "btn_release": "LEPASKAN PIKIRAN",
-        "empty_dump": "Belum ada catatan sebelumnya.",
-        "lbl_date": "Tanggal (hari ini atau kemarin)",
-        "lbl_mood": "Mood secara umum?",
-        "lbl_energy": "Level Energi (1-5)",
-        "opt_energy_default": "Seberapa bertenaga lu hari ini?",
-        "opt_energy_1": "1 - Habis Total 🪫",
-        "opt_energy_2": "2 - Low Battery 🔋",
-        "opt_energy_3": "3 - Cukup 🔋",
-        "opt_energy_4": "4 - Semangat 🙂",
-        "opt_energy_5": "5 - On Fire ⚡",
-        "lbl_lesson": "Satu pelajaran penting hari ini",
-        "ph_lesson": "Apa yang lu sadari hari ini?",
-        "lbl_improve": "Apa yang perlu diperbaiki besok?",
-        "ph_improve": "Target perbaikan besok...",
-        "btn_finish_day": "SELESAIKAN HARI",
-        "empty_debrief": "Belum ada debrief sebelumnya.",
-        "desc_screen": "Catat durasi layar lu hari ini agar tetap sadar (mindful) sama waktu yang dihabiskan di depan layar.",
-        "lbl_total_duration": "Total Durasi Layar",
-        "lbl_top_apps": "Top 3 Aplikasi Terlama",
-        "ph_app_name": "Nama App",
-        "btn_save_screen": "SIMPAN SCREEN TIME",
-        "empty_screen": "Belum ada catatan screen time sebelumnya.",
-        "lbl_review_week": "Tinjauan Minggu Ini",
-        "desc_weekly": "Evaluasi seminggu ke belakang. Cari pola mana yang berhasil dan mana yang gagal.",
-        "lbl_week_date": "Tanggal (Akhir Minggu)",
-        "lbl_week_score": "Skor Keseluruhan (1-10)",
-        "opt_score_default": "Seberapa puas lu dengan minggu ini?",
-        "lbl_wins": "Kemenangan Terbesar",
-        "ph_wins": "Apa yang berjalan lancar?",
-        "lbl_fails": "Kegagalan/Gangguan Terbesar",
-        "ph_fails": "Apa yang bikin kacau?",
-        "lbl_next_action": "Action Plan Minggu Depan",
-        "ph_next_action": "Minggu depan gua bakal...",
-        "btn_save_weekly": "SIMPAN WEEKLY REVIEW",
-        "empty_weekly": "Belum ada catatan mingguan sebelumnya.",
-        "lang_toggle": "ID / EN",
-
-        "modal_battle_title": "Ambil Kendali",
-        "lbl_battle_date": "1. Tanggal (Hari ini/Kemarin)",
-        "lbl_battle_trigger": "2. Pilih Trigger",
-        "opt_battle_trigger_default": "Pilih trigger...",
-        "ph_battle_custom_trigger": "Ketik trigger lu di sini...",
-        "lbl_battle_outcome": "3. Hasil",
-        "lbl_battle_win": "✅ Berhasil",
-        "lbl_battle_lose": "❌ Gagal",
-        "lbl_battle_note": "4. Catatan (Opsional)",
-        "ph_battle_note": "Tulis konteks singkat...",
-        "btn_save": "SIMPAN",
-    }
-};
-
-function setLanguage(lang) {
-    try { localStorage.setItem('lang', lang); } catch(e) {}
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (translations[lang] && translations[lang][key]) {
-            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                el.placeholder = translations[lang][key];
-            } else if (el.tagName === 'OPTION') {
-                el.innerHTML = translations[lang][key];
-            } else {
-                // If it contains HTML inside, we might need to handle it carefully, but mostly it's innerText
-                // except for nav-icon which is inside a span. Wait, we should target the text span specifically.
-                el.innerHTML = translations[lang][key];
+        function walk(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.textContent.trim();
+                // Skip teks kosong, teks pendek (emoji/angka saja), atau sudah ada atribut data-original
+                if (text.length > 1 && /[a-zA-ZÀ-ÖØ-öø-ÿ\u00C0-\u024F\u0100-\u024F\u4E00-\u9FFF\u3000-\u303F\u0900-\u097F\u0600-\u06FF\u0080-\u00FF]/.test(text)) {
+                    result.push(node);
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                if (skipTags.has(node.tagName)) return;
+                // Skip modal yang sedang tersembunyi
+                if (node.style && node.style.display === 'none') return;
+                node.childNodes.forEach(walk);
             }
         }
-    });
 
-    const toggleBtn = document.getElementById('langToggleBtn');
-    if (toggleBtn) {
-        toggleBtn.innerText = lang === 'en' ? 'EN' : 'ID';
+        // Scan seluruh body
+        walk(document.body);
+        return result;
     }
-    
-    const landingToggleBtn = document.getElementById('landingLangToggleBtn');
-    if (landingToggleBtn) {
-        landingToggleBtn.innerText = lang === 'en' ? 'EN' : 'ID';
+
+    // Terjemahkan satu teks via MyMemory API, dengan cache localStorage
+    async function translateOne(text, from, to) {
+        const cacheKey = CACHE_PREFIX + to + '_' + btoa(unescape(encodeURIComponent(text.substring(0, 50)))).replace(/[^a-z0-9]/gi, '');
+        
+        // Cek cache dulu
+        try {
+            const cached = localStorage.getItem(cacheKey);
+            if (cached) return cached;
+        } catch(e) {}
+
+        try {
+            const url = `${API_URL}?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            
+            if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
+                const translated = data.responseData.translatedText;
+                // Simpan ke cache supaya tidak panggil API lagi
+                try { localStorage.setItem(cacheKey, translated); } catch(e) {}
+                return translated;
+            }
+        } catch(e) {
+            console.warn('Gagal menerjemahkan:', text, e);
+        }
+        return text; // Fallback: teks asli
     }
-}
 
-function toggleLanguage() {
-    let currentLang = 'en';
-    try { currentLang = localStorage.getItem('lang') || 'en'; } catch(e) {}
-    const newLang = currentLang === 'en' ? 'id' : 'en';
-    setLanguage(newLang);
-}
+    // Terjemahkan seluruh halaman sekaligus (batch)
+    async function translatePage(from, to) {
+        if (isTranslating) return;
+        isTranslating = true;
 
-// Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
-    const savedLang = localStorage.getItem('lang') || 'en';
-    setLanguage(savedLang);
-});
+        // Tampilkan loading indicator
+        showTranslateLoader(true);
+
+        try {
+            const nodes = getTranslatableNodes();
+
+            // Simpan teks asli (bahasa Indonesia) di data attribute jika belum ada
+            nodes.forEach(node => {
+                const parent = node.parentElement;
+                if (parent && !parent.dataset.originalText) {
+                    parent.dataset.originalText = node.textContent.trim();
+                    parent.dataset.originalLang = 'id';
+                }
+            });
+
+            if (to === 'id') {
+                // Kembalikan ke teks asli (Indonesia)
+                nodes.forEach(node => {
+                    const parent = node.parentElement;
+                    if (parent && parent.dataset.originalText) {
+                        node.textContent = parent.dataset.originalText;
+                    }
+                });
+            } else {
+                // Translate secara batch dengan concurrency terbatas (5 sekaligus biar ga rate-limit)
+                const CONCURRENCY = 5;
+                for (let i = 0; i < nodes.length; i += CONCURRENCY) {
+                    const batch = nodes.slice(i, i + CONCURRENCY);
+                    await Promise.all(batch.map(async node => {
+                        const parent = node.parentElement;
+                        const textToTranslate = (parent && parent.dataset.originalText) 
+                            ? parent.dataset.originalText 
+                            : node.textContent.trim();
+                        
+                        if (textToTranslate && textToTranslate.length > 1) {
+                            const translated = await translateOne(textToTranslate, from, to);
+                            node.textContent = translated;
+                        }
+                    }));
+                }
+            }
+        } catch(e) {
+            console.error('Gagal menerjemahkan halaman:', e);
+        } finally {
+            showTranslateLoader(false);
+            isTranslating = false;
+        }
+    }
+
+    // Loading indicator saat proses translate
+    function showTranslateLoader(show) {
+        let loader = document.getElementById('translate-loader');
+        if (!loader && show) {
+            loader = document.createElement('div');
+            loader.id = 'translate-loader';
+            loader.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                background: rgba(15,23,42,0.95); color: #a78bfa; padding: 20px 32px;
+                border-radius: 16px; z-index: 99999; font-family: 'Inter', sans-serif;
+                font-size: 15px; font-weight: 600; letter-spacing: 0.5px;
+                border: 1px solid rgba(124,58,237,0.4);
+                box-shadow: 0 8px 32px rgba(124,58,237,0.2);
+                display: flex; align-items: center; gap: 12px;
+            `;
+            loader.innerHTML = `
+                <div style="width:20px;height:20px;border:2px solid rgba(124,58,237,0.3);border-top-color:#a78bfa;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+                <span>Menerjemahkan...</span>
+            `;
+            // Tambah animasi spin
+            if (!document.getElementById('spin-style')) {
+                const style = document.createElement('style');
+                style.id = 'spin-style';
+                style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+                document.head.appendChild(style);
+            }
+            document.body.appendChild(loader);
+        } else if (loader && !show) {
+            loader.remove();
+        }
+    }
+
+    // Set bahasa dan terjemahkan
+    async function setLanguage(lang) {
+        const prevLang = currentLang;
+        currentLang = lang;
+        try { localStorage.setItem('lang', lang); } catch(e) {}
+
+        // Update tombol toggle
+        ['langToggleBtn', 'landingLangToggleBtn'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.innerText = lang.toUpperCase();
+        });
+
+        if (lang !== 'id') {
+            await translatePage('id', lang);
+        } else {
+            await translatePage(prevLang, 'id');
+        }
+    }
+
+    // Toggle antara ID dan EN
+    async function toggleLanguage() {
+        const newLang = currentLang === 'id' ? 'en' : 'id';
+        await setLanguage(newLang);
+    }
+
+    // Init saat DOMContentLoaded
+    function init() {
+        let savedLang = 'id';
+        try { savedLang = localStorage.getItem('lang') || 'id'; } catch(e) {}
+        currentLang = savedLang;
+
+        // Update tombol
+        ['langToggleBtn', 'landingLangToggleBtn'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) btn.innerText = savedLang.toUpperCase();
+        });
+
+        // Kalau bahasa tersimpan bukan Indonesia, terjemahkan halaman
+        if (savedLang !== 'id') {
+            // Sedikit delay biar halaman render dulu sepenuhnya
+            setTimeout(() => translatePage('id', savedLang), 800);
+        }
+    }
+
+    return { setLanguage, toggleLanguage, init };
+})();
+
+// Expose fungsi global supaya bisa dipanggil dari HTML onclick
+function setLanguage(lang) { TranslatorEngine.setLanguage(lang); }
+function toggleLanguage() { TranslatorEngine.toggleLanguage(); }
+
+document.addEventListener('DOMContentLoaded', () => TranslatorEngine.init());
