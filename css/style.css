@@ -174,7 +174,7 @@
         
         .landing-nav {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 40px; position: relative; top: 0; left: 0; width: 100%; z-index: 100;
+            padding: 20px max(40px, calc(50vw - 580px)); position: relative; top: 0; left: 0; width: 100%; z-index: 100;
             background: rgba(11, 12, 16, 0.8); backdrop-filter: blur(10px);
             box-sizing: border-box; border-bottom: 1px solid var(--glass-border);
         }
@@ -250,7 +250,7 @@
                 /* Footer */
         .landing-footer {
             position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100;
-            color: var(--text-muted); font-size: 14px; padding: 15px 40px;
+            color: var(--text-muted); font-size: 14px; padding: 15px max(40px, calc(50vw - 580px));
             border-top: 1px solid var(--glass-border);
             background: rgba(11, 12, 16, 0.8); backdrop-filter: blur(10px);
             box-sizing: border-box;
@@ -269,6 +269,7 @@
         @media (max-width: 768px) {
             .footer-content { flex-direction: column; gap: 10px; text-align: center; }
             .landing-footer { padding: 15px 20px; }
+            .landing-nav { padding: 15px 20px; }
         }
 
         @media (max-width: 768px) {
