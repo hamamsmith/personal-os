@@ -2,7 +2,7 @@ async function loadPages() {
     const pages = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
     const main = document.getElementById('main-content');
     // Load main pages
-    const CACHE_VER = "4"; // increment to bust cache
+    const CACHE_VER = "5"; // increment to bust cache
     for (const page of pages) {
         try {
             const res = await fetch(`pages/${page}.html?v=${CACHE_VER}`);
@@ -20,6 +20,9 @@ async function loadPages() {
         
         const loginRes = await fetch(`pages/loginScreen.html?v=${CACHE_VER}`);
         document.getElementById('loginScreenContainer').outerHTML = await loginRes.text();
+
+        const legalRes = await fetch(`pages/legalModals.html?v=${CACHE_VER}`);
+        document.getElementById('legalModalsContainer').outerHTML = await legalRes.text();
     } catch (e) {}
 
     // Apply i18n to newly loaded elements
