@@ -30,10 +30,14 @@ async function loadPages() {
     setLanguage(savedLang);
     
     // Check initial route
-    const hash = window.location.hash.substring(1);
-    if(hash && pages.includes(hash)) {
-        const btn = document.querySelector(`.nav-item[onclick*="${hash}"]`);
-        if(btn) navTo(hash, btn.querySelector('span:last-child').innerText, btn, false);
+    let hash = window.location.hash.substring(1);
+    if (!hash) hash = 'dashboard';
+    if(pages.includes(hash)) {
+        const btn = document.querySelector(`.nav-item[href="#${hash}"]`);
+        let title = hash;
+        if (btn) title = btn.getAttribute('data-title') || hash;
+        else if (hash === 'dashboard') title = 'Dashboard.';
+        navTo(hash, title, btn);
     }
 }
 
@@ -43,15 +47,20 @@ document.addEventListener('DOMContentLoaded', loadPages);
 window.addEventListener('hashchange', () => {
     let hash = window.location.hash.substring(1);
     if (!hash) hash = 'dashboard';
-    const btn = document.querySelector(`.nav-item[onclick*="${hash}"]`);
+    
+    // Check if the hash is one of our pages
+    const pages = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
+    if (!pages.includes(hash)) return;
+
+    const btn = document.querySelector(`.nav-item[href="#${hash}"]`);
+    let title = hash;
     if (btn) {
-        const onclickAttr = btn.getAttribute('onclick');
-        const match = onclickAttr ? onclickAttr.match(/navTo\('[^']+',\s*'([^']+)'/) : null;
-        const title = match ? match[1] : hash;
-        navTo(hash, title, btn, false);
+        title = btn.getAttribute('data-title') || hash;
     } else if (hash === 'dashboard') {
-        navTo('dashboard', 'Dashboard.', null, false);
+        title = 'Dashboard.';
     }
+    
+    navTo(hash, title, btn);
 });
 
 
@@ -153,13 +162,7 @@ function loginOS(e) {
             }
         });
 
-        function navTo(pageId, pageTitle, el, pushHistory = true) {
-    if (pushHistory) {
-        // Only set hash, let hashchange handle the rest
-        window.location.hash = pageId;
-        return;
-    }
-
+        function navTo(pageId, pageTitle, el) {
     document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
     
