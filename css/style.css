@@ -191,14 +191,14 @@
         
         /* Hero Section */
         .landing-hero {
-            display: flex; align-items: center; justify-content: space-between;
-            min-height: 70vh; gap: 40px; margin-bottom: 80px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            min-height: 70vh; gap: 40px; margin-bottom: 80px; margin-top: 40px;
         }
-        .hero-content { flex: 1; max-width: 600px; }
+        .hero-content { max-width: 800px; margin: 0 auto; }
         .landing-title { font-size: 64px; font-weight: 800; font-family: 'Outfit', sans-serif; line-height: 1.1; margin-bottom: 20px; background: linear-gradient(135deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .landing-subtitle { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 40px; }
         
-        .hero-cta-wrapper { display: flex; gap: 20px; align-items: center; }
+        .hero-cta-wrapper { display: flex; gap: 20px; align-items: center; justify-content: center; }
         .btn-enter {
             background: var(--primary); color: #fff; font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700;
             padding: 16px 40px; border: none; border-radius: 12px; cursor: pointer; transition: 0.3s;
