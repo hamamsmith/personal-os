@@ -20,11 +20,16 @@ const TranslatorEngine = (() => {
         '.topbar-title',
         '.landing-title', '.landing-subtitle',
         '.feature-card h3', '.feature-card p',
-        '.card h1', '.card h3',
+        '.card h1', '.card h3', '.card p',
         '[data-translate="true"]',
         '.summary-box .label',
-        '.footer-left p',
-        '.empty-state', '.empty-msg'
+        '.footer-left p', '.footer-link',
+        '.empty-state', '.empty-msg',
+        '.modal-content h3', '.modal-content h4', '.modal-content p',
+        'option', 'select', 'th', 'td',
+        '.nav-item span:not(.nav-icon)',
+        '.section-title', '.section-desc',
+        'span.label', '.desc', '.title'
     ].join(', ');
 
     // Simpan teks asli (Inggris) sebelum translate
