@@ -191,7 +191,7 @@
         }
         .landing-lang-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-        .landing-container { max-width: 1200px; margin: 0 auto; padding: 100px 20px 80px; }
+        .landing-container { max-width: 1200px; margin: 0 auto; padding: 100px 40px 120px; }
         
         /* Hero Section */
         .landing-hero {
@@ -240,7 +240,8 @@
 
         /* Features Section */
         .landing-features-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 80px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+            margin-bottom: 80px;
         }
         .feature-card {
             background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 16px;
