@@ -1286,3 +1286,17 @@ function loginOS(e) {
             setTimeout(initPushNotifBanner, 1000);
         }
 
+
+// --- LEGAL MODALS ---
+function openPrivacyModal() {
+    document.getElementById('privacyModal').classList.add('show');
+}
+function closePrivacyModal() {
+    document.getElementById('privacyModal').classList.remove('show');
+}
+function openTermsModal() {
+    document.getElementById('termsModal').classList.add('show');
+}
+function closeTermsModal() {
+    document.getElementById('termsModal').classList.remove('show');
+}
