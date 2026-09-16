@@ -76,7 +76,7 @@ const translations = {
         "ph_next_action": "Next week I will...",
         "btn_save_weekly": "SAVE WEEKLY REVIEW",
         "empty_weekly": "No weekly review records yet.",
-        "lang_toggle": "EN / ID"
+        "lang_toggle": "EN / ID",
 
         "modal_battle_title": "Take Control",
         "lbl_battle_date": "1. Date (Today/Yesterday)",
@@ -167,7 +167,7 @@ const translations = {
         "ph_next_action": "Minggu depan gua bakal...",
         "btn_save_weekly": "SIMPAN WEEKLY REVIEW",
         "empty_weekly": "Belum ada catatan mingguan sebelumnya.",
-        "lang_toggle": "ID / EN"
+        "lang_toggle": "ID / EN",
 
         "modal_battle_title": "Ambil Kendali",
         "lbl_battle_date": "1. Tanggal (Hari ini/Kemarin)",
