@@ -121,6 +121,16 @@ function closeLandingMenu() {
     if (menu) menu.classList.remove('mobile-show');
 }
 
+function toggleUserMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu) menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+}
+function closeUserMenu() {
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu) menu.style.display = 'none';
+}
+
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const main = document.getElementById('main-content');
@@ -143,6 +153,13 @@ document.addEventListener('click', function(e) {
     const hamburger = document.querySelector('.hamburger');
     if (sidebar && hamburger && window.innerWidth <= 768 && sidebarOpen) {
         if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) closeMobileSidebar();
+    }
+    
+    // Close user menu
+    const userMenu = document.getElementById('userDropdownMenu');
+    const userContainer = document.querySelector('.user-dropdown-container');
+    if (userMenu && userContainer && !userContainer.contains(e.target)) {
+        closeUserMenu();
     }
 });
 function navTo(pageId, pageTitle, el) {
