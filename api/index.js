@@ -30,7 +30,7 @@ const pool = new Pool({
 
 // Endpoint Testing (Mirip doGet di Code.gs)
 app.get('/api/status', (req, res) => {
-  res.json({ status: 'success', message: 'Personal OS API is Active!' });
+  res.json({ status: 'success', message: 'Vareya API is Active!' });
 });
 
 // Endpoint Utama Data (Pengganti doPost di Code.gs)
