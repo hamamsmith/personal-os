@@ -11,7 +11,7 @@ try {
     document.body.classList.add('locked');
 }
 
-const CACHE_VER = "15";
+const CACHE_VER = "16";
 const PAGES = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
 
 async function loadPages() {
@@ -25,7 +25,7 @@ async function loadPages() {
     try {
         const landingRes = await fetch(`pages/landingScreen.html?v=${CACHE_VER}`);
         document.getElementById('landingScreenContainer').outerHTML = await landingRes.text();
-        const loginRes = await fetch(`pages/loginScreen.html?v=${CACHE_VER}`);
+        const footerRes = await fetch(`pages/footer.html?v=${CACHE_VER}`); document.getElementById('footerContainer').outerHTML = await footerRes.text(); const loginRes = await fetch(`pages/loginScreen.html?v=${CACHE_VER}`);
         document.getElementById('loginScreenContainer').outerHTML = await loginRes.text();
         const legalRes = await fetch(`pages/legalModals.html?v=${CACHE_VER}`);
         document.getElementById('legalModalsContainer').innerHTML = await legalRes.text();

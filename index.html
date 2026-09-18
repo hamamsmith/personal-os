@@ -1,6 +1,6 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
-<html lang="id">
+<html class="dark" lang="id">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
@@ -43,7 +43,7 @@ tailwind.config = {
     <div class="auth-content">
         <!-- LANDING SCREEN -->
         <div id="landingScreenContainer"></div>
-        <!-- LOGIN SCREEN -->
+        <!-- FOOTER --><div id="footerContainer"></div><!-- LOGIN SCREEN -->
         <div id="loginScreenContainer"></div>
     </div>
 
@@ -51,16 +51,16 @@ tailwind.config = {
 </div>
 
 
-<div id="toast">✅ Data berhasil disimpan!</div>
+<div id="toast">? Data berhasil disimpan!</div>
 <div class="sidebar-wrapper" id="sidebar">
 <nav class="sidebar">
-<a class="nav-item active" href="#dashboard" data-title="Dashboard."><span class="nav-icon">✨</span><span data-i18n="nav_home">Home</span></a>
-<a class="nav-item" href="#battle" data-title="Take Control."><span class="nav-icon">⚔️</span><span data-i18n="nav_control">Control</span></a>
-<a class="nav-item" href="#braindump" data-title="Brain Dump."><span class="nav-icon">🧠</span><span data-i18n="nav_dump">Dump</span></a>
-<a class="nav-item" href="#debrief" data-title="Debrief Malam."><span class="nav-icon">🌙</span><span data-i18n="nav_debrief">Debrief</span></a>
-<a class="nav-item" href="#screentime" data-title="Screen Time."><span class="nav-icon">📱</span><span data-i18n="nav_screen">Screen</span></a>
-<a class="nav-item" href="#weekly" data-title="Weekly Review."><span class="nav-icon">🗓️</span><span data-i18n="nav_weekly">Weekly</span></a>
-<a class="nav-item" onclick="logoutOS()"><span class="nav-icon">🚪</span><span data-i18n="nav_logout">Logout</span></a>
+<a class="nav-item active" href="#dashboard" data-title="Dashboard."><span class="nav-icon">?</span><span data-i18n="nav_home">Home</span></a>
+<a class="nav-item" href="#battle" data-title="Take Control."><span class="nav-icon">??</span><span data-i18n="nav_control">Control</span></a>
+<a class="nav-item" href="#braindump" data-title="Brain Dump."><span class="nav-icon">??</span><span data-i18n="nav_dump">Dump</span></a>
+<a class="nav-item" href="#debrief" data-title="Debrief Malam."><span class="nav-icon">??</span><span data-i18n="nav_debrief">Debrief</span></a>
+<a class="nav-item" href="#screentime" data-title="Screen Time."><span class="nav-icon">??</span><span data-i18n="nav_screen">Screen</span></a>
+<a class="nav-item" href="#weekly" data-title="Weekly Review."><span class="nav-icon">???</span><span data-i18n="nav_weekly">Weekly</span></a>
+<a class="nav-item" onclick="logoutOS()"><span class="nav-icon">??</span><span data-i18n="nav_logout">Logout</span></a>
 </nav>
 </div>
 <main class="main-content" id="main-content"></main>
@@ -69,13 +69,13 @@ tailwind.config = {
 <div class="modal-content">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
 <h3 style="margin-bottom: 0;" data-i18n="modal_battle_title">Take Control</h3>
-<span onclick="closeBattleModal()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">×</span>
+<span onclick="closeBattleModal()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">�</span>
 </div>
 <!-- Step 1: Tanggal -->
 <label data-i18n="lbl_battle_date">1. Date (Today/Yesterday)</label>
 <div class="picker-container" style="margin-bottom: 20px;">
 <select id="battleDatePicker" style="font-size: 15px;"></select>
-<span class="lbl">▼</span>
+<span class="lbl">?</span>
 </div>
 <!-- Step 2: Trigger -->
 <label data-i18n="lbl_battle_trigger">2. Select Trigger</label>
@@ -83,15 +83,15 @@ tailwind.config = {
 <select id="battleTypeVal" onchange="checkCustomTrigger()" style="font-size: 15px;">
 <option disabled="" selected="" value="" data-i18n="opt_battle_trigger_default">Select trigger...</option>
 </select>
-<span class="lbl">▼</span>
+<span class="lbl">?</span>
 </div>
 <input id="customTriggerInput" placeholder="Type your trigger here..." data-i18n="ph_battle_custom_trigger" style="display:none; margin-bottom: 20px; font-size: 15px; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: var(--text-main); width: 100%; box-sizing: border-box; outline: none;" type="text"/>
 <input id="battleKategoriVal" type="hidden" value="Lainnya"/>
 <!-- Step 3: Hasil -->
 <label data-i18n="lbl_battle_outcome">3. Outcome</label>
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-<div class="radio-btn" data-i18n="lbl_battle_win" onclick="selectRadio(this, 'battleOutcome')">✅ Win</div>
-<div class="radio-btn" data-i18n="lbl_battle_lose" onclick="selectRadio(this, 'battleOutcome')">❌ Lose</div>
+<div class="radio-btn" data-i18n="lbl_battle_win" onclick="selectRadio(this, 'battleOutcome')">? Win</div>
+<div class="radio-btn" data-i18n="lbl_battle_lose" onclick="selectRadio(this, 'battleOutcome')">? Lose</div>
 </div>
 <input id="battleOutcomeVal" type="hidden"/>
 <!-- Step 4: Catatan -->
@@ -108,7 +108,7 @@ tailwind.config = {
 <h3 id="battleDetailTitle" style="margin-bottom: 4px;">-</h3>
 <p id="battleDetailSub" style="font-size: 12px; color: var(--text-muted);">-</p>
 </div>
-<span onclick="closeBattleDetail()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">×</span>
+<span onclick="closeBattleDetail()" style="cursor:pointer; font-size: 24px; color: var(--text-muted); line-height: 1;">�</span>
 </div>
 <div id="battleDetailList" style="max-height: 60vh; overflow-y: auto;"></div>
 </div>
