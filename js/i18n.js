@@ -200,10 +200,16 @@ const TranslatorEngine = (() => {
         currentLang = lang;
         try { localStorage.setItem('lang', lang); } catch(e) {}
 
-        // Update tombol toggle
+        // Update tombol toggle dengan bendera bulat kecil
         ['langToggleBtn', 'landingLangToggleBtn'].forEach(id => {
             const btn = document.getElementById(id);
-            if (btn) btn.innerText = lang === 'en' ? 'EN' : 'ID';
+            if (btn) {
+                const flagCode = lang === 'en' ? 'gb' : 'id';
+                btn.innerHTML = `<img src="https://flagcdn.com/w40/${flagCode}.png" alt="${lang}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--glass-border); display: block;">`;
+                btn.style.padding = '4px'; // Sesuaikan padding
+                btn.style.background = 'transparent';
+                btn.style.border = 'none';
+            }
         });
 
         if (lang === 'id') {
@@ -229,7 +235,13 @@ const TranslatorEngine = (() => {
         // Update label tombol
         ['langToggleBtn', 'landingLangToggleBtn'].forEach(id => {
             const btn = document.getElementById(id);
-            if (btn) btn.innerText = savedLang === 'en' ? 'EN' : 'ID';
+            if (btn) {
+                const flagCode = savedLang === 'en' ? 'gb' : 'id';
+                btn.innerHTML = `<img src="https://flagcdn.com/w40/${flagCode}.png" alt="${savedLang}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--glass-border); display: block;">`;
+                btn.style.padding = '4px';
+                btn.style.background = 'transparent';
+                btn.style.border = 'none';
+            }
         });
 
         // Kalau user sebelumnya pakai Bahasa Indonesia, terjemahkan
