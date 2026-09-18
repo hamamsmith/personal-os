@@ -87,9 +87,23 @@ const TranslatorEngine = (() => {
         });
     }
 
+    // Override manual untuk kata-kata yang hasil terjemahan API-nya aneh
+    const OVERRIDES = {
+        'en|id': {
+            'About': 'Tentang',
+            'Features': 'Fitur',
+            'Privacy': 'Privasi'
+        }
+    };
+
     // Terjemahkan satu teks via MyMemory API dengan cache
     async function translateOne(text, from, to) {
         if (!text || text.trim().length < 2) return text;
+
+        const langPair = `${from}|${to}`;
+        if (OVERRIDES[langPair] && OVERRIDES[langPair][text.trim()]) {
+            return OVERRIDES[langPair][text.trim()];
+        }
 
         const safeKey = text.substring(0, 60).replace(/[^a-z0-9]/gi, '_');
         const cacheKey = `${CACHE_PREFIX}${to}_${safeKey}`;
