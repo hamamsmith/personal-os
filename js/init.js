@@ -85,9 +85,10 @@ async function testPush() {
 
 window.onload = async function() {
     try {
+        const CACHE_VER = Date.now();
         const [headerRes, footerRes] = await Promise.all([
-            fetch('pages/header.html?v=34'),
-            fetch('pages/footer.html?v=34')
+            fetch(`pages/header.html?v=${CACHE_VER}`),
+            fetch(`pages/footer.html?v=${CACHE_VER}`)
         ]);
         const headerHtml = await headerRes.text();
         const footerHtml = await footerRes.text();
