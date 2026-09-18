@@ -359,3 +359,5 @@
             border-color: var(--primary); background: rgba(0, 0, 0, 0.6);
             box-shadow: 0 0 0 4px var(--primary-glow), inset 0 2px 4px rgba(0,0,0,0.2);
         }
+
+@media (max-width: 768px) { .landing-menu { display: none !important; } .landing-nav-inner { padding: 15px; } }

@@ -1,7 +1,22 @@
 <nav class="landing-nav">
     <div class="landing-nav-inner">
+        <!-- Kiri: Logo -->
         <div class="landing-logo">Personal<span>OS</span></div>
-        <div id="landingLangToggleBtn" onclick="toggleLanguage()" class="landing-lang-btn">EN</div>
+        
+        <!-- Tengah: Menu Desktop -->
+        <div class="landing-menu" style="display: flex; gap: 30px; margin: 0 auto; align-items: center;">
+            <a href="#features" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Features</a>
+            <a href="#about" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">About</a>
+            <a href="#privacy" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Privacy</a>
+        </div>
+        
+        <!-- Kanan: Aksi -->
+        <div class="landing-actions" style="display: flex; gap: 15px; align-items: center;">
+            <div id="landingLangToggleBtn" onclick="toggleLanguage()" class="landing-lang-btn" style="cursor: pointer;">EN</div>
+            <a href="#login" style="text-decoration: none;">
+                <button style="background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.4); color: #fff; padding: 6px 16px; border-radius: 20px; font-weight: 600; font-size: 13px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(124, 58, 237, 0.1);" onmouseover="this.style.background='var(--primary)'; this.style.boxShadow='0 0 15px var(--primary-glow)';" onmouseout="this.style.background='rgba(124, 58, 237, 0.1)'; this.style.boxShadow='0 0 10px rgba(124, 58, 237, 0.1)';">Login</button>
+            </a>
+        </div>
     </div>
 </nav>
 
