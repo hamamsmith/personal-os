@@ -9,28 +9,30 @@ const TranslatorEngine = (() => {
     const API_URL = 'https://api.mymemory.translated.net/get';
     let currentLang = 'en';
     let isTranslating = false;
+    let observer = null;
 
     // Tag yang DILEWAT (tidak perlu ditranslate text-content-nya)
     const SKIP_TAGS = new Set(['SCRIPT','STYLE','NOSCRIPT','CODE','PRE','SVG','CANVAS','IFRAME','IMG','BR','HR','HEAD','META','LINK','TITLE']);
 
-    // Ambil semua elemen yang punya teks langsung (bukan dari child element) atau placeholder
-    function getTranslatableElements() {
+    // Ambil semua elemen yang punya teks langsung, placeholder, atau data-title
+    function getTranslatableElements(root = document) {
         const result = [];
         const seen = new Set();
 
-        document.querySelectorAll('*').forEach(el => {
+        root.querySelectorAll('*').forEach(el => {
             if (SKIP_TAGS.has(el.tagName)) return;
             if (seen.has(el)) return;
             
             const isInput = el.tagName === 'INPUT' || el.tagName === 'TEXTAREA';
+            const hasDataTitle = el.hasAttribute('data-title');
+            
             let textToTranslate = '';
             
-            if (isInput) {
-                 if (el.placeholder) {
-                     textToTranslate = el.placeholder;
-                 }
+            if (isInput && el.placeholder) {
+                 textToTranslate = el.placeholder;
+            } else if (hasDataTitle) {
+                 textToTranslate = el.getAttribute('data-title');
             } else {
-                 // Hanya ambil kalau teks langsung di element ini (bukan dari child)
                  let directText = '';
                  el.childNodes.forEach(node => {
                      if (node.nodeType === Node.TEXT_NODE) {
@@ -48,20 +50,19 @@ const TranslatorEngine = (() => {
             if (!/[a-zA-Z\u00C0-\u024F\u4E00-\u9FFF\u3040-\u30FF\u0080-\u00FF]/.test(trimmed)) return;
 
             seen.add(el);
-            result.push({ el, originalText: trimmed, isPlaceholder: isInput });
+            result.push({ el, originalText: trimmed, isPlaceholder: isInput && el.placeholder, isDataTitle: hasDataTitle });
         });
 
         return result;
     }
 
     // Simpan teks asli (Inggris) di data attribute
-    function saveOriginals() {
-        getTranslatableElements().forEach(({ el, originalText, isPlaceholder }) => {
+    function saveOriginals(root = document) {
+        getTranslatableElements(root).forEach(({ el, originalText, isPlaceholder, isDataTitle }) => {
             if (!el.dataset.originalText) {
                 el.dataset.originalText = originalText;
-                if (isPlaceholder) {
-                     el.dataset.isPlaceholder = 'true';
-                }
+                if (isPlaceholder) el.dataset.isPlaceholder = 'true';
+                if (isDataTitle) el.dataset.isDataTitle = 'true';
             }
         });
     }
@@ -72,6 +73,8 @@ const TranslatorEngine = (() => {
             if (el.dataset.originalText) {
                 if (el.dataset.isPlaceholder === 'true') {
                     el.placeholder = el.dataset.originalText;
+                } else if (el.dataset.isDataTitle === 'true') {
+                    el.setAttribute('data-title', el.dataset.originalText);
                 } else {
                     // Temukan text node langsung dan update
                     el.childNodes.forEach(node => {
@@ -98,7 +101,7 @@ const TranslatorEngine = (() => {
 
         try {
             const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 5000); // 5 detik timeout per request
+            const timeout = setTimeout(() => controller.abort(), 5000);
             const url = `${API_URL}?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
             const res = await fetch(url, { signal: controller.signal });
             clearTimeout(timeout);
@@ -110,55 +113,98 @@ const TranslatorEngine = (() => {
                 return translated;
             }
         } catch(e) {
-            // Timeout atau error network — pakai teks asli
+            // Error network, ignore
         }
         return text;
     }
 
+    // Proses translate array elemen
+    async function processTranslationBatch(elements, from, to) {
+        const BATCH_SIZE = 5;
+        for (let i = 0; i < elements.length; i += BATCH_SIZE) {
+            const batch = elements.slice(i, i + BATCH_SIZE);
+            await Promise.all(batch.map(async ({ el }) => {
+                const original = el.dataset.originalText;
+                if (!original) return;
+                const translated = await translateOne(original, from, to);
+                
+                if (el.dataset.isPlaceholder === 'true') {
+                    el.placeholder = translated;
+                } else if (el.dataset.isDataTitle === 'true') {
+                    el.setAttribute('data-title', translated);
+                } else {
+                    el.childNodes.forEach(node => {
+                        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 1) {
+                            node.textContent = translated;
+                        }
+                    });
+                }
+            }));
+        }
+    }
+
     // Terjemahkan seluruh halaman ke bahasa target
-    async function translatePage(from, to) {
-        if (isTranslating) return;
-        isTranslating = true;
-        showLoader(true);
+    async function translatePage(from, to, root = document, showUI = true) {
+        if (isTranslating && root === document) return;
+        if (root === document) isTranslating = true;
+        if (showUI) showLoader(true);
 
         try {
-            if (to === 'en') {
+            if (to === 'en' && root === document) {
                 restoreOriginals();
+                stopObserver();
                 return;
             }
 
-            // Simpan teks asli dulu
-            saveOriginals();
+            saveOriginals(root);
 
-            // Ambil SEMUA elemen berteks di halaman
-            const elements = getTranslatableElements()
+            const elements = getTranslatableElements(root)
                 .filter(({ el }) => el.dataset.originalText && el.dataset.originalText.trim().length > 1);
 
-            // Batch 5 sekaligus biar tidak spam API tapi tetap cepat
-            const BATCH_SIZE = 5;
-            for (let i = 0; i < elements.length; i += BATCH_SIZE) {
-                const batch = elements.slice(i, i + BATCH_SIZE);
-                await Promise.all(batch.map(async ({ el }) => {
-                    const original = el.dataset.originalText;
-                    const translated = await translateOne(original, from, to);
-                    
-                    if (el.dataset.isPlaceholder === 'true') {
-                        el.placeholder = translated;
-                    } else {
-                        // Update text node langsung (jaga icon/child element)
-                        el.childNodes.forEach(node => {
-                            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 1) {
-                                node.textContent = translated;
-                            }
-                        });
-                    }
-                }));
+            await processTranslationBatch(elements, from, to);
+            
+            // Nyalakan observer kalau mentranslate seluruh document
+            if (root === document && to !== 'en') {
+                startObserver(from, to);
             }
         } catch(e) {
             console.error('Gagal menerjemahkan halaman:', e);
         } finally {
-            showLoader(false);
-            isTranslating = false;
+            if (showUI) showLoader(false);
+            if (root === document) isTranslating = false;
+        }
+    }
+    
+    // Auto translate dynamic content (MutationObserver)
+    let observeTimeout = null;
+    function startObserver(from, to) {
+        if (observer) return;
+        observer = new MutationObserver(mutations => {
+            // Debounce mutasi biar ga spam API
+            clearTimeout(observeTimeout);
+            observeTimeout = setTimeout(() => {
+                mutations.forEach(m => {
+                    if (m.addedNodes.length > 0) {
+                        m.addedNodes.forEach(node => {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                // Translate node baru secara background tanpa loader
+                                translatePage(from, to, node, false);
+                            } else if (node.nodeType === Node.TEXT_NODE && node.parentElement && !SKIP_TAGS.has(node.parentElement.tagName)) {
+                                // Translate teks yang baru dimasukkan secara langsung (e.g. innerText ubah)
+                                translatePage(from, to, node.parentElement, false);
+                            }
+                        });
+                    }
+                });
+            }, 300);
+        });
+        observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    }
+    
+    function stopObserver() {
+        if (observer) {
+            observer.disconnect();
+            observer = null;
         }
     }
 
@@ -200,13 +246,12 @@ const TranslatorEngine = (() => {
         currentLang = lang;
         try { localStorage.setItem('lang', lang); } catch(e) {}
 
-        // Update tombol toggle dengan bendera bulat kecil
         ['langToggleBtn', 'landingLangToggleBtn'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
                 const flagCode = lang === 'en' ? 'gb' : 'id';
                 btn.innerHTML = `<img src="https://flagcdn.com/w40/${flagCode}.png" alt="${lang}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--glass-border); display: block;">`;
-                btn.style.padding = '4px'; // Sesuaikan padding
+                btn.style.padding = '4px';
                 btn.style.background = 'transparent';
                 btn.style.border = 'none';
             }
@@ -215,10 +260,10 @@ const TranslatorEngine = (() => {
         if (lang === 'id') {
             await translatePage('en', 'id');
         } else {
-            // Kembali ke Inggris = restore saja, tidak perlu API
             showLoader(false);
             isTranslating = false;
             restoreOriginals();
+            stopObserver();
         }
     }
 
@@ -232,7 +277,6 @@ const TranslatorEngine = (() => {
         try { savedLang = localStorage.getItem('lang') || 'en'; } catch(e) {}
         currentLang = savedLang;
 
-        // Update label tombol
         ['langToggleBtn', 'landingLangToggleBtn'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
@@ -244,7 +288,6 @@ const TranslatorEngine = (() => {
             }
         });
 
-        // Kalau user sebelumnya pakai Bahasa Indonesia, terjemahkan
         if (savedLang === 'id') {
             setTimeout(() => translatePage('en', 'id'), 1000);
         }
