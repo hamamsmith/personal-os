@@ -111,6 +111,16 @@ function logoutOS() {
 
 // --- SIDEBAR & NAV ---
 let sidebarOpen = window.innerWidth > 768;
+
+function toggleLandingMenu() {
+    const menu = document.getElementById('landingMenu');
+    if (menu) menu.classList.toggle('mobile-show');
+}
+function closeLandingMenu() {
+    const menu = document.getElementById('landingMenu');
+    if (menu) menu.classList.remove('mobile-show');
+}
+
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const main = document.getElementById('main-content');

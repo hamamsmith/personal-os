@@ -4,10 +4,10 @@
         <div class="landing-logo">Personal<span>OS</span></div>
         
         <!-- Tengah: Menu Desktop -->
-        <div class="landing-menu" style="display: flex; gap: 30px; margin: 0 auto; align-items: center;">
-            <a href="#features" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Features</a>
-            <a href="#about" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">About</a>
-            <a href="#privacy" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Privacy</a>
+        <div id="landingMenu" class="landing-menu" style="display: flex; gap: 30px; margin: 0 auto; align-items: center;">
+            <a href="#features" onclick="closeLandingMenu()" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Features</a>
+            <a href="#about" onclick="closeLandingMenu()" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">About</a>
+            <a href="#privacy" onclick="closeLandingMenu()" style="color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">Privacy</a>
         </div>
         
         <!-- Kanan: Aksi -->
@@ -23,6 +23,7 @@
                     </svg>
                 </button>
             </a>
+            <div class="landing-hamburger" onclick="toggleLandingMenu()">☰</div>
         </div>
     </div>
 </nav>
