@@ -1,4 +1,7 @@
-<div id="landingScreen">
+﻿import re
+
+with open('pages/landingScreen.html', 'w', encoding='utf-8') as f:
+    f.write('''<div id="landingScreen">
     <main class="w-full pt-20 bg-background text-on-surface">
         <div class="flex flex-col w-full">
             <!-- SECTION 1: AMBIENT HERO -->
@@ -223,4 +226,4 @@
             </section>
         </div>
     </main>
-</div>
+</div>''')

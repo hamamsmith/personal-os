@@ -1,4 +1,9 @@
-<header class="landing-nav fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-border-subtle shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+import re
+
+with open('pages/header.html', 'r', encoding='utf-8') as f:
+    content = f.read()
+
+new_header = '''<header class="landing-nav fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl border-b border-border-subtle shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
 <div class="h-20 w-full px-margin flex items-center justify-between gap-space-md">
     <div class="flex items-center gap-space-lg">
         <a class="flex items-center gap-space-sm group" data-path="overview" href="#">
@@ -39,15 +44,10 @@
         </div>
     </div>
 </div>
-</header>
+</header>'''
 
-<header class="topbar">
-    <div class="hamburger" onclick="toggleSidebar()" style="margin-right:0;">☰</div>
-    <div class="topbar-title" data-i18n="dashboard_title" id="topbar-title" style="position: absolute; left: 50%; transform: translateX(-50%);">Dashboard.</div>
-    <div id="headerBell" onclick="openNotifModal()" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='scale(1)';" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='scale(1.05)';" style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
-        <span style="font-size: 18px; filter: drop-shadow(0 2px 4px rgba(124,58,237,0.5));">🔔</span>
-    </div>
-    <div id="langToggleBtn" onclick="toggleLanguage()" style="cursor:pointer; margin-left: auto; margin-right: 20px; padding: 4px; background: transparent; border: none;">
-        <img src="https://flagcdn.com/w40/gb.png" alt="en" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--glass-border); display: block;">
-    </div>
-</header>
+# Replace everything from <nav class="landing-nav"> to </nav>
+content = re.sub(r'<nav class="landing-nav">.*?</nav>', new_header, content, flags=re.DOTALL)
+
+with open('pages/header.html', 'w', encoding='utf-8') as f:
+    f.write(content)

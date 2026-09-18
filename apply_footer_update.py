@@ -1,4 +1,7 @@
-<footer class="w-full bg-surface-container-low border-t border-border-subtle mt-space-xl">
+﻿import re
+
+with open('pages/footer.html', 'w', encoding='utf-8') as f:
+    f.write('''<footer class="w-full bg-surface-container-low border-t border-border-subtle mt-space-xl">
     <div class="w-full px-margin py-space-xl flex flex-col md:flex-row items-center justify-between gap-space-lg">
         <div class="flex flex-col sm:flex-row items-center gap-space-md">
             <span class="font-headline-sm text-headline-sm text-text-primary tracking-tight">Personal<span class="text-primary">OS</span></span>
@@ -27,4 +30,4 @@
             </div>
         </div>
     </div>
-</footer>
+</footer>''')
