@@ -8,7 +8,7 @@ self.addEventListener('push', function(event) {
     }
   }
 
-  const title = data.title || 'Sistem Personal OS';
+  const title = data.title || 'Sistem Vareya';
   const options = {
     body: data.body || 'Ada pesan baru buat lu bro!',
     icon: 'https://cdn-icons-png.flaticon.com/512/263/263062.png',
