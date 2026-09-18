@@ -25,7 +25,7 @@ async function loadPages() {
     try {
         const landingRes = await fetch(`pages/landingScreen.html?v=${CACHE_VER}`);
         document.getElementById('landingScreenContainer').outerHTML = await landingRes.text();
-        const footerRes = await fetch(`pages/footer.html?v=${CACHE_VER}`); document.getElementById('footerContainer').outerHTML = await footerRes.text(); const loginRes = await fetch(`pages/loginScreen.html?v=${CACHE_VER}`);
+        const loginRes = await fetch(`pages/loginScreen.html?v=${CACHE_VER}`);
         document.getElementById('loginScreenContainer').outerHTML = await loginRes.text();
         const legalRes = await fetch(`pages/legalModals.html?v=${CACHE_VER}`);
         document.getElementById('legalModalsContainer').innerHTML = await legalRes.text();
