@@ -10,10 +10,10 @@ const TranslatorEngine = (() => {
     let currentLang = 'en';
     let isTranslating = false;
 
-    // Tag yang DILEWAT (tidak perlu ditranslate)
-    const SKIP_TAGS = new Set(['SCRIPT','STYLE','NOSCRIPT','CODE','PRE','INPUT','TEXTAREA','SELECT','SVG','CANVAS','IFRAME','IMG','BR','HR','HEAD','META','LINK','TITLE']);
+    // Tag yang DILEWAT (tidak perlu ditranslate text-content-nya)
+    const SKIP_TAGS = new Set(['SCRIPT','STYLE','NOSCRIPT','CODE','PRE','SVG','CANVAS','IFRAME','IMG','BR','HR','HEAD','META','LINK','TITLE']);
 
-    // Ambil semua elemen yang punya teks langsung (bukan dari child element)
+    // Ambil semua elemen yang punya teks langsung (bukan dari child element) atau placeholder
     function getTranslatableElements() {
         const result = [];
         const seen = new Set();
@@ -21,16 +21,26 @@ const TranslatorEngine = (() => {
         document.querySelectorAll('*').forEach(el => {
             if (SKIP_TAGS.has(el.tagName)) return;
             if (seen.has(el)) return;
+            
+            const isInput = el.tagName === 'INPUT' || el.tagName === 'TEXTAREA';
+            let textToTranslate = '';
+            
+            if (isInput) {
+                 if (el.placeholder) {
+                     textToTranslate = el.placeholder;
+                 }
+            } else {
+                 // Hanya ambil kalau teks langsung di element ini (bukan dari child)
+                 let directText = '';
+                 el.childNodes.forEach(node => {
+                     if (node.nodeType === Node.TEXT_NODE) {
+                         directText += node.textContent;
+                     }
+                 });
+                 textToTranslate = directText;
+            }
 
-            // Hanya ambil kalau teks langsung di element ini (bukan dari child)
-            let directText = '';
-            el.childNodes.forEach(node => {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    directText += node.textContent;
-                }
-            });
-
-            const trimmed = directText.trim();
+            const trimmed = textToTranslate.trim();
             // Skip kalau kosong, hanya angka, hanya emoji, atau terlalu pendek
             if (trimmed.length < 2) return;
             if (/^[\d\s.,:%+\-\/\\|×÷=@#$%^&*()[\]{}<>]+$/.test(trimmed)) return;
@@ -38,7 +48,7 @@ const TranslatorEngine = (() => {
             if (!/[a-zA-Z\u00C0-\u024F\u4E00-\u9FFF\u3040-\u30FF\u0080-\u00FF]/.test(trimmed)) return;
 
             seen.add(el);
-            result.push({ el, originalText: trimmed });
+            result.push({ el, originalText: trimmed, isPlaceholder: isInput });
         });
 
         return result;
@@ -46,9 +56,12 @@ const TranslatorEngine = (() => {
 
     // Simpan teks asli (Inggris) di data attribute
     function saveOriginals() {
-        getTranslatableElements().forEach(({ el, originalText }) => {
+        getTranslatableElements().forEach(({ el, originalText, isPlaceholder }) => {
             if (!el.dataset.originalText) {
                 el.dataset.originalText = originalText;
+                if (isPlaceholder) {
+                     el.dataset.isPlaceholder = 'true';
+                }
             }
         });
     }
@@ -57,12 +70,16 @@ const TranslatorEngine = (() => {
     function restoreOriginals() {
         document.querySelectorAll('[data-original-text]').forEach(el => {
             if (el.dataset.originalText) {
-                // Temukan text node langsung dan update
-                el.childNodes.forEach(node => {
-                    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 1) {
-                        node.textContent = el.dataset.originalText;
-                    }
-                });
+                if (el.dataset.isPlaceholder === 'true') {
+                    el.placeholder = el.dataset.originalText;
+                } else {
+                    // Temukan text node langsung dan update
+                    el.childNodes.forEach(node => {
+                        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 1) {
+                            node.textContent = el.dataset.originalText;
+                        }
+                    });
+                }
             }
         });
     }
@@ -124,12 +141,17 @@ const TranslatorEngine = (() => {
                 await Promise.all(batch.map(async ({ el }) => {
                     const original = el.dataset.originalText;
                     const translated = await translateOne(original, from, to);
-                    // Update text node langsung (jaga icon/child element)
-                    el.childNodes.forEach(node => {
-                        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 1) {
-                            node.textContent = translated;
-                        }
-                    });
+                    
+                    if (el.dataset.isPlaceholder === 'true') {
+                        el.placeholder = translated;
+                    } else {
+                        // Update text node langsung (jaga icon/child element)
+                        el.childNodes.forEach(node => {
+                            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 1) {
+                                node.textContent = translated;
+                            }
+                        });
+                    }
                 }));
             }
         } catch(e) {
