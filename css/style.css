@@ -168,14 +168,24 @@
 
         #authLayout { display: none; }
         body.locked #authLayout {
-            display: block;
-            width: 100%;
-            min-height: 100vh;
-            box-sizing: border-box;
-            overflow-x: hidden;
-            position: relative;
-            padding-bottom: 80px; /* Space for footer */
-        }
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-height: 100vh;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        position: relative;
+}
+
+#authLayout .auth-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#landingScreenContainer {
+    flex: 1;
+}
 
         #landingScreen {
             width: 100%; min-height: 100vh; padding-bottom: 80px;
