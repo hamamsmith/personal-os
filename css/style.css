@@ -57,10 +57,9 @@
         .orb-3 { width: 250px; height: 250px; background: var(--bg-orb-3); top: 40%; left: 30%; animation-delay: -10s; }
         @keyframes float { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.1); } 100% { transform: translateY(20px) scale(0.9); } }
 
-        .topbar { position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-height); background: rgba(11, 12, 16, 0.7); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 1000; }
-        .hamburger { font-size: 28px; cursor: pointer; color: var(--text-main); margin-right: 20px; transition: 0.3s; user-select: none; }
+        /* topbar styling pindah ke Tailwind di header.html */
+        .hamburger { cursor: pointer; color: var(--text-main); transition: 0.3s; user-select: none; }
         .hamburger:active { transform: scale(0.9); color: var(--primary); }
-        .topbar-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-title); }
 
         .sidebar-wrapper { position: fixed; top: calc(var(--topbar-height) + 20px); left: 20px; height: calc(100vh - var(--topbar-height) - 40px); width: var(--sidebar-width); z-index: 999; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s; }
         .sidebar-wrapper.collapsed { transform: translateX(-150%); opacity: 0; pointer-events: none; }
