@@ -50,11 +50,12 @@
             min-height: 100vh;
         }
 
-        .ambient-bg { position: fixed; top: 0; left: 0; width: 100%; min-height: 100vh; z-index: -1; overflow: hidden; background: var(--bg-base); }
-        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; animation: float 15s infinite alternate ease-in-out; }
-        .orb-1 { width: 300px; height: 300px; background: var(--bg-orb-1); top: -50px; left: -50px; }
-        .orb-2 { width: 400px; height: 400px; background: var(--bg-orb-2); bottom: -100px; right: -50px; animation-delay: -5s; }
-        .orb-3 { width: 250px; height: 250px; background: var(--bg-orb-3); top: 40%; left: 30%; animation-delay: -10s; }
+        .ambient-bg { position: fixed; top: 0; left: 0; width: 100%; min-height: 100vh; z-index: -1; overflow: hidden; background: radial-gradient(ellipse 130% 90% at 50% -15%, #171a2e 0%, var(--bg-base) 55%), var(--bg-base); }
+        .ambient-bg::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 115%, rgba(30, 27, 75, 0.55) 0%, transparent 50%), radial-gradient(circle at 50% -10%, rgba(88, 28, 135, 0.22) 0%, transparent 45%); }
+        .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.55; mix-blend-mode: screen; animation: float 16s infinite alternate ease-in-out; will-change: transform, opacity; }
+        .orb-1 { width: 360px; height: 360px; top: -90px; left: -80px; background: radial-gradient(circle at 30% 30%, #a78bfa 0%, #6d28d9 70%); }
+        .orb-2 { width: 480px; height: 480px; bottom: -140px; right: -100px; background: radial-gradient(circle at 70% 20%, #38bdf8 0%, #1e3a8a 72%); animation-delay: -6s; }
+        .orb-3 { width: 330px; height: 330px; top: 38%; left: 33%; background: radial-gradient(circle at 50% 50%, #f0abfc 0%, #86198f 72%); animation-delay: -11s; opacity: 0.4; }
         @keyframes float { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.1); } 100% { transform: translateY(20px) scale(0.9); } }
 
         /* topbar styling pindah ke Tailwind di header.html */
@@ -141,7 +142,7 @@
             
             /* OPTIMASI PERFORMA HP (ANTI-LAG) */
             /* Mematikan animasi bola cahaya dan blur tingkat tinggi yang bikin GPU HP berat */
-            .orb { animation: none !important; filter: blur(30px) !important; opacity: 0.2 !important; }
+            .orb { animation: none !important; filter: blur(40px) !important; opacity: 0.28 !important; }
             /* Mematikan efek kaca belakang pada kartu saat di-scroll */
             .card { backdrop-filter: none !important; background: rgba(255, 255, 255, 0.05) !important; box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important; }
             .topbar { backdrop-filter: blur(8px) !important; padding: 0 16px; }
