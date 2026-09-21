@@ -83,6 +83,20 @@ function hideLoginScreen() {
     const landing = document.getElementById('landingScreen');
     if (landing) landing.style.opacity = '1';
 }
+function handleLogoClick(e) {
+    if (e) e.preventDefault();
+    let isLoggedIn = false;
+    try { isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; } catch(err) {}
+    if (isLoggedIn) {
+        window.location.hash = 'dashboard';
+        return;
+    }
+    document.body.classList.remove('show-login');
+    const landing = document.getElementById('landingScreen');
+    if (landing) landing.style.opacity = '1';
+    try { if (window.location.hash) window.location.hash = ''; } catch(err) {}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 function loginOS(e) {
     e.preventDefault();
     try { localStorage.setItem('isLoggedIn', 'true'); } catch(e) {}
