@@ -138,6 +138,22 @@ window.onload = async function() {
         });
     }, observerOptions);
     
+    // Gunakan MutationObserver untuk mendeteksi elemen .reveal yang di-load secara dinamis
+    const mutationObserver = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.nodeType === 1) { // ELEMENT_NODE
+                    if (node.classList && node.classList.contains('reveal')) {
+                        revealObserver.observe(node);
+                    }
+                    node.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+                }
+            });
+        });
+    });
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+    
+    // Fallback observe elemen yang sudah ada
     setTimeout(() => {
         document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
     }, 100);
