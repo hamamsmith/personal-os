@@ -51,6 +51,7 @@
         }
 
         .ambient-bg { position: fixed; top: 0; left: 0; width: 100%; min-height: 100vh; z-index: -1; overflow: hidden; background: radial-gradient(ellipse 130% 90% at 50% -15%, #171a2e 0%, #101221 60%), linear-gradient(180deg, #101221 0%, #0d0f1a 100%); }
+        .noise-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; opacity: 0.035; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.55; mix-blend-mode: screen; animation: float 16s infinite alternate ease-in-out; will-change: transform, opacity; }
         .orb-1 { width: 360px; height: 360px; top: -90px; left: -80px; background: radial-gradient(circle at 30% 30%, #a78bfa 0%, #6d28d9 70%); }
         .orb-2 { width: 480px; height: 480px; bottom: -140px; right: -100px; background: radial-gradient(circle at 70% 20%, #38bdf8 0%, #1e3a8a 72%); animation-delay: -6s; }
@@ -384,3 +385,14 @@
     .summary-box { padding: 15px 12px; }
     .radio-grid { grid-template-columns: 1fr; }
 }
+
+/* Premium Animations */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
+.reveal.active { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 100ms; }
+.reveal-delay-2 { transition-delay: 200ms; }
+.reveal-delay-3 { transition-delay: 300ms; }
+.glow-card { position: relative; overflow: hidden; }
+.glow-card::before { content: ''; position: absolute; top: var(--mouse-y, 50%); left: var(--mouse-x, 50%); width: 300px; height: 300px; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%); transform: translate(-50%, -50%); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 0; }
+.glow-card:hover::before { opacity: 1; }
+.glow-card > * { position: relative; z-index: 1; }

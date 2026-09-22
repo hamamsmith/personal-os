@@ -126,4 +126,30 @@ window.onload = async function() {
 
     if (typeof loadDashboardData === 'function') loadDashboardData();
     setTimeout(initPushNotifBanner, 1000);
+
+    // Premium Frontend: Scroll Reveal Observer
+    const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    setTimeout(() => {
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    }, 100);
+
+    // Premium Frontend: Interactive Mouse Glow Effect
+    document.addEventListener('mousemove', (e) => {
+        document.querySelectorAll('.glow-card').forEach(card => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
 }
