@@ -16,9 +16,16 @@
     flex-wrap: wrap;
 }
 
-/* State tampil — SATU-satunya sumber keputusan, tak bisa di-override */
+/* State tampil — SATU-satunya sumber keputusan, tak bisa di-override.
+   Dibuat overlay fullscreen agar selalu menutup viewport & tak bisa
+   terdorong keluar oleh layout di sekitarnya. */
 .auth-screen.auth-active {
     display: flex !important;
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    overflow-y: auto;
+    background: rgba(10, 11, 15, 0.72);
 }
 
 /* ---- Panel kiri: brand dossier ---- */
