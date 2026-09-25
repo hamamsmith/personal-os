@@ -1,9 +1,10 @@
-<div id="loginScreen">
-<form class="login-box" onsubmit="loginOS(event)">
-<div class="login-logo">Personal<span>OS</span></div>
-<div class="login-subtitle" data-i18n="login_secured">Secured Access Interface</div>
-<input class="login-input" placeholder="Username" required="" type="text"/>
-<input class="login-input" placeholder="Password" required="" type="password"/>
-<button class="btn-submit" data-i18n="btn_access" style="margin-top: 10px;" type="submit">ACCESS OS</button>
+<div id="loginScreen" class="auth-box">
+<div class="auth-logo">Personal<span>OS</span></div>
+<div class="auth-title" data-i18n="login_secured">INITIATE SESSION</div>
+<form onsubmit="loginOS(event)">
+<input class="auth-input" placeholder="Username" required="" type="text"/>
+<input class="auth-input" placeholder="Password" required="" type="password"/>
+<button class="auth-btn" data-i18n="btn_access" type="submit">LOGIN</button>
 </form>
+<a class="auth-link" onclick="showSignupScreen()" data-i18n="link_signup">Don't have an account? Sign up</a>
 </div>

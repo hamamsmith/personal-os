@@ -1,0 +1,74 @@
+/* AUTH SCREENS - Custom Design */
+.auth-box {
+    background: #0B0C10;
+    border: 1px solid #34343a;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.auth-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    letter-spacing: -0.05em;
+    color: #F8FAFC;
+    text-transform: uppercase;
+}
+
+.auth-title {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: #94A3B8;
+}
+
+.auth-input {
+    width: 100%;
+    background: #121318;
+    border: 1px solid #34343a;
+    color: #F8FAFC;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    outline: none;
+    transition: 0.2s;
+}
+
+.auth-input:focus {
+    border-color: #9333EA;
+}
+
+.auth-btn {
+    width: 100%;
+    background: #9333EA;
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    margin-top: 1rem;
+    transition: background 0.2s;
+}
+
+.auth-btn:hover {
+    background: #7C3AED;
+}
+
+.auth-link {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #64748B;
+    font-size: 0.85rem;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.auth-link:hover {
+    color: #F8FAFC;
+}

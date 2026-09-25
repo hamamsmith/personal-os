@@ -27,6 +27,8 @@ async function loadPages() {
         document.getElementById('landingScreenContainer').outerHTML = await landingRes.text();
         const loginRes = await fetch(`pages/loginScreen.html?v=${CACHE_VER}`);
         document.getElementById('loginScreenContainer').outerHTML = await loginRes.text();
+        const signupRes = await fetch(`pages/signupScreen.html?v=${CACHE_VER}`);
+        document.getElementById('signupScreenContainer').outerHTML = await signupRes.text();
         const legalRes = await fetch(`pages/legalModals.html?v=${CACHE_VER}`);
         document.getElementById('legalModalsContainer').innerHTML = await legalRes.text();
     } catch (e) {}
@@ -74,6 +76,19 @@ window.addEventListener('hashchange', () => {
 
 // --- LOGIN / LOGOUT ---
 function showLoginScreen() {
+    const signup = document.getElementById('signupScreen');
+    if (signup) signup.style.display = 'none';
+    const login = document.getElementById('loginScreen');
+    if (login) login.style.display = 'block';
+    const landing = document.getElementById('landingScreen');
+    if (landing) landing.style.opacity = '0';
+    setTimeout(() => { document.body.classList.add('show-login'); }, 500);
+}
+function showSignupScreen() {
+    const login = document.getElementById('loginScreen');
+    if (login) login.style.display = 'none';
+    const signup = document.getElementById('signupScreen');
+    if (signup) signup.style.display = 'block';
     const landing = document.getElementById('landingScreen');
     if (landing) landing.style.opacity = '0';
     setTimeout(() => { document.body.classList.add('show-login'); }, 500);
