@@ -8,14 +8,31 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Outfit:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="css/style.css?v=45" rel="stylesheet"/>
 <link href="css/auth.css?v=6" rel="stylesheet"/>
-
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet"/>
+<!-- 3rd-party CDN dimuat SETELAH DOM siap (tidak memblokir parse/render head)
+     sehingga layar login tetap muncul meski CDN lambat/terblokir. -->
+<script>
+(function () {
+    function injectAll() {
+        if (injectAll.done) return; injectAll.done = true;
+        var urls = ['https://cdn.tailwindcss.com', 'https://cdn.jsdelivr.net/npm/chart.js'];
+        urls.forEach(function (src) {
+            var s = document.createElement('script');
+            s.src = src;
+            document.body.appendChild(s);
+        });
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', injectAll);
+    } else {
+        injectAll();
+    }
+})();
+</script>
 <style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style>
-<script src="https://cdn.tailwindcss.com"></script>
 <script id="tailwind-config">
 tailwind.config = {
     "corePlugins": { "preflight": true },

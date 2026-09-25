@@ -41,6 +41,10 @@ async function loadPages() {
     let isLoggedIn = false;
     try { isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; } catch(e) {}
 
+    // Route login/signup SELALU menampilkan layar auth (tahan dari isLoggedIn nyasar)
+    if (hash === 'login') { showLoginScreen(); return; }
+    if (hash === 'signup') { showSignupScreen(); return; }
+
     if (!isLoggedIn) {
         if (hash === 'login') showLoginScreen();
         else if (hash === 'signup') showSignupScreen();
@@ -64,6 +68,9 @@ window.addEventListener('hashchange', () => {
     let hash = window.location.hash.substring(1);
     let isLoggedIn = false;
     try { isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; } catch(e) {}
+    // Route login/signup SELALU menampilkan layar auth (tahan dari isLoggedIn nyasar)
+    if (hash === 'login') { showLoginScreen(); return; }
+    if (hash === 'signup') { showSignupScreen(); return; }
     if (!isLoggedIn) {
         if (hash === 'login') showLoginScreen();
         else if (hash === 'signup') showSignupScreen();
