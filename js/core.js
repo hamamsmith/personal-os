@@ -60,9 +60,9 @@ async function loadPages() {
     }
 }
 
-// Jalan segera (script di akhir body) agar layar auth ter-render tanpa
-// menunggu script CDN (tailwind/chart) yang bisa lambat/blokir di jaringan tertentu.
-try { loadPages(); } catch (e) { console.error('Gagal memuat halaman:', e); }
+// Head sudah bebas script CDN (font async, CDN di akhir body) sehingga
+// DOMContentLoaded cepat & semua JS lokal (termasuk i18n.js) sudah termuat.
+document.addEventListener('DOMContentLoaded', loadPages);
 
 window.addEventListener('hashchange', () => {
     let hash = window.location.hash.substring(1);
