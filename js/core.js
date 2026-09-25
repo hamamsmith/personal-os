@@ -43,6 +43,7 @@ async function loadPages() {
 
     if (!isLoggedIn) {
         if (hash === 'login') showLoginScreen();
+        else if (hash === 'signup') showSignupScreen();
         else hideLoginScreen();
     } else {
         if (!hash) hash = 'dashboard';
@@ -63,6 +64,7 @@ window.addEventListener('hashchange', () => {
     try { isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; } catch(e) {}
     if (!isLoggedIn) {
         if (hash === 'login') showLoginScreen();
+        else if (hash === 'signup') showSignupScreen();
         else hideLoginScreen();
         return;
     }
