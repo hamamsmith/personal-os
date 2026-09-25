@@ -16,6 +16,11 @@
     flex-wrap: wrap;
 }
 
+/* State tampil — SATU-satunya sumber keputusan, tak bisa di-override */
+.auth-screen.auth-active {
+    display: flex !important;
+}
+
 /* ---- Panel kiri: brand dossier ---- */
 .auth-brand {
     flex: 1 1 320px;

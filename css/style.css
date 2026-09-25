@@ -155,9 +155,7 @@
         body.locked .main-content {
             display: none !important;
         }
-        body.locked #landingScreen { display: block !important; opacity: 1; pointer-events: auto; }
-body.locked #loginScreen,
-        body.locked #signupScreen { display: none; }
+body.locked #landingScreen { display: block !important; opacity: 1; pointer-events: auto; }
         body.locked.show-login #landingScreen { display: none !important; }
         
         body:not(.locked) .landing-nav { display: none !important; }

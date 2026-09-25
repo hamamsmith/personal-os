@@ -11,7 +11,7 @@ try {
     document.body.classList.add('locked');
 }
 
-const CACHE_VER = "16";
+const CACHE_VER = "17";
 const PAGES = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
 
 async function loadPages() {
@@ -77,18 +77,22 @@ window.addEventListener('hashchange', () => {
 // --- LOGIN / LOGOUT ---
 function showLoginScreen() {
     document.body.classList.add('show-login');
-    const signup = document.getElementById('signupScreen');
-    if (signup) signup.style.display = 'none';
     const login = document.getElementById('loginScreen');
+    const signup = document.getElementById('signupScreen');
+    if (login) login.classList.add('auth-active');
+    if (signup) signup.classList.remove('auth-active');
     if (login) login.style.display = 'flex';
+    if (signup) signup.style.display = 'none';
     const landing = document.getElementById('landingScreen');
     if (landing) landing.style.opacity = '0';
 }
 function showSignupScreen() {
     document.body.classList.add('show-login');
     const login = document.getElementById('loginScreen');
-    if (login) login.style.display = 'none';
     const signup = document.getElementById('signupScreen');
+    if (login) login.classList.remove('auth-active');
+    if (signup) signup.classList.add('auth-active');
+    if (login) login.style.display = 'none';
     if (signup) signup.style.display = 'flex';
     const landing = document.getElementById('landingScreen');
     if (landing) landing.style.opacity = '0';
@@ -98,9 +102,9 @@ function hideLoginScreen() {
     const landing = document.getElementById('landingScreen');
     if (landing) landing.style.opacity = '1';
     const login = document.getElementById('loginScreen');
-    if (login) login.style.display = 'none';
     const signup = document.getElementById('signupScreen');
-    if (signup) signup.style.display = 'none';
+    if (login) { login.classList.remove('auth-active'); login.style.display = 'none'; }
+    if (signup) { signup.classList.remove('auth-active'); signup.style.display = 'none'; }
 }
 function handleLogoClick(e) {
     if (e) e.preventDefault();
@@ -127,6 +131,7 @@ function loginOS(e) {
             document.body.classList.remove('show-login');
             window.location.hash = 'dashboard';
             loadDashboardData();
+            loginScreen.classList.remove('auth-active');
             loginScreen.style.opacity = '';
             loginScreen.style.display = 'none';
         }, 500);
@@ -154,7 +159,10 @@ function signupOS(e) {
         window.location.hash = 'dashboard';
         loadDashboardData();
         const signupScreen = document.getElementById('signupScreen');
-        if (signupScreen) signupScreen.style.display = 'none';
+        if (signupScreen) {
+            signupScreen.classList.remove('auth-active');
+            signupScreen.style.display = 'none';
+        }
     } else {
         alert('Password dan konfirmasi password beda, bro. Cek lagi.');
     }
