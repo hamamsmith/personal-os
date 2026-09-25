@@ -156,9 +156,9 @@
             display: none !important;
         }
         body.locked #landingScreen { display: block !important; opacity: 1; pointer-events: auto; }
-        body.locked #loginScreen { display: none; }
+body.locked #loginScreen,
+        body.locked #signupScreen { display: none; }
         body.locked.show-login #landingScreen { display: none !important; }
-        body.locked.show-login #loginScreen { display: flex !important; opacity: 1; pointer-events: auto; min-height: 100vh; padding-top: 80px; padding-bottom: 80px; }
         
         body:not(.locked) .landing-nav { display: none !important; }
         body.locked .landing-nav { display: flex; }

@@ -76,27 +76,31 @@ window.addEventListener('hashchange', () => {
 
 // --- LOGIN / LOGOUT ---
 function showLoginScreen() {
+    document.body.classList.add('show-login');
     const signup = document.getElementById('signupScreen');
     if (signup) signup.style.display = 'none';
     const login = document.getElementById('loginScreen');
-    if (login) login.style.display = 'block';
+    if (login) login.style.display = 'flex';
     const landing = document.getElementById('landingScreen');
     if (landing) landing.style.opacity = '0';
-    setTimeout(() => { document.body.classList.add('show-login'); }, 500);
 }
 function showSignupScreen() {
+    document.body.classList.add('show-login');
     const login = document.getElementById('loginScreen');
     if (login) login.style.display = 'none';
     const signup = document.getElementById('signupScreen');
-    if (signup) signup.style.display = 'block';
+    if (signup) signup.style.display = 'flex';
     const landing = document.getElementById('landingScreen');
     if (landing) landing.style.opacity = '0';
-    setTimeout(() => { document.body.classList.add('show-login'); }, 500);
 }
 function hideLoginScreen() {
     document.body.classList.remove('show-login');
     const landing = document.getElementById('landingScreen');
     if (landing) landing.style.opacity = '1';
+    const login = document.getElementById('loginScreen');
+    if (login) login.style.display = 'none';
+    const signup = document.getElementById('signupScreen');
+    if (signup) signup.style.display = 'none';
 }
 function handleLogoClick(e) {
     if (e) e.preventDefault();
@@ -116,14 +120,44 @@ function loginOS(e) {
     e.preventDefault();
     try { localStorage.setItem('isLoggedIn', 'true'); } catch(e) {}
     const loginScreen = document.getElementById('loginScreen');
-    loginScreen.style.opacity = '0';
-    setTimeout(() => {
+    if (loginScreen) {
+        loginScreen.style.opacity = '0';
+        setTimeout(() => {
+            document.body.classList.remove('locked');
+            document.body.classList.remove('show-login');
+            window.location.hash = 'dashboard';
+            loadDashboardData();
+            loginScreen.style.opacity = '';
+            loginScreen.style.display = 'none';
+        }, 500);
+    } else {
         document.body.classList.remove('locked');
         document.body.classList.remove('show-login');
         window.location.hash = 'dashboard';
         loadDashboardData();
-        loginScreen.style.opacity = '';
-    }, 500);
+    }
+}
+function signupOS(e) {
+    e.preventDefault();
+    const f = e.target;
+    const username = (f.querySelector('input[name="username"]') || {}).value ? f.querySelector('input[name="username"]').value.trim() : '';
+    const email = (f.querySelector('input[name="email"]') || {}).value ? f.querySelector('input[name="email"]').value.trim() : '';
+    const password = (f.querySelector('input[name="password"]') || {}).value || '';
+    const confirmPass = (f.querySelector('input[name="confirm-password"]') || {}).value || '';
+    if (!username) { alert('Username wajib diisi, bro.'); return; }
+    if (!email) { alert('Email wajib diisi, bro.'); return; }
+    if (password === confirmPass && password) {
+        try { localStorage.setItem('os_user', username); } catch(e) {}
+        try { localStorage.setItem('isLoggedIn', 'true'); } catch(e) {}
+        document.body.classList.remove('locked');
+        document.body.classList.remove('show-login');
+        window.location.hash = 'dashboard';
+        loadDashboardData();
+        const signupScreen = document.getElementById('signupScreen');
+        if (signupScreen) signupScreen.style.display = 'none';
+    } else {
+        alert('Password dan konfirmasi password beda, bro. Cek lagi.');
+    }
 }
 function logoutOS() {
     if (confirm("Lu yakin mau keluar dari sesi ini?")) {
@@ -135,6 +169,12 @@ function logoutOS() {
         if (landing) landing.style.opacity = '1';
         const loginScreen = document.getElementById('loginScreen');
         if (loginScreen) loginScreen.querySelectorAll('input').forEach(i => i.value = '');
+        const signupScreen = document.getElementById('signupScreen');
+        if (signupScreen) {
+            signupScreen.querySelectorAll('input').forEach(i => i.value = '');
+            signupScreen.style.display = 'none';
+        }
+        if (loginScreen) loginScreen.style.display = 'none';
     }
 }
 

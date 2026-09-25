@@ -1,10 +1,29 @@
-<div id="loginScreen" class="auth-box">
-<div class="auth-logo">Personal<span>OS</span></div>
-<div class="auth-title" data-i18n="login_secured">INITIATE SESSION</div>
+<div id="loginScreen" class="auth-screen" style="display: none;">
+<div class="auth-brand">
+<div class="auth-wordmark">Personal<span class="auth-os">OS</span></div>
+<p class="auth-brandline">A local-first command center for habits, focus, and weekly review.</p>
+<ul class="auth-specs">
+<li>Session_04</li>
+<li>Local vault</li>
+<li>AES-GCM encrypted</li>
+</ul>
+</div>
+<div class="auth-card">
+<div class="auth-panel-head">
+<h2>Access your vault</h2>
+<p>Sign in to continue to your workspace.</p>
+</div>
 <form onsubmit="loginOS(event)">
-<input class="auth-input" placeholder="Username" required="" type="text"/>
-<input class="auth-input" placeholder="Password" required="" type="password"/>
-<button class="auth-btn" data-i18n="btn_access" type="submit">LOGIN</button>
+<label class="auth-field">
+<span>Username</span>
+<input class="auth-input" name="username" required="" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="your_handle"/>
+</label>
+<label class="auth-field">
+<span>Password</span>
+<input class="auth-input" name="password" required="" type="password" autocomplete="current-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"/>
+</label>
+<button class="auth-btn" type="submit">Sign In</button>
 </form>
-<a class="auth-link" onclick="showSignupScreen()" data-i18n="link_signup">Don't have an account? Sign up</a>
+<p class="auth-switch">No account yet? <a href="#" onclick="showSignupScreen(); return false;">Create one</a></p>
+</div>
 </div>

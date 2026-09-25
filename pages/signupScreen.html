@@ -1,12 +1,37 @@
-<div id="signupScreen" class="auth-box">
-<div class="auth-logo">Personal<span>OS</span></div>
-<div class="auth-title" data-i18n="signup_title">CREATE ACCOUNT</div>
+<div id="signupScreen" class="auth-screen" style="display: none;">
+<div class="auth-brand">
+<div class="auth-wordmark">Personal<span class="auth-os">OS</span></div>
+<p class="auth-brandline">Set up your vault, then lock in your first non-negotiable habit.</p>
+<ul class="auth-specs">
+<li>No server account</li>
+<li>Data stays on device</li>
+<li>Free forever</li>
+</ul>
+</div>
+<div class="auth-card">
+<div class="auth-panel-head">
+<h2>Create your account</h2>
+<p>Pick a handle. Your vault begins now.</p>
+</div>
 <form onsubmit="signupOS(event)">
-<input class="auth-input" placeholder="Username" required="" type="text"/>
-<input class="auth-input" placeholder="Email" required="" type="email"/>
-<input class="auth-input" placeholder="Password" required="" type="password"/>
-<input class="auth-input" placeholder="Confirm Password" required="" type="password"/>
-<button class="auth-btn" data-i18n="btn_signup" type="submit">REGISTER</button>
+<label class="auth-field">
+<span>Username</span>
+<input class="auth-input" name="username" required="" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="your_handle"/>
+</label>
+<label class="auth-field">
+<span>Email</span>
+<input class="auth-input" name="email" required="" type="email" autocomplete="email" placeholder="you@example.com"/>
+</label>
+<label class="auth-field">
+<span>Password</span>
+<input class="auth-input" name="password" required="" type="password" autocomplete="new-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"/>
+</label>
+<label class="auth-field">
+<span>Confirm password</span>
+<input class="auth-input" name="confirm-password" required="" type="password" autocomplete="new-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"/>
+</label>
+<button class="auth-btn" type="submit">Create Account</button>
 </form>
-<a class="auth-link" onclick="showLoginScreen()" data-i18n="link_login">Already have an account? Login</a>
+<p class="auth-switch">Already have an account? <a href="#" onclick="showLoginScreen(); return false;">Sign in</a></p>
+</div>
 </div>
