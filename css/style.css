@@ -157,6 +157,7 @@
         }
 body.locked #landingScreen { display: block !important; opacity: 1; pointer-events: auto; }
         body.locked.show-login #landingScreen { display: none !important; }
+        body.locked.show-login #landingScreenContainer { display: none; }
         
         body:not(.locked) .landing-nav { display: none !important; }
         body.locked .landing-nav { display: flex; }

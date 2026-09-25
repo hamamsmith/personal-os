@@ -11,7 +11,7 @@ try {
     document.body.classList.add('locked');
 }
 
-const CACHE_VER = "17";
+const CACHE_VER = "18";
 const PAGES = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
 
 async function loadPages() {
