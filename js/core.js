@@ -11,7 +11,7 @@ try {
     document.body.classList.add('locked');
 }
 
-const CACHE_VER = "18";
+const CACHE_VER = "19";
 const PAGES = ['dashboard', 'battle', 'braindump', 'debrief', 'screentime', 'weekly'];
 
 async function loadPages() {
@@ -56,7 +56,9 @@ async function loadPages() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadPages);
+// Jalan segera (script di akhir body) agar layar auth ter-render tanpa
+// menunggu script CDN (tailwind/chart) yang bisa lambat/blokir di jaringan tertentu.
+try { loadPages(); } catch (e) { console.error('Gagal memuat halaman:', e); }
 
 window.addEventListener('hashchange', () => {
     let hash = window.location.hash.substring(1);
@@ -78,6 +80,7 @@ window.addEventListener('hashchange', () => {
 
 // --- LOGIN / LOGOUT ---
 function showLoginScreen() {
+    if (window.location.hash !== '#login') window.location.hash = 'login';
     document.body.classList.add('show-login');
     const login = document.getElementById('loginScreen');
     const signup = document.getElementById('signupScreen');
@@ -89,6 +92,7 @@ function showLoginScreen() {
     if (landing) landing.style.opacity = '0';
 }
 function showSignupScreen() {
+    if (window.location.hash !== '#signup') window.location.hash = 'signup';
     document.body.classList.add('show-login');
     const login = document.getElementById('loginScreen');
     const signup = document.getElementById('signupScreen');

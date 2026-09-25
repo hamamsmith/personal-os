@@ -9,8 +9,8 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Outfit:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
 <script defer="" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="css/style.css?v=45" rel="stylesheet"/>
-<link href="css/auth.css?v=6" rel="stylesheet"/>
+<link href="css/style.css?v=44" rel="stylesheet"/>
+<link href="css/auth.css?v=5" rel="stylesheet"/>
 
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet"/>
@@ -34,7 +34,7 @@ tailwind.config = {
 };
 </script>
 </head>
-<body>
+<body><script>window.requestAnimationFrame=function(cb){return setTimeout(function(){cb(performance.now())},16)};</script>
 <div class="noise-overlay"></div>
 <div class="ambient-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
 <!-- LOGGED OUT LAYOUT -->
@@ -45,58 +45,10 @@ tailwind.config = {
     <div class="auth-content">
         <!-- LANDING SCREEN -->
         <div id="landingScreenContainer"></div>
-        <!-- LOGIN SCREEN (fallback statis: di-overwrite oleh pages/loginScreen.html) -->
-        <div id="loginScreenContainer"><div id="loginScreen" class="auth-screen" style="display: none;">
-<div class="auth-card">
-<div class="auth-head">
-<div class="auth-logo">Personal<span>OS</span></div>
-<h2>Welcome back</h2>
-<p>Enter your credentials to open your vault.</p>
-</div>
-<form onsubmit="loginOS(event)">
-<label class="auth-field">
-<span>Username</span>
-<input class="auth-input" name="username" required="" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="your_handle"/>
-</label>
-<label class="auth-field">
-<span>Password</span>
-<input class="auth-input" name="password" required="" type="password" autocomplete="current-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"/>
-</label>
-<button class="auth-btn" type="submit">Sign In</button>
-</form>
-<p class="auth-switch">No account yet? <a href="#signup" onclick="showSignupScreen(); return false;">Create one</a></p>
-</div>
-</div></div>
-        <!-- SIGNUP SCREEN (fallback statis: di-overwrite oleh pages/signupScreen.html) -->
-        <div id="signupScreenContainer"><div id="signupScreen" class="auth-screen" style="display: none;">
-<div class="auth-card">
-<div class="auth-head">
-<div class="auth-logo">Personal<span>OS</span></div>
-<h2>Create your account</h2>
-<p>Pick a handle. Your vault begins now.</p>
-</div>
-<form onsubmit="signupOS(event)">
-<label class="auth-field">
-<span>Username</span>
-<input class="auth-input" name="username" required="" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="your_handle"/>
-</label>
-<label class="auth-field">
-<span>Email</span>
-<input class="auth-input" name="email" required="" type="email" autocomplete="email" placeholder="you@example.com"/>
-</label>
-<label class="auth-field">
-<span>Password</span>
-<input class="auth-input" name="password" required="" type="password" autocomplete="new-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"/>
-</label>
-<label class="auth-field">
-<span>Confirm password</span>
-<input class="auth-input" name="confirm-password" required="" type="password" autocomplete="new-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"/>
-</label>
-<button class="auth-btn" type="submit">Create Account</button>
-</form>
-<p class="auth-switch">Already have an account? <a href="#login" onclick="showLoginScreen(); return false;">Sign in</a></p>
-</div>
-</div></div>
+        <!-- LOGIN SCREEN -->
+        <div id="loginScreenContainer"></div>
+        <!-- SIGNUP SCREEN -->
+        <div id="signupScreenContainer"></div>
     </div>
 
 
