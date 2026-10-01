@@ -321,55 +321,7 @@ body.locked #landingScreen { display: block !important; opacity: 1; pointer-even
         @keyframes slideUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         @media (max-width: 768px) { .landing-title { font-size: 42px; letter-spacing: -1px; } .landing-subtitle { font-size: 15px; padding: 0 20px; } .landing-features { gap: 10px; } .feature-pill { font-size: 12px; padding: 6px 16px; } }
 
-        /* --- LOGIN SCREEN STYLES --- */
-        #loginScreen {
-            position: relative; top: 0; left: 0; width: 100%; min-height: 100vh;
-            display: none; opacity: 0; pointer-events: none;
-            justify-content: center; align-items: center; z-index: 1;
-            transition: opacity 0.5s ease;
-            background: rgba(11, 12, 16, 0.4);
-            backdrop-filter: blur(15px);
-        }
-        .login-box {
-            background: rgba(20, 20, 25, 0.7);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
-            padding: 40px 30px;
-            border-radius: var(--radius-lg);
-            width: 90%; max-width: 400px;
-            text-align: center;
-            animation: floatLogin 6s ease-in-out infinite;
-        }
-        @keyframes floatLogin {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        .login-logo {
-            font-family: 'Outfit', sans-serif;
-            font-size: 32px; font-weight: 800; color: white;
-            margin-bottom: 8px; letter-spacing: 1px;
-        }
-        .login-logo span { color: var(--primary); text-shadow: 0 0 15px var(--primary-glow); }
-        .login-subtitle {
-            font-size: 13px; color: var(--text-muted);
-            margin-bottom: 30px;
-        }
-        .login-input {
-            width: 100%; background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-title); padding: 16px;
-            border-radius: var(--radius-md); margin-bottom: 16px;
-            font-size: 15px; outline: none; transition: 0.3s;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        .login-input:focus {
-            border-color: var(--primary); background: rgba(0, 0, 0, 0.6);
-            box-shadow: 0 0 0 4px var(--primary-glow), inset 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-@media (max-width: 768px) { 
+@media (max-width: 768px) {
     .landing-menu { display: none !important; } 
     .landing-menu.mobile-show { display: flex !important; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(11, 12, 16, 0.95); backdrop-filter: blur(20px); padding: 20px; border-bottom: 1px solid var(--glass-border); z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
     .landing-nav-inner { padding: 15px; } 
