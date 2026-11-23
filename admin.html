@@ -345,7 +345,7 @@
       <div class="dash-top">
         <div>
           <h1>Monitoring Akun</h1>
-          <p class="sub">Daftar akun yang memakai aplikasi Vareya (Android/iOS). Status <b>Online</b> bila aktif dalam 2 menit terakhir.</p>
+          <p class="sub">Daftar akun yang memakai aplikasi Vareya (Android/iOS). Status <b>Online</b> bila aktif dalam 1 menit terakhir.</p>
         </div>
         <div class="dash-actions">
           <button class="btn-ghost" id="refreshBtn" type="button" title="Muat ulang data"><span class="spin-icon">↻</span> Muat ulang</button>
@@ -397,7 +397,7 @@
     </div>
 
     <p class="foot">
-      <span class="live"><span class="live-dot"></span> Auto-refresh setiap 15 detik</span>
+      <span class="live"><span class="live-dot"></span> Auto-refresh setiap 10 detik</span>
       <span id="stamp"></span>
     </p>
   </section>
@@ -603,7 +603,7 @@
     refreshTimer = setInterval(function () {
       if (document.hidden || !activeToken) return;
       refreshNow(false);
-    }, 15000);
+    }, 10000);
   }
 
   async function openDashboard(token, remember) {
