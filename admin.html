@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Admin &middot; Vareya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-base: #0B0C10;
+    --surface: rgba(255, 255, 255, 0.03);
+    --border: rgba(255, 255, 255, 0.09);
+    --primary: #9333EA;
+    --primary-hover: #A855F7;
+    --danger: #EF4444;
+    --text-title: #F8FAFC;
+    --text-main: #F1F5F9;
+    --text-muted: #94A3B8;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 9px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg-base);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .wrap { width: 100%; max-width: 1100px; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  h1 { font-size: 26px; font-weight: 700; color: var(--text-title); margin: 6px 0 2px; }
+  .sub { color: var(--text-muted); font-size: 14px; }
+
+  .gate {
+    max-width: 380px;
+    margin: 80px auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+  }
+  .gate h1 { font-size: 20px; }
+  .field { display: block; margin-top: 20px; }
+  .field span {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+    letter-spacing: 0.04em;
+  }
+  input {
+    width: 100%;
+    padding: 11px 13px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  input:focus { border-color: var(--primary); }
+  button {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background .15s, opacity .15s;
+  }
+  .btn-primary {
+    width: 100%;
+    margin-top: 22px;
+    padding: 12px;
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-primary:disabled { opacity: .55; cursor: default; }
+  .msg { margin-top: 14px; font-size: 13px; min-height: 18px; }
+  .msg.err { color: var(--danger); }
+
+  .topbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .btn-ghost {
+    padding: 9px 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  .btn-ghost:hover { color: var(--text-main); border-color: var(--text-muted); }
+
+  .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    min-width: 150px;
+  }
+  .stat .n { font-size: 26px; font-weight: 700; color: var(--text-title); }
+  .stat .l { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    text-align: left;
+    padding: 13px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody td { padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted); }
+  .name { font-weight: 600; color: var(--text-title); }
+  .pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(147, 51, 234, 0.16);
+    color: #d8b4fe;
+    text-transform: capitalize;
+  }
+  .pill.online {
+    background: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+    text-transform: none;
+  }
+  .pill.offline {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-muted);
+    text-transform: none;
+  }
+  .username-cell { display: flex; flex-direction: column; gap: 2px; }
+  .username-cell .name { font-weight: 600; color: var(--text-title); }
+  .username-cell .uname { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--text-muted); }
+  .username-cell .ref { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #fbbf24; }
+  .empty { padding: 48px 20px; text-align: center; color: var(--text-muted); font-size: 14px; }
+  .foot { margin-top: 16px; font-size: 12px; color: var(--text-muted); }
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  .pill.online .dot { background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,0.8); }
+  .pill.offline .dot { background: #64748b; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="gateView" class="gate">
+    <div class="eyebrow">Vareya &middot; Restricted</div>
+    <h1>Admin</h1>
+    <p class="sub">Masukkan kunci admin untuk melihat akun yang bergabung dan status online-nya.</p>
+    <form id="gateForm">
+      <label class="field">
+        <span>Admin key</span>
+        <input id="keyInput" type="password" autocomplete="off" spellcheck="false" placeholder="••••••••••••" required />
+      </label>
+      <button class="btn-primary" id="gateBtn" type="submit">Masuk</button>
+      <div class="msg err" id="gateMsg" role="alert"></div>
+    </form>
+  </section>
+
+  <section id="dashView" hidden>
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">Vareya &middot; Admin</div>
+        <h1>Monitoring Akun</h1>
+        <p class="sub">Daftar akun yang memakai aplikasi Vareya Android. Status <b>Online</b> bila aktif dalam 5 menit terakhir.</p>
+      </div>
+      <button class="btn-ghost" id="logoutBtn" type="button">Keluar</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="statTotal">—</div><div class="l">Total akun</div></div>
+      <div class="stat"><div class="n" id="statOnline">—</div><div class="l">Online sekarang</div></div>
+      <div class="stat"><div class="n" id="statLatest">—</div><div class="l">Bergabung terbaru</div></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Dibuat</th>
+              <th>Status</th>
+              <th>Terakhir aktif</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="emptyState" hidden>Belum ada akun yang bergabung.</div>
+    </div>
+    <p class="foot" id="stamp"></p>
+  </section>
+</div>
+
+<script>
+(function () {
+  var KEY_STORE = 'vareya_admin_key';
+  var gateView = document.getElementById('gateView');
+  var dashView = document.getElementById('dashView');
+  var gateForm = document.getElementById('gateForm');
+  var gateBtn = document.getElementById('gateBtn');
+  var gateMsg = document.getElementById('gateMsg');
+  var keyInput = document.getElementById('keyInput');
+  var rowsEl = document.getElementById('rows');
+  var emptyState = document.getElementById('emptyState');
+  var stamp = document.getElementById('stamp');
+
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function fmtDate(v) {
+    if (!v) return '—';
+    var d = new Date(v);
+    if (isNaN(d.getTime())) return esc(v);
+    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function fmtDateTime(v) {
+    if (!v) return '—';
+    var d = new Date(v);
+    if (isNaN(d.getTime())) return esc(v);
+    return d.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  async function loadProfiles(key) {
+    var res = await fetch('/api/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
+      body: JSON.stringify({ action: 'getProfiles' })
+    });
+    var body = await res.json().catch(function () { return {}; });
+    if (!res.ok || body.status !== 'success') {
+      var err = new Error(body.message || ('Gagal memuat data (HTTP ' + res.status + ')'));
+      err.code = res.status;
+      throw err;
+    }
+    return body.profiles || [];
+  }
+
+  function render(profiles) {
+    rowsEl.innerHTML = '';
+    document.getElementById('statTotal').textContent = profiles.length;
+    var onlineCount = profiles.filter(function (p) { return p.online; }).length;
+    document.getElementById('statOnline').textContent = onlineCount;
+    var latest = profiles[0] && profiles[0].joined_at ? fmtDate(profiles[0].joined_at) : '—';
+    document.getElementById('statLatest').textContent = latest;
+
+    if (!profiles.length) {
+      emptyState.hidden = false;
+      stamp.textContent = '';
+      return;
+    }
+    emptyState.hidden = true;
+
+    // Hitung username yang duplikat -> ID ditampilkan otomatis
+    var counts = {};
+    profiles.forEach(function (p) {
+      var u = String(p.username || '').toLowerCase();
+      if (u) counts[u] = (counts[u] || 0) + 1;
+    });
+
+    profiles.forEach(function (p) {
+      var isOnline = !!p.online;
+      var uname = String(p.username || '');
+      var dupe = uname && counts[uname.toLowerCase()] > 1;
+
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' +
+          '<div class="username-cell">' +
+            '<span class="uname">' + (uname ? '@' + esc(uname) : '<span style="color:var(--text-muted)">(belum ada)</span>') + '</span>' +
+            '<span class="name">' + esc(p.name || '—') + '</span>' +
+            (dupe ? '<span class="ref" title="' + esc(p.account_ref) + '">ID: ' + esc(String(p.account_ref || '').slice(0, 12)) + '…</span>' : '') +
+          '</div>' +
+        '</td>' +
+        '<td>' + fmtDate(p.joined_at) + '</td>' +
+        '<td><span class="pill ' + (isOnline ? 'online' : 'offline') + '"><span class="dot"></span>' + (isOnline ? 'Online' : 'Offline') + '</span></td>' +
+        '<td>' + fmtDateTime(p.last_seen_at) + '</td>';
+      rowsEl.appendChild(tr);
+    });
+    stamp.textContent = 'Terakhir dimuat: ' + new Date().toLocaleString('id-ID');
+  }
+
+  function showGate(message) {
+    dashView.hidden = true;
+    gateView.hidden = false;
+    gateMsg.textContent = message || '';
+    keyInput.focus();
+  }
+
+  var activeKey = null;
+  var refreshTimer = null;
+
+  function stopRefresh() {
+    if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
+  }
+
+  function startRefresh() {
+    stopRefresh();
+    refreshTimer = setInterval(async function () {
+      if (document.hidden || !activeKey) return;
+      try {
+        var profiles = await loadProfiles(activeKey);
+        render(profiles);
+      } catch (err) {
+        if (err.code === 401) {
+          stopRefresh();
+          activeKey = null;
+          try { sessionStorage.removeItem(KEY_STORE); } catch (e) {}
+          showGate('Sesi berakhir. Masukkan kunci admin lagi.');
+        }
+      }
+    }, 30000);
+  }
+
+  async function openDashboard(key, remember) {
+    gateBtn.disabled = true;
+    gateMsg.textContent = '';
+    try {
+      var profiles = await loadProfiles(key);
+      activeKey = key;
+      if (remember) {
+        try { sessionStorage.setItem(KEY_STORE, key); } catch (e) {}
+      }
+      gateView.hidden = true;
+      dashView.hidden = false;
+      render(profiles);
+      startRefresh();
+    } catch (err) {
+      if (err.code === 401) {
+        try { sessionStorage.removeItem(KEY_STORE); } catch (e) {}
+        showGate('Kunci admin salah.');
+      } else if (err.code === 503) {
+        showGate('Server belum punya ADMIN_KEY.');
+      } else {
+        showGate(err.message || 'Gagal terhubung ke server.');
+      }
+    } finally {
+      gateBtn.disabled = false;
+    }
+  }
+
+  gateForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var key = keyInput.value.trim();
+    if (!key) return;
+    openDashboard(key, true);
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', function () {
+    stopRefresh();
+    activeKey = null;
+    try { sessionStorage.removeItem(KEY_STORE); } catch (e) {}
+    keyInput.value = '';
+    rowsEl.innerHTML = '';
+    showGate('');
+  });
+
+  var saved = null;
+  try { saved = sessionStorage.getItem(KEY_STORE); } catch (e) {}
+  if (saved) {
+    openDashboard(saved, false);
+  } else {
+    keyInput.focus();
+  }
+})();
+</script>
+</body>
+</html>

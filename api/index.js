@@ -4,6 +4,7 @@ require('dotenv').config();
 const { Pool } = require('pg');
 const webpush = require('web-push');
 const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -69,6 +70,81 @@ app.post('/api/data', async (req, res) => {
       const ts = data.date && data.date.length === 10 ? `${data.date} 12:00:00` : new Date().toISOString();
       await pool.query('INSERT INTO debriefs (timestamp, mood, energy, lesson, fix) VALUES ($1, $2, $3, $4, $5)', [ts, data.mood, data.energy, data.lesson, data.fix]);
       return res.json({ status: 'success' });
+    }
+
+    else if (action === 'saveProfile') {
+      const p = data || {};
+      const accountRef = String(p.accountRef || '').trim();
+      const name = String(p.name || '').trim();
+      const username = String(p.username || '').trim().toLowerCase();
+      if (!/^[A-Za-z0-9-]{8,64}$/.test(accountRef)) {
+        return res.status(400).json({ status: 'error', message: 'accountRef tidak valid' });
+      }
+      if (!name || name.length > 80) {
+        return res.status(400).json({ status: 'error', message: 'Nama wajib diisi (maks 80 karakter)' });
+      }
+      if (username && !/^[a-z0-9._]{3,24}$/.test(username)) {
+        return res.status(400).json({ status: 'error', message: 'Username tidak valid (3-24 karakter: huruf, angka, titik, garis bawah)' });
+      }
+      const asDate = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? v : null);
+      const platform = String(p.platform || 'android').slice(0, 20);
+
+      await pool.query(
+        `INSERT INTO profiles (account_ref, name, birth_date, joined_at, platform, username, last_seen_at, last_login_at)
+         VALUES ($1, $2, $3, $4, $5, $6, now(), now())
+         ON CONFLICT (account_ref) DO UPDATE SET
+           name = EXCLUDED.name,
+           birth_date = EXCLUDED.birth_date,
+           joined_at = EXCLUDED.joined_at,
+           platform = EXCLUDED.platform,
+           username = COALESCE(EXCLUDED.username, profiles.username),
+           last_seen_at = now(),
+           last_login_at = now(),
+           updated_at = now()`,
+        [accountRef, name, asDate(p.birthDate), asDate(p.joinedAt), platform, username || null]
+      );
+      return res.json({ status: 'success' });
+    }
+
+    else if (action === 'heartbeat') {
+      const p = data || {};
+      const accountRef = String(p.accountRef || '').trim();
+      if (!/^[A-Za-z0-9-]{8,64}$/.test(accountRef)) {
+        return res.status(400).json({ status: 'error', message: 'accountRef tidak valid' });
+      }
+      const updated = await pool.query(
+        `UPDATE profiles SET last_seen_at = now(), updated_at = now() WHERE account_ref = $1 RETURNING id`,
+        [accountRef]
+      );
+      if (updated.rows.length === 0) {
+        return res.json({ status: 'unknown_account' });
+      }
+      return res.json({ status: 'success' });
+    }
+
+    else if (action === 'getProfiles') {
+      const adminKey = process.env.ADMIN_KEY;
+      if (!adminKey) {
+        return res.status(503).json({ status: 'error', message: 'ADMIN_KEY belum diset di server' });
+      }
+      const provided = String(req.get('x-admin-key') || '');
+      const a = Buffer.from(provided);
+      const b = Buffer.from(adminKey);
+      const ok = a.length === b.length && crypto.timingSafeEqual(a, b);
+      if (!ok) {
+        return res.status(401).json({ status: 'error', message: 'Kunci admin salah' });
+      }
+      const rows = await pool.query(
+        `SELECT id, account_ref, username, name, birth_date, joined_at, platform,
+                last_seen_at, last_login_at,
+                (last_seen_at > now() - interval '5 minutes') AS online
+         FROM profiles
+         ORDER BY (last_seen_at > now() - interval '5 minutes') DESC,
+                  last_seen_at DESC NULLS LAST,
+                  joined_at DESC NULLS LAST,
+                  created_at DESC`
+      );
+      return res.json({ status: 'success', profiles: rows.rows });
     }
 
     else if (action === 'getDashboardData') {
