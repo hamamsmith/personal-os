@@ -183,9 +183,9 @@ app.post('/api/data', async (req, res) => {
       const rows = await pool.query(
         `SELECT id, account_ref, username, name, birth_date, joined_at, platform,
                 last_seen_at, last_login_at,
-                (last_seen_at > now() - interval '5 minutes') AS online
+                (last_seen_at > now() - interval '2 minutes') AS online
          FROM profiles
-         ORDER BY (last_seen_at > now() - interval '5 minutes') DESC,
+         ORDER BY (last_seen_at > now() - interval '2 minutes') DESC,
                   last_seen_at DESC NULLS LAST,
                   joined_at DESC NULLS LAST,
                   created_at DESC`
