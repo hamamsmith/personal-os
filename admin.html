@@ -177,6 +177,40 @@
   .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
   .pill.online .dot { background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,0.8); }
   .pill.offline .dot { background: #64748b; }
+
+  .temp-cred {
+    margin-top: 22px;
+    padding: 14px 16px;
+    border: 1px dashed rgba(245, 158, 11, 0.5);
+    border-radius: var(--radius-md);
+    background: rgba(245, 158, 11, 0.06);
+  }
+  .temp-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fbbf24;
+    margin-bottom: 10px;
+  }
+  .temp-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 4px 0;
+  }
+  .temp-row code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.06);
+    padding: 3px 10px;
+    border-radius: 6px;
+    user-select: all;
+  }
+
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -185,15 +219,24 @@
   <section id="gateView" class="gate">
     <div class="eyebrow">Vareya &middot; Restricted</div>
     <h1>Admin</h1>
-    <p class="sub">Masukkan kunci admin untuk melihat akun yang bergabung dan status online-nya.</p>
+    <p class="sub">Masuk dengan akun Vareya web untuk memonitor akun &amp; status online.</p>
     <form id="gateForm">
       <label class="field">
-        <span>Admin key</span>
-        <input id="keyInput" type="password" autocomplete="off" spellcheck="false" placeholder="••••••••••••" required />
+        <span>Username</span>
+        <input id="userInput" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="username" required />
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input id="passInput" type="password" autocomplete="current-password" placeholder="••••••••••••" required />
       </label>
       <button class="btn-primary" id="gateBtn" type="submit">Masuk</button>
       <div class="msg err" id="gateMsg" role="alert"></div>
     </form>
+    <div class="temp-cred">
+      <div class="temp-label">Akun sementara</div>
+      <div class="temp-row"><span>Username</span><code>admin</code></div>
+      <div class="temp-row"><span>Password</span><code>admin123</code></div>
+    </div>
   </section>
 
   <section id="dashView" hidden>
@@ -234,13 +277,14 @@
 
 <script>
 (function () {
-  var KEY_STORE = 'vareya_admin_key';
+  var KEY_STORE = 'vareya_admin_token';
   var gateView = document.getElementById('gateView');
   var dashView = document.getElementById('dashView');
   var gateForm = document.getElementById('gateForm');
   var gateBtn = document.getElementById('gateBtn');
   var gateMsg = document.getElementById('gateMsg');
-  var keyInput = document.getElementById('keyInput');
+  var userInput = document.getElementById('userInput');
+  var passInput = document.getElementById('passInput');
   var rowsEl = document.getElementById('rows');
   var emptyState = document.getElementById('emptyState');
   var stamp = document.getElementById('stamp');
@@ -265,10 +309,10 @@
     return d.toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
-  async function loadProfiles(key) {
+  async function loadProfiles(token) {
     var res = await fetch('/api/data', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
       body: JSON.stringify({ action: 'getProfiles' })
     });
     var body = await res.json().catch(function () { return {}; });
@@ -328,7 +372,7 @@
     dashView.hidden = true;
     gateView.hidden = false;
     gateMsg.textContent = message || '';
-    keyInput.focus();
+    userInput.focus();
   }
 
   var activeKey = null;
@@ -350,20 +394,20 @@
           stopRefresh();
           activeKey = null;
           try { sessionStorage.removeItem(KEY_STORE); } catch (e) {}
-          showGate('Sesi berakhir. Masukkan kunci admin lagi.');
+          showGate('Sesi berakhir. Masuk lagi sebagai admin.');
         }
       }
     }, 30000);
   }
 
-  async function openDashboard(key, remember) {
+  async function openDashboard(token, remember) {
     gateBtn.disabled = true;
     gateMsg.textContent = '';
     try {
-      var profiles = await loadProfiles(key);
-      activeKey = key;
+      var profiles = await loadProfiles(token);
+      activeKey = token;
       if (remember) {
-        try { sessionStorage.setItem(KEY_STORE, key); } catch (e) {}
+        try { sessionStorage.setItem(KEY_STORE, token); } catch (e) {}
       }
       gateView.hidden = true;
       dashView.hidden = false;
@@ -372,9 +416,7 @@
     } catch (err) {
       if (err.code === 401) {
         try { sessionStorage.removeItem(KEY_STORE); } catch (e) {}
-        showGate('Kunci admin salah.');
-      } else if (err.code === 503) {
-        showGate('Server belum punya ADMIN_KEY.');
+        showGate('Username atau password admin salah.');
       } else {
         showGate(err.message || 'Gagal terhubung ke server.');
       }
@@ -385,16 +427,34 @@
 
   gateForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    var key = keyInput.value.trim();
-    if (!key) return;
-    openDashboard(key, true);
+    var user = userInput.value.trim();
+    var pass = passInput.value;
+    if (!user || !pass) return;
+    gateBtn.disabled = true;
+    gateMsg.textContent = '';
+    fetch('/api/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'adminLogin', data: { username: user, password: pass } })
+    }).then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+      .then(function (res) {
+        if (!res.ok || res.body.status !== 'success') {
+          gateMsg.textContent = res.body.message || 'Login gagal.';
+          return;
+        }
+        openDashboard(res.body.token, true);
+        passInput.value = '';
+      })
+      .catch(function () { gateMsg.textContent = 'Gagal terhubung ke server.'; })
+      .finally(function () { gateBtn.disabled = false; });
   });
 
   document.getElementById('logoutBtn').addEventListener('click', function () {
     stopRefresh();
     activeKey = null;
     try { sessionStorage.removeItem(KEY_STORE); } catch (e) {}
-    keyInput.value = '';
+    userInput.value = '';
+    passInput.value = '';
     rowsEl.innerHTML = '';
     showGate('');
   });
@@ -404,7 +464,7 @@
   if (saved) {
     openDashboard(saved, false);
   } else {
-    keyInput.focus();
+    userInput.focus();
   }
 })();
 </script>

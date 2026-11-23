@@ -20,6 +20,46 @@ if (publicVapidKey && privateVapidKey) {
 app.use(cors()); // Mengizinkan request dari frontend
 app.use(express.json()); // Membaca body request format JSON
 
+// === Admin auth (sementara) ===
+// Kredensial sementara; utamakan env Vercel (ADMIN_USER/ADMIN_PASS) lalu fallback.
+// PENTING: ganti lewat env untuk produksi, jangan biarkan default.
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
+const TOKEN_SECRET = process.env.ADMIN_TOKEN_SECRET || 'vareya-dev-secret-change-me';
+const TOKEN_TTL_MS = 8 * 60 * 60 * 1000; // 8 jam
+
+function safeEqual(a, b) {
+  const ba = Buffer.from(String(a));
+  const bb = Buffer.from(String(b));
+  return ba.length === bb.length && crypto.timingSafeEqual(ba, bb);
+}
+
+function makeAdminToken() {
+  const exp = Date.now() + TOKEN_TTL_MS;
+  const base = String(exp);
+  const sig = crypto.createHmac('sha256', TOKEN_SECRET).update(base).digest('hex');
+  return base + '.' + sig;
+}
+
+function verifyAdminToken(tok) {
+  const s = String(tok || '');
+  const i = s.indexOf('.');
+  if (i < 0) return false;
+  const base = s.slice(0, i);
+  const sig = s.slice(i + 1);
+  const exp = parseInt(base, 10);
+  if (!exp || Date.now() > exp) return false;
+  return safeEqual(sig, crypto.createHmac('sha256', TOKEN_SECRET).update(base).digest('hex'));
+}
+
+// Lolos bila: admin key cocok (kalau ADMIN_KEY diset) ATAU token admin valid.
+function adminAuthorized(req) {
+  const adminKey = process.env.ADMIN_KEY;
+  const provided = String(req.get('x-admin-key') || '');
+  if (adminKey && provided && safeEqual(provided, adminKey)) return true;
+  return verifyAdminToken(req.get('x-admin-token'));
+}
+
 // Menyediakan akses ke file Index.html dan sw.js
 app.use(express.static(path.join(__dirname, '..')));
 
@@ -122,16 +162,22 @@ app.post('/api/data', async (req, res) => {
       return res.json({ status: 'success' });
     }
 
-    else if (action === 'getProfiles') {
-      const adminKey = process.env.ADMIN_KEY;
-      if (!adminKey) {
-        return res.status(503).json({ status: 'error', message: 'ADMIN_KEY belum diset di server' });
+    else if (action === 'adminLogin') {
+      const p = data || {};
+      const user = String(p.username || '').trim();
+      const pass = String(p.password || '');
+      if (!safeEqual(user, ADMIN_USER) || !safeEqual(pass, ADMIN_PASS)) {
+        return res.status(401).json({ status: 'error', message: 'Username atau password admin salah' });
       }
-      const provided = String(req.get('x-admin-key') || '');
-      const a = Buffer.from(provided);
-      const b = Buffer.from(adminKey);
-      const ok = a.length === b.length && crypto.timingSafeEqual(a, b);
-      if (!ok) {
+      return res.json({ status: 'success', token: makeAdminToken(), expiresInMs: TOKEN_TTL_MS });
+    }
+
+    else if (action === 'getProfiles') {
+      if (!adminAuthorized(req)) {
+        const adminKey = process.env.ADMIN_KEY;
+        if (!adminKey) {
+          return res.status(503).json({ status: 'error', message: 'Server belum punya ADMIN_KEY. Login via username/password admin.' });
+        }
         return res.status(401).json({ status: 'error', message: 'Kunci admin salah' });
       }
       const rows = await pool.query(
